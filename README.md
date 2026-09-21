@@ -53,15 +53,20 @@ Bakara memiliki fokus yang berbeda dibanding platform jual-beli umum maupun plat
 
 | Modul | Deskripsi | PIC |
 |---|---|---|
-| Modul Barang (Beli, Meminjam, Donasi) | Pengelolaan listing barang beserta status transaksi (jual/pinjam/donasi) | James Adi Putra & Darrel Rifathir |
-| Modul User Profile | Profil pengguna, autentikasi, dan riwayat aktivitas | Kesya Clara Dania |
-| Modul Chat | Komunikasi langsung antara pemilik dan peminat barang | Nurul Zakyah Ovi |
-| Modul Review | Rating dan ulasan setelah transaksi/serah terima barang | Faatir Wibowo Rachmad & Kesya Clara Dania |
-| Modul Impact Dashboard | Statistik dampak reuse dan sistem ranking fakultas di UI berdasarkan jumlah barang yang sudah tersalurkan | Nurul Zakyah Ovi |
+| Modul Autentikasi & Profil Pengguna | Pengelolaan akun dan profil pengguna (`User`), meliputi registrasi akun, melihat profil, edit profil/nomor WA/foto, serta menonaktifkan akun | Kesya Clara Dania |
+| Modul Katalog & Listing Barang | Pengelolaan katalog dan listing barang (`Barang`), meliputi upload barang, melihat detail/katalog, edit informasi barang, serta menghapus listing | Darrel Rifathirn Arwa |
+| Modul Kontak & Minat | Pengelolaan ketertarikan pengguna terhadap barang (`Minat`), meliputi menandai barang yang diminati, melihat daftar peminat, serta membatalkan ketertarikan | Faatir Wibowo Rachmad |
+| Modul Transaksi & Tracking Status | Pengelolaan transaksi (`Transaksi`), meliputi memulai transaksi dari minat, melihat status dan riwayat transaksi, mengubah status transaksi, serta membatalkan transaksi | James Adi Putra |
+| Modul Rating & Review | Pengelolaan rating dan ulasan (`Review`), meliputi memberikan rating/ulasan setelah transaksi selesai, melihat review, mengedit review sendiri, serta menghapus review | Nurul Zakiyah Ovi |
 
 ## 6. Sumber Public API / Mock API
 
-**Public API: OpenStreetMap** — digunakan untuk kebutuhan lokasi, seperti lokasi kampus/fakultas UI, lokasi barang, dan titik pengambilan barang.
+| API | Kegunaan |
+|---|---|
+| **OpenStreetMap API** | Digunakan untuk kebutuhan lokasi, seperti lokasi kampus/fakultas UI, lokasi barang, dan titik pengambilan barang. |
+| **DummyJSON API** | Digunakan sebagai mock API / data dummy untuk keperluan prototyping dan testing awal tampilan daftar barang, kategori, serta ulasan sebelum diintegrasikan penuh dengan backend. |
+| **Open Library API** | Digunakan untuk mengambil metadata buku secara otomatis, seperti judul, penulis, dan sampul buku ketika pengguna mengunggah atau mencari buku kuliah preloved di platform. |
+              
 
 ## 7. Jenis/Peran Pengguna Aplikasi (User Role & Target User)
 
