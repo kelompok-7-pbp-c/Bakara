@@ -1,7 +1,7 @@
 # Rancangan Aplikasi Kelompok 7 PBP C
 
 ## 1. Nama Aplikasi
-**Re-UI**
+**Bakara**
 
 ## 2. Anggota Kelompok
 - Faatir Wibowo Rachmad - 2506595146
@@ -11,9 +11,9 @@
 - Darrel Rifathir Arwa - 2506536420
 
 ## 3. Deskripsi Aplikasi
-Re-UI adalah platform berbagi barang khusus mahasiswa Universitas Indonesia yang memungkinkan mahasiswa untuk membeli, meminjam, atau mendonasikan barang yang sudah tidak digunakan kepada mahasiswa lain di lingkungan UI, baik antar kating (kakak tingkat) maupun deting (adik tingkat).
+Bakara adalah platform berbagi barang khusus mahasiswa Universitas Indonesia yang memungkinkan mahasiswa untuk membeli, meminjam, atau mendonasikan barang yang sudah tidak digunakan kepada mahasiswa lain di lingkungan UI, baik antar kating (kakak tingkat) maupun deting (adik tingkat).
 
-Ide ini terutama ditujukan untuk mahasiswa baru dan mahasiswa perantauan yang sering membutuhkan berbagai barang ketika pertama kali tinggal di kos/asrama dan memulai perkuliahan di UI. Misalnya, seorang maba membutuhkan hanger, lampu belajar, rice cooker, buku kuliah, kalkulator, kabel, alat makan, ataupun perlengkapan kos. Daripada langsung membeli barang baru, ia dapat mencari barang tersebut di Re-UI dan mendapatkannya dari kating yang sudah tidak membutuhkannya.
+Ide ini terutama ditujukan untuk mahasiswa baru dan mahasiswa perantauan yang sering membutuhkan berbagai barang ketika pertama kali tinggal di kos/asrama dan memulai perkuliahan di UI. Misalnya, seorang maba membutuhkan hanger, lampu belajar, rice cooker, buku kuliah, kalkulator, kabel, alat makan, ataupun perlengkapan kos. Daripada langsung membeli barang baru, ia dapat mencari barang tersebut di Bakara dan mendapatkannya dari kating yang sudah tidak membutuhkannya.
 
 ### Value Proposition (VP) Questions
 **A. What are the purposes/visions of this website?**
@@ -35,19 +35,19 @@ Menyediakan satu platform untuk mencari, membeli, meminjam, atau mendonasikan ba
 
 ## 4. Perbandingan dengan Aplikasi Serupa
 
-Re-UI memiliki fokus yang berbeda dibanding platform jual-beli umum maupun platform reuse khusus kampus yang sudah ada (di luar maupun di dalam negeri):
+Bakara memiliki fokus yang berbeda dibanding platform jual-beli umum maupun platform reuse khusus kampus yang sudah ada (di luar maupun di dalam negeri):
 
-| Platform | Fokus | Perbedaan Re-UI |
+| Platform | Fokus | Perbedaan Bakara |
 |---|---|---|
-| Carousell | Jual-beli barang bekas, skala umum | Re-UI fokus pada komunitas mahasiswa UI, bukan sekadar jual-beli |
-| OLX | Marketplace barang bekas, skala umum | Re-UI punya konsep gratis, tukar, pinjam, dan jual murah |
-| Facebook Marketplace | Jual-beli lokal, skala umum | Re-UI lebih spesifik untuk kebutuhan mahasiswa/kampus UI |
-| ReSwap (University of Southern California, California) | Marketplace khusus mahasiswa untuk beli, jual, tukar, dan sewa barang per kategori (pakaian, kebutuhan harian, hunian, carpool) | Re-UI berfokus khusus pada sirkulasi barang kebutuhan kuliah & kos, dengan penekanan pada kebutuhan maba/deting |
-| Swapp (Cornell University, New York) | Marketplace jual-beli barang preloved khusus mahasiswa, untuk mengurangi sampah saat peak moving season | Re-UI menambahkan opsi donasi & pinjam, tidak hanya jual-beli |
-| BaranginAja (UNESA, Surabaya) | Jual-beli barang bekas antar mahasiswa se-kampus dengan sistem komisi platform | Re-UI tidak berorientasi profit/komisi, lebih menekankan sirkulasi & berbagi antar kating-deting |
-| Loak.in (Undika, Surabaya) | Jual-beli barang bekas terhubung ke tukang loak via peta | Re-UI menyasar sirkulasi barang antar sesama mahasiswa, bukan ke pengepul barang bekas |
+| Carousell | Jual-beli barang bekas, skala umum | Bakara fokus pada komunitas mahasiswa UI, bukan sekadar jual-beli |
+| OLX | Marketplace barang bekas, skala umum | Bakara punya konsep gratis, tukar, pinjam, dan jual murah |
+| Facebook Marketplace | Jual-beli lokal, skala umum | Bakara lebih spesifik untuk kebutuhan mahasiswa/kampus UI |
+| ReSwap (University of Southern California, California) | Marketplace khusus mahasiswa untuk beli, jual, tukar, dan sewa barang per kategori (pakaian, kebutuhan harian, hunian, carpool) | Bakara berfokus khusus pada sirkulasi barang kebutuhan kuliah & kos, dengan penekanan pada kebutuhan maba/deting |
+| Swapp (Cornell University, New York) | Marketplace jual-beli barang preloved khusus mahasiswa, untuk mengurangi sampah saat peak moving season | Bakara menambahkan opsi donasi & pinjam, tidak hanya jual-beli |
+| BaranginAja (UNESA, Surabaya) | Jual-beli barang bekas antar mahasiswa se-kampus dengan sistem komisi platform | Bakara tidak berorientasi profit/komisi, lebih menekankan sirkulasi & berbagi antar kating-deting |
+| Loak.in (Undika, Surabaya) | Jual-beli barang bekas terhubung ke tukang loak via peta | Bakara menyasar sirkulasi barang antar sesama mahasiswa, bukan ke pengepul barang bekas |
 
-**Our Insight**: beberapa platform reuse *khusus kampus* (ReSwap, Swapp) sudah ditemukan di luar negeri, tetapi implementasinya di Indonesia masih sangat jarang, dan yang sudah ada (BaranginAja, Loak.in) masih murni berorientasi jual-beli tanpa elemen pinjam/donasi. Re-UI mengisi gap ini dengan menggabungkan jual, pinjam, dan donasi dalam satu ekosistem berbasis komunitas UI.
+**Our Insight**: beberapa platform reuse *khusus kampus* (ReSwap, Swapp) sudah ditemukan di luar negeri, tetapi implementasinya di Indonesia masih sangat jarang, dan yang sudah ada (BaranginAja, Loak.in) masih murni berorientasi jual-beli tanpa elemen pinjam/donasi. Bakara mengisi gap ini dengan menggabungkan jual, pinjam, dan donasi dalam satu ekosistem berbasis komunitas UI.
 
 ## 5. Daftar Modul
 
