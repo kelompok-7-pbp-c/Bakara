@@ -1,4 +1,4 @@
-#Rancangan Aplikasi Kelompok 7 PBP C
+# Rancangan Aplikasi Kelompok 7 PBP C
 
 ## 1. Nama Aplikasi
 **Bakara**
