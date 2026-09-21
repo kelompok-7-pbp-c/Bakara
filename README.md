@@ -51,17 +51,22 @@ Bakara memiliki fokus yang berbeda dibanding platform jual-beli umum maupun plat
 
 ## 5. Daftar Modul
 
-| Modul | Deskripsi | PIC |
-|---|---|---|
-| Modul Barang (Beli, Meminjam, Donasi) | Pengelolaan listing barang beserta status transaksi (jual/pinjam/donasi) | James Adi Putra & Darrel Rifathir |
-| Modul User Profile | Profil pengguna, autentikasi, dan riwayat aktivitas | Kesya Clara Dania |
-| Modul Chat | Komunikasi langsung antara pemilik dan peminat barang | Nurul Zakyah Ovi |
-| Modul Review | Rating dan ulasan setelah transaksi/serah terima barang | Faatir Wibowo Rachmad & Kesya Clara Dania |
-| Modul Impact Dashboard | Statistik dampak reuse dan sistem ranking fakultas di UI berdasarkan jumlah barang yang sudah tersalurkan | Nurul Zakyah Ovi |
+| No | Modul | Entitas Utama | CRUD | PIC |
+|---:|---|---|---|---|
+| 1 | **Autentikasi & Profil Pengguna** | `User` | **Create:** Registrasi akun (email @ui.ac.id/upload KTM)<br>**Read:** Lihat profil sendiri/orang lain<br>**Update:** Edit profil, nomor WA, foto<br>**Delete:** Nonaktifkan akun | Kesya Clara Dania |
+| 2 | **Katalog & Listing Barang** | `Barang` | **Create:** Upload barang baru<br>**Read:** Lihat detail barang, browse katalog<br>**Update:** Edit info barang (deskripsi, foto, status)<br>**Delete:** Hapus listing barang | Darrel Rifathirn Arwa |
+| 3 | **Kontak & Minat** | `Minat` | **Create:** Tandai tertarik pada barang<br>**Read:** Lihat daftar yang tertarik untuk pemilik barang<br>**Update:** Tidak diperlukan, cukup create/delete<br>**Delete:** Batalkan tanda tertarik | Faatir Wibowo Rachmad |
+| 4 | **Transaksi & Tracking Status** | `Transaksi` | **Create:** Mulai transaksi dari minat<br>**Read:** Lihat status & riwayat transaksi<br>**Update:** Ubah status (nego → selesai)<br>**Delete:** Batalkan transaksi | James Adi Putra |
+| 5 | **Rating & Review** | `Review` | **Create:** Beri rating & ulasan setelah transaksi selesai<br>**Read:** Lihat rating/review di profil user<br>**Update:** Edit review sendiri<br>**Delete:** Hapus review sendiri | Nurul Zakiyah Ovi |
 
 ## 6. Sumber Public API / Mock API
 
-**Public API: OpenStreetMap** — digunakan untuk kebutuhan lokasi, seperti lokasi kampus/fakultas UI, lokasi barang, dan titik pengambilan barang.
+| API | Kegunaan |
+|---|---|
+| **OpenStreetMap API** | Digunakan untuk kebutuhan lokasi, seperti lokasi kampus/fakultas UI, lokasi barang, dan titik pengambilan barang. |
+| **DummyJSON API** | Digunakan sebagai mock API / data dummy untuk keperluan prototyping dan testing awal tampilan daftar barang, kategori, serta ulasan sebelum diintegrasikan penuh dengan backend. |
+| **Open Library API** | Digunakan untuk mengambil metadata buku secara otomatis, seperti judul, penulis, dan sampul buku ketika pengguna mengunggah atau mencari buku kuliah preloved di platform. |
+              
 
 ## 7. Jenis/Peran Pengguna Aplikasi (User Role & Target User)
 
