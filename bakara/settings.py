@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
-ROOT_URLCONF = 're_ui.urls'
+ROOT_URLCONF = 'bakara.urls'
 
 TEMPLATES = [
     {
@@ -72,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 're_ui.wsgi.application'
+WSGI_APPLICATION = 'bakara.wsgi.application'
 
 
 # Database
