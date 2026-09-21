@@ -1,4 +1,4 @@
-<img width="680" height="423" alt="image" src="https://github.com/user-attachments/assets/354ecfb4-69c7-4a9a-bb58-dff071718c3f" /># Rancangan Aplikasi Kelompok 7 PBP C
+# Rancangan Aplikasi Kelompok 7 PBP C
 
 ## 1. Nama Aplikasi
 **Bakara**
