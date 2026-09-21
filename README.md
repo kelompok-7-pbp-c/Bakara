@@ -1,4 +1,4 @@
-# Rancangan Aplikasi Kelompok 7 PBP C
+<img width="680" height="423" alt="image" src="https://github.com/user-attachments/assets/354ecfb4-69c7-4a9a-bb58-dff071718c3f" /># Rancangan Aplikasi Kelompok 7 PBP C
 
 ## 1. Nama Aplikasi
 **Bakara**
@@ -90,7 +90,7 @@ Dapat melakukan:
 - Mengadakan kegiatan reuse di lingkungan UI
 
 ## 8. Tautan Deployment PWS
-https://darrel-rifathir-re-ui.pws.cs.ui.ac.id/
+https://darrel-rifathir-bakara.pws.cs.ui.ac.id/
 
 ## 9. Tautan Desain Figma
 https://www.figma.com/design/pU7PzvdlefcBJJkBS5NqQB/Untitled?node-id=2-4&t=QdZKyKytq6PMkH4r-1
