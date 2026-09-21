@@ -51,13 +51,13 @@ Bakara memiliki fokus yang berbeda dibanding platform jual-beli umum maupun plat
 
 ## 5. Daftar Modul
 
-| Modul | Deskripsi | PIC |
-|---|---|---|
-| Modul Autentikasi & Profil Pengguna | Pengelolaan akun dan profil pengguna (`User`), meliputi registrasi akun, melihat profil, edit profil/nomor WA/foto, serta menonaktifkan akun | Kesya Clara Dania |
-| Modul Katalog & Listing Barang | Pengelolaan katalog dan listing barang (`Barang`), meliputi upload barang, melihat detail/katalog, edit informasi barang, serta menghapus listing | Darrel Rifathirn Arwa |
-| Modul Kontak & Minat | Pengelolaan ketertarikan pengguna terhadap barang (`Minat`), meliputi menandai barang yang diminati, melihat daftar peminat, serta membatalkan ketertarikan | Faatir Wibowo Rachmad |
-| Modul Transaksi & Tracking Status | Pengelolaan transaksi (`Transaksi`), meliputi memulai transaksi dari minat, melihat status dan riwayat transaksi, mengubah status transaksi, serta membatalkan transaksi | James Adi Putra |
-| Modul Rating & Review | Pengelolaan rating dan ulasan (`Review`), meliputi memberikan rating/ulasan setelah transaksi selesai, melihat review, mengedit review sendiri, serta menghapus review | Nurul Zakiyah Ovi |
+| No | Modul | Entitas Utama | CRUD | PIC |
+|---:|---|---|---|---|
+| 1 | **Autentikasi & Profil Pengguna** | `User` | **Create:** Registrasi akun (email @ui.ac.id/upload KTM)<br>**Read:** Lihat profil sendiri/orang lain<br>**Update:** Edit profil, nomor WA, foto<br>**Delete:** Nonaktifkan akun | Kesya Clara Dania |
+| 2 | **Katalog & Listing Barang** | `Barang` | **Create:** Upload barang baru<br>**Read:** Lihat detail barang, browse katalog<br>**Update:** Edit info barang (deskripsi, foto, status)<br>**Delete:** Hapus listing barang | Darrel Rifathirn Arwa |
+| 3 | **Kontak & Minat** | `Minat` | **Create:** Tandai tertarik pada barang<br>**Read:** Lihat daftar yang tertarik untuk pemilik barang<br>**Update:** Tidak diperlukan, cukup create/delete<br>**Delete:** Batalkan tanda tertarik | Faatir Wibowo Rachmad |
+| 4 | **Transaksi & Tracking Status** | `Transaksi` | **Create:** Mulai transaksi dari minat<br>**Read:** Lihat status & riwayat transaksi<br>**Update:** Ubah status (nego → selesai)<br>**Delete:** Batalkan transaksi | James Adi Putra |
+| 5 | **Rating & Review** | `Review` | **Create:** Beri rating & ulasan setelah transaksi selesai<br>**Read:** Lihat rating/review di profil user<br>**Update:** Edit review sendiri<br>**Delete:** Hapus review sendiri | Nurul Zakiyah Ovi |
 
 ## 6. Sumber Public API / Mock API
 
