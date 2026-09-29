@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Daftar — Bakara{% endblock title %}
+
+{% block meta_description %}Buat akun Bakara dengan email UI kamu.{% endblock meta_description %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <h1>Daftar</h1>
+        <p class="auth-subtitle">Buat akun Bakara dengan email UI kamu.</p>
+
+        <form method="POST" class="auth-form" novalidate>
+            {% csrf_token %}
+
+            {% for error in form.non_field_errors %}
+                <p class="alert alert-error">{{ error }}</p>
+            {% endfor %}
+
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <div class="form-help">{{ field.help_text|safe }}</div>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="form-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary btn-block">Daftar</button>
+        </form>
+
+        <p class="auth-switch">Sudah punya akun? <a href="{% url 'authentication:login' %}">Masuk</a></p>
+    </div>
+</div>
+{% endblock content %}
