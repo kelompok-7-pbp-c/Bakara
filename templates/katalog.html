@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Katalog Barang — Bakara{% endblock title %}
+
+{% block meta_description %}Jelajahi katalog barang di Bakara. Temukan barang untuk dibeli, dipinjam, atau didonasikan oleh sesama mahasiswa Universitas Indonesia.{% endblock meta_description %}
+
+{% block content %}
+<div class="page-stub">
+    <div class="page-stub-inner">
+        <span class="page-stub-icon">🛍️</span>
+        <h1>Katalog Barang</h1>
+        <p>Temukan barang untuk dibeli, dipinjam, atau didonasikan dari sesama mahasiswa UI.<br>Fitur ini sedang dalam pengembangan.</p>
+        <a href="{% url 'main:show_beranda' %}" class="btn btn-primary">← Kembali ke Beranda</a>
+    </div>
+</div>
+{% endblock content %}

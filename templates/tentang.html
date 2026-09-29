@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Tentang Kami — Bakara{% endblock title %}
+
+{% block meta_description %}Bakara adalah platform berbagi barang khusus mahasiswa Universitas Indonesia yang dikembangkan oleh Kelompok 7 PBP C.{% endblock meta_description %}
+
+{% block content %}
+<div class="page-stub">
+    <div class="page-stub-inner">
+        <span class="page-stub-icon">ℹ️</span>
+        <h1>Tentang Kami</h1>
+        <p>Bakara adalah platform berbagi barang khusus untuk mahasiswa UI.<br>Dikembangkan oleh Kelompok 7 PBP C. Fitur ini sedang dalam pengembangan.</p>
+        <a href="{% url 'main:show_beranda' %}" class="btn btn-primary">← Kembali ke Beranda</a>
+    </div>
+</div>
+{% endblock content %}
