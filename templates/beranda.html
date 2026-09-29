@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bakara — Butuh Barang? Cari di Bakara!{% endblock title %}
+
+{% block meta_description %}Platform berbagi barang khusus mahasiswa UI. Beli, pinjam, atau donasikan barang yang sudah
+tidak kamu gunakan kepada sesama mahasiswa Universitas Indonesia.{% endblock meta_description %}
+
+{% block content %}
+
+<!-- ===================== HERO SECTION ===================== -->
+<section class="hero" aria-label="Hero">
+    <div class="container">
+        <!-- Left: Text Content -->
+        <div class="hero-content">
+            <span class="hero-badge">Platform Berbagi Barang Khusus Mahasiswa UI</span>
+
+            <h1>Butuh Barang?<br>Cari di Bakara!</h1>
+
+            <p class="hero-desc">
+                Beli, pinjam, atau donasikan barang yang sudah tidak kamu gunakan
+                kepada sesama mahasiswa UI.
+            </p>
+
+            <a href="{% url 'main:show_katalog' %}" class="hero-cta" id="hero-cta-btn">
+                Jelajahi Katalog
+                <span class="hero-cta-arrow" aria-hidden="true">→</span>
+            </a>
+        </div>
+
+        <!-- Right: Illustration -->
+        <div class="hero-visual" aria-hidden="true">
+            <img src="{% static 'img/hero-illustration.webp' %}" alt="Mahasiswa UI di depan gedung rektorat" width="480"
+                height="360">
+        </div>
+    </div>
+</section>
+
+<!-- ===================== BENEFITS BAR ===================== -->
+<div class="benefits-bar" aria-label="Keunggulan platform">
+    <div class="container">
+        <div class="benefit-item">
+            <div class="benefit-icon" aria-hidden="true">⚡</div>
+            <div class="benefit-label">
+                <strong>Mudah &amp; Cepat</strong>
+                <span>Proses transaksi simpel</span>
+            </div>
+        </div>
+
+        <div class="benefit-item">
+            <div class="benefit-icon" aria-hidden="true">🤝</div>
+            <div class="benefit-label">
+                <strong>Terpercaya</strong>
+                <span>Sesama Mahasiswa UI</span>
+            </div>
+        </div>
+
+        <div class="benefit-item">
+            <div class="benefit-icon" aria-hidden="true">♻️</div>
+            <div class="benefit-label">
+                <strong>Berkelanjutan</strong>
+                <span>Untuk Lingkungan</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

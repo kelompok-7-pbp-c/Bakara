@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Transaksi — Bakara{% endblock title %}
+
+{% block meta_description %}Lihat riwayat dan status transaksi kamu di Bakara.{% endblock meta_description %}
+
+{% block content %}
+<div class="page-stub">
+    <div class="page-stub-inner">
+        <span class="page-stub-icon">📦</span>
+        <h1>Transaksi</h1>
+        <p>Lihat riwayat dan status transaksi kamu di sini.<br>Fitur ini sedang dalam pengembangan.</p>
+        <a href="{% url 'main:show_beranda' %}" class="btn btn-primary">← Kembali ke Beranda</a>
+    </div>
+</div>
+{% endblock content %}
