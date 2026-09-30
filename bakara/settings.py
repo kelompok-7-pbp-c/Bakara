@@ -150,3 +150,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'authentication:login'
 LOGIN_REDIRECT_URL = 'main:show_beranda'
 LOGOUT_REDIRECT_URL = 'main:show_beranda'
+
+# SSO UI (CAS)
+SSO_UI_URL = 'https://sso.ui.ac.id/cas2/'
+SSO_UI_FORCE_SERVICE_HTTPS = PRODUCTION
