@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -144,3 +145,8 @@ WHITENOISE_USE_FINDERS = True
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Authentication
+LOGIN_URL = 'authentication:login'
+LOGIN_REDIRECT_URL = 'main:show_beranda'
+LOGOUT_REDIRECT_URL = 'main:show_beranda'
