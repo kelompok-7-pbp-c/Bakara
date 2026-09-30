@@ -618,6 +618,24 @@ ol {
     color:       var(--color-primary);
 }
 
+/* Pemisah "atau" antara form login dan tombol SSO */
+.auth-divider {
+    display:     flex;
+    align-items: center;
+    gap:         var(--spacing-sm);
+    margin:      var(--spacing-lg) 0 var(--spacing-sm);
+    font-size:   13px;
+    color:       var(--color-secondary);
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content:          '';
+    flex:             1;
+    height:           1px;
+    background-color: var(--color-border);
+}
+
 /* Tombol Keluar di navbar (form POST, tampil seperti link) */
 .nav-logout-form {
     display: inline;
