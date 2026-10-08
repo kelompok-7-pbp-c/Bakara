@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profil — Bakara{% endblock title %}
+
+{% block meta_description %}Perbarui data profil Bakara kamu.{% endblock meta_description %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <h1>Edit Profil</h1>
+        <p class="auth-subtitle">Lengkapi data diri kamu.</p>
+
+        <form method="POST" enctype="multipart/form-data" class="auth-form" novalidate>
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {% if field.name == 'photo' and form.instance.photo %}
+                    <img src="{{ form.instance.photo.url }}" alt="Foto profil saat ini" class="profile-photo profile-photo-sm">
+                    <div class="form-help">Pilih file baru hanya jika ingin mengganti foto.</div>
+                {% endif %}
+                {{ field }}
+                {% if field.help_text %}
+                    <div class="form-help">{{ field.help_text }}</div>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="form-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary btn-block">Simpan</button>
+        </form>
+
+        <p class="auth-switch"><a href="{% url 'main:show_profil' %}">Batal</a></p>
+    </div>
+</div>
+{% endblock content %}

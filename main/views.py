@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
+from authentication.models import Profile
+
 def show_beranda(request):
     context = {
         'brand_name': 'Bakara'
@@ -16,7 +18,8 @@ def show_transaksi(request):
 
 @login_required
 def show_profil(request):
-    return render(request, 'profil.html')
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+    return render(request, 'profil.html', {'profile': profile})
 
 def show_tentang(request):
     return render(request, 'tentang.html')

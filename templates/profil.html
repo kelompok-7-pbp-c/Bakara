@@ -5,12 +5,51 @@
 {% block meta_description %}Kelola profil dan akun Bakara kamu di sini.{% endblock meta_description %}
 
 {% block content %}
-<div class="page-stub">
-    <div class="page-stub-inner">
-        <span class="page-stub-icon">👤</span>
+<div class="auth-page">
+    <div class="auth-card">
+        {% if profile.photo %}
+            <img src="{{ profile.photo.url }}" alt="Foto profil {{ user.username }}" class="profile-photo">
+        {% else %}
+            <div class="profile-photo profile-photo-empty" aria-hidden="true">{{ user.username|first|upper }}</div>
+        {% endif %}
+
         <h1>Profil Saya</h1>
-        <p>Kelola profil dan informasi akun kamu di sini.<br>Fitur ini sedang dalam pengembangan.</p>
-        <a href="{% url 'main:show_beranda' %}" class="btn btn-primary">← Kembali ke Beranda</a>
+        <p class="auth-subtitle">@{{ user.username }} · {{ user.email }}</p>
+
+        {% if not profile.is_complete %}
+            <p class="alert alert-info">Profil kamu belum lengkap. Yuk lengkapi dulu!</p>
+        {% endif %}
+
+        <dl class="profile-details">
+            <div class="profile-row">
+                <dt>Nama lengkap</dt>
+                <dd>{{ profile.full_name|default:"—" }}</dd>
+            </div>
+            <div class="profile-row">
+                <dt>Fakultas</dt>
+                <dd>{{ profile.get_faculty_display|default:"—" }}</dd>
+            </div>
+            <div class="profile-row">
+                <dt>Angkatan</dt>
+                <dd>{{ profile.angkatan|default:"—" }}</dd>
+            </div>
+            <div class="profile-row">
+                <dt>WhatsApp</dt>
+                <dd>
+                    {% if profile.whatsapp %}
+                        <a href="{{ profile.whatsapp_link }}" target="_blank" rel="noopener">{{ profile.whatsapp }}</a>
+                    {% else %}—{% endif %}
+                </dd>
+            </div>
+            <div class="profile-row">
+                <dt>ID LINE</dt>
+                <dd>{{ profile.line_id|default:"—" }}</dd>
+            </div>
+        </dl>
+
+        <a href="{% url 'authentication:edit_profile' %}" class="btn btn-primary btn-block">
+            {% if profile.is_complete %}Edit Profil{% else %}Lengkapi Profil{% endif %}
+        </a>
     </div>
 </div>
 {% endblock content %}
