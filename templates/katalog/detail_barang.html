@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ barang.nama }} — Bakara{% endblock title %}
+{% block meta_description %}{{ barang.nama }} — {{ barang.get_jenis_display }} oleh {{ barang.penjual.username }} di Bakara.{% endblock meta_description %}
+
+{% block content %}
+<div class="detail-page">
+    <div class="container">
+
+        <a href="{% url 'katalog:show_katalog' %}" class="detail-back">
+            ← Kembali ke Katalog
+        </a>
+
+        <div class="detail-layout">
+
+            <!-- ── Kiri: Foto ──────────────────────────────────────────── -->
+            <div class="detail-img-wrap">
+                {% if barang.foto_url %}
+                    <img src="{{ barang.foto_url }}" alt="{{ barang.nama }}">
+                {% else %}
+                    {% if barang.kategori == 'buku' %}📚
+                    {% elif barang.kategori == 'elektronik' %}💻
+                    {% elif barang.kategori == 'pakaian' %}👕
+                    {% elif barang.kategori == 'furnitur' %}🪑
+                    {% elif barang.kategori == 'olahraga' %}⚽
+                    {% else %}📦{% endif %}
+                {% endif %}
+            </div>
+
+            <!-- ── Kanan: Info ─────────────────────────────────────────── -->
+            <div class="detail-info">
+
+                <!-- Badges -->
+                <div class="detail-badges">
+                    <span class="badge badge-{{ barang.jenis }}">{{ barang.get_jenis_display }}</span>
+                    <span class="badge badge-status-{{ barang.status }}">{{ barang.get_status_display }}</span>
+                </div>
+
+                <!-- Nama & Harga -->
+                <h1 class="detail-nama">{{ barang.nama }}</h1>
+                <p class="detail-harga">{{ barang.harga_display }}</p>
+
+                <!-- Meta Grid -->
+                <dl class="detail-meta-grid">
+                    <div class="meta-item">
+                        <dt>Kategori</dt>
+                        <dd>{{ barang.get_kategori_display }}</dd>
+                    </div>
+                    <div class="meta-item">
+                        <dt>Kondisi</dt>
+                        <dd>{{ barang.get_kondisi_display }}</dd>
+                    </div>
+                    <div class="meta-item">
+                        <dt>Lokasi</dt>
+                        <dd>{{ barang.lokasi|default:"—" }}</dd>
+                    </div>
+                    <div class="meta-item">
+                        <dt>Diposting</dt>
+                        <dd>{{ barang.dibuat_pada|date:"d M Y" }}</dd>
+                    </div>
+                </dl>
+
+                <!-- Deskripsi -->
+                {% if barang.deskripsi %}
+                <div>
+                    <p class="detail-deskripsi-label">Deskripsi</p>
+                    <p class="detail-deskripsi">{{ barang.deskripsi }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Penjual -->
+                <div class="detail-penjual-card">
+                    <div class="penjual-avatar">{{ barang.penjual.username|first|upper }}</div>
+                    <div>
+                        <p class="penjual-name">{{ barang.penjual.username }}</p>
+                        <p class="penjual-label">Pemilik Barang</p>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="detail-actions">
+                    {% if user.is_authenticated and barang.status == 'tersedia' %}
+                        {# Placeholder — tombol "Saya Tertarik" (modul Kontak & Minat oleh Faatir) #}
+                        <button class="btn btn-primary" disabled title="Fitur minat segera hadir">
+                            🤝 Saya Tertarik
+                        </button>
+                    {% elif not user.is_authenticated %}
+                        <a href="{% url 'authentication:login' %}" class="btn btn-primary">Masuk untuk Berminat</a>
+                    {% endif %}
+
+                    {% if user == barang.penjual %}
+                    <a href="{% url 'katalog:edit_barang' barang.pk %}" class="btn btn-ghost">✏️ Edit</a>
+                    <form action="{% url 'katalog:hapus_barang' barang.pk %}" method="post"
+                          onsubmit="return confirm('Yakin hapus listing ini?')">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-danger">🗑 Hapus</button>
+                    </form>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div><!-- /detail-layout -->
+
+    </div>
+</div>
+{% endblock content %}
+

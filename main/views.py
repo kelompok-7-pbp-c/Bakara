@@ -3,14 +3,16 @@ from django.shortcuts import render
 
 from authentication.models import Profile
 
+
 def show_beranda(request):
     context = {
         'brand_name': 'Bakara'
     }
     return render(request, 'beranda.html', context)
 
-def show_katalog(request):
-    return render(request, 'katalog.html')
+# NOTE:
+# show_katalog telah dipindahkan ke katalog/views.py
+# URL /katalog/ sekarang ditangani oleh app `katalog`.
 
 @login_required
 def show_transaksi(request):

@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Katalog Barang — Bakara{% endblock title %}
+{% block meta_description %}Jelajahi katalog barang di Bakara. Temukan barang untuk dibeli, dipinjam, atau didonasikan dari sesama mahasiswa UI.{% endblock meta_description %}
+
+{% block content %}
+
+<!-- ── HERO / HEADER ──────────────────────────────────────────────────────── -->
+<section class="katalog-hero">
+    <div class="container">
+        <h1>🛍️ Katalog Barang</h1>
+        <p>Temukan barang untuk dibeli, dipinjam, atau didonasikan dari sesama mahasiswa UI.</p>
+
+        <!-- Search + Sort -->
+        <form method="get" action="" id="katalog-filter-form" class="katalog-toolbar">
+            <div class="search-wrap">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input
+                    type="search"
+                    name="q"
+                    value="{{ search_query }}"
+                    placeholder="Cari barang… (mis. kalkulator, hanger, buku)"
+                    class="search-input"
+                    id="search-input"
+                    autocomplete="off"
+                >
+            </div>
+            <select name="sort" class="sort-select" onchange="this.form.submit()">
+                <option value="-dibuat_pada" {% if current_sort == '-dibuat_pada' %}selected{% endif %}>Terbaru</option>
+                <option value="dibuat_pada"  {% if current_sort == 'dibuat_pada' %}selected{% endif %}>Terlama</option>
+                <option value="nama"         {% if current_sort == 'nama' %}selected{% endif %}>Nama A–Z</option>
+                <option value="harga"        {% if current_sort == 'harga' %}selected{% endif %}>Harga ↑</option>
+                <option value="-harga"       {% if current_sort == '-harga' %}selected{% endif %}>Harga ↓</option>
+            </select>
+            {% if filter_kategori %}<input type="hidden" name="kategori" value="{{ filter_kategori }}">{% endif %}
+            {% if filter_jenis    %}<input type="hidden" name="jenis"    value="{{ filter_jenis }}">{% endif %}
+        </form>
+
+        <!-- Filter Chips: Jenis -->
+        <div class="filter-chips">
+            <span class="filter-label">Jenis:</span>
+            <a href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if filter_kategori %}kategori={{ filter_kategori }}&{% endif %}sort={{ current_sort }}"
+               class="chip {% if not filter_jenis %}chip-active{% endif %}">Semua</a>
+            {% for val, label in jenis_choices %}
+            <a href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if filter_kategori %}kategori={{ filter_kategori }}&{% endif %}jenis={{ val }}&sort={{ current_sort }}"
+               class="chip {% if filter_jenis == val %}chip-active{% endif %}">{{ label }}</a>
+            {% endfor %}
+
+            <span class="filter-label" style="margin-left: 8px;">Kategori:</span>
+            <a href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if filter_jenis %}jenis={{ filter_jenis }}&{% endif %}sort={{ current_sort }}"
+               class="chip {% if not filter_kategori %}chip-active{% endif %}">Semua</a>
+            {% for val, label in kategori_choices %}
+            <a href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if filter_jenis %}jenis={{ filter_jenis }}&{% endif %}kategori={{ val }}&sort={{ current_sort }}"
+               class="chip {% if filter_kategori == val %}chip-active{% endif %}">{{ label }}</a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ── MAIN GRID ─────────────────────────────────────────────────────────── -->
+<section class="katalog-section" aria-label="Daftar Barang">
+    <div class="container">
+        <div class="katalog-meta">
+            <p class="katalog-count">
+                Menampilkan <strong>{{ total_barang }}</strong> barang tersedia
+                {% if search_query %}untuk "<strong>{{ search_query }}</strong>"{% endif %}
+                {% if filter_kategori %}dalam kategori <strong>{{ filter_kategori }}</strong>{% endif %}
+                {% if filter_jenis %}jenis <strong>{{ filter_jenis }}</strong>{% endif %}
+            </p>
+            {% if user.is_authenticated %}
+            <a href="{% url 'katalog:tambah_barang' %}" class="btn btn-primary">
+                + Upload Barang
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Grid Barang -->
+        <div class="barang-grid" id="barang-grid">
+            {% for b in barang_list %}
+            <a href="{% url 'katalog:detail_barang' b.pk %}" class="barang-card" aria-label="{{ b.nama }}">
+
+                <!-- Foto / Placeholder -->
+                <div class="card-img-wrap">
+                    {% if b.foto_url %}
+                        <img src="{{ b.foto_url }}" alt="{{ b.nama }}" loading="lazy">
+                    {% else %}
+                        <div class="card-img-placeholder" aria-hidden="true">
+                            {% if b.kategori == 'buku' %}📚
+                            {% elif b.kategori == 'elektronik' %}💻
+                            {% elif b.kategori == 'pakaian' %}👕
+                            {% elif b.kategori == 'furnitur' %}🪑
+                            {% elif b.kategori == 'olahraga' %}⚽
+                            {% else %}📦{% endif %}
+                        </div>
+                    {% endif %}
+
+                    <div class="card-badges">
+                        <span class="badge badge-{{ b.jenis }}">{{ b.get_jenis_display }}</span>
+                        {% if b.status != 'tersedia' %}
+                        <span class="badge badge-status">{{ b.get_status_display }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div class="card-body">
+                    <span class="card-kategori">{{ b.get_kategori_display }}</span>
+                    <h3 class="card-nama">{{ b.nama }}</h3>
+                    <span class="card-kondisi">{{ b.get_kondisi_display }}</span>
+
+                    <div class="card-footer">
+                        <span class="card-harga">{{ b.harga_display }}</span>
+                        <span class="card-penjual">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            {{ b.penjual.username }}
+                        </span>
+                    </div>
+                </div>
+            </a>
+            {% empty %}
+            <div class="empty-state" style="grid-column: 1/-1;">
+                <span class="empty-state-icon">🔍</span>
+                <h2>Barang tidak ditemukan</h2>
+                <p>Coba ubah filter atau kata kunci pencarianmu.</p>
+                <a href="{% url 'katalog:show_katalog' %}" class="btn btn-ghost" style="margin-top: 16px;">Reset Filter</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- CTA Upload -->
+        {% if user.is_authenticated %}
+        <div class="katalog-cta-bar">
+            <p>Punya barang yang tidak terpakai? Bagikan ke sesama mahasiswa UI!</p>
+            <a href="{% url 'katalog:tambah_barang' %}" class="btn btn-primary">+ Upload Barang Sekarang</a>
+        </div>
+        {% else %}
+        <div class="katalog-cta-bar">
+            <p>Masuk untuk mulai berbagi atau mencatat minatmu pada barang ini.</p>
+            <a href="{% url 'authentication:login' %}" class="btn btn-primary">Masuk Sekarang</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock content %}
+
