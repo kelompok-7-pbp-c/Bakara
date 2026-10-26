@@ -6,7 +6,7 @@ from authentication.models import Profile
 
 def show_beranda(request):
     context = {
-        'brand_name': 'Bakara'
+        'brand_name': 'Bakara',
     }
     return render(request, 'beranda.html', context)
 
