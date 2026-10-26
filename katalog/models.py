@@ -3,6 +3,7 @@ import uuid
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+from django.conf import settings
 
 
 class Barang(models.Model):
@@ -11,25 +12,25 @@ class Barang(models.Model):
     Setiap barang dimiliki oleh satu User (penjual/pemberi).
     """
 
-    # Pilihan Jenis Transaksi 
-    JUAL    = 'jual'
-    PINJAM  = 'pinjam'
-    DONASI  = 'donasi'
+    # Pilihan Jenis Transaksi
+    JUAL = 'jual'
+    PINJAM = 'pinjam'
+    DONASI = 'donasi'
     JENIS_CHOICES = [
         (JUAL,   'Dijual'),
         (PINJAM, 'Dipinjamkan'),
         (DONASI, 'Didonasikan'),
     ]
 
-    # Pilihan Kategori 
-    BUKU         = 'buku'
-    ELEKTRONIK   = 'elektronik'
-    PAKAIAN      = 'pakaian'
-    FURNITUR     = 'furnitur'
-    ALAT_TULIS   = 'alat_tulis'
-    KEBUTUHAN_KOS= 'kebutuhan_kos'
-    OLAHRAGA     = 'olahraga'
-    LAINNYA      = 'lainnya'
+    # Pilihan Kategori
+    BUKU = 'buku'
+    ELEKTRONIK = 'elektronik'
+    PAKAIAN = 'pakaian'
+    FURNITUR = 'furnitur'
+    ALAT_TULIS = 'alat_tulis'
+    KEBUTUHAN_KOS = 'kebutuhan_kos'
+    OLAHRAGA = 'olahraga'
+    LAINNYA = 'lainnya'
     KATEGORI_CHOICES = [
         (BUKU,          'Buku & Alat Belajar'),
         (ELEKTRONIK,    'Elektronik & Gadget'),
@@ -41,27 +42,27 @@ class Barang(models.Model):
         (LAINNYA,       'Lainnya'),
     ]
 
-    # Pilihan Kondisi Barang 
-    BARU             = 'baru'
-    BAIK             = 'baik'
-    LAYAK_PAKAI      = 'layak_pakai'
+    # Pilihan Kondisi Barang
+    BARU = 'baru'
+    BAIK = 'baik'
+    LAYAK_PAKAI = 'layak_pakai'
     KONDISI_CHOICES = [
         (BARU,        'Baru / Belum Dipakai'),
         (BAIK,        'Baik (sedikit bekas)'),
         (LAYAK_PAKAI, 'Layak Pakai (bekas, tapi oke)'),
     ]
 
-    # Pilihan Status Listing 
-    TERSEDIA      = 'tersedia'
-    DALAM_PROSES  = 'dalam_proses'
-    SELESAI       = 'selesai'
+    # Pilihan Status Listing
+    TERSEDIA = 'tersedia'
+    DALAM_PROSES = 'dalam_proses'
+    SELESAI = 'selesai'
     STATUS_CHOICES = [
         (TERSEDIA,     'Tersedia'),
         (DALAM_PROSES, 'Dalam Proses'),
         (SELESAI,      'Selesai / Sudah Diambil'),
     ]
 
-    # Fields 
+    # Fields
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -76,12 +77,16 @@ class Barang(models.Model):
     )
 
     # Info utama
-    nama        = models.CharField('Nama Barang', max_length=120)
-    deskripsi   = models.TextField('Deskripsi', blank=True)
-    kategori    = models.CharField('Kategori', max_length=20, choices=KATEGORI_CHOICES, default=LAINNYA)
-    jenis       = models.CharField('Jenis Transaksi', max_length=10, choices=JENIS_CHOICES, default=JUAL)
-    kondisi     = models.CharField('Kondisi', max_length=15, choices=KONDISI_CHOICES, default=BAIK)
-    status      = models.CharField('Status', max_length=15, choices=STATUS_CHOICES, default=TERSEDIA)
+    nama = models.CharField('Nama Barang', max_length=120)
+    deskripsi = models.TextField('Deskripsi', blank=True)
+    kategori = models.CharField(
+        'Kategori', max_length=20, choices=KATEGORI_CHOICES, default=LAINNYA)
+    jenis = models.CharField(
+        'Jenis Transaksi', max_length=10, choices=JENIS_CHOICES, default=JUAL)
+    kondisi = models.CharField(
+        'Kondisi', max_length=15, choices=KONDISI_CHOICES, default=BAIK)
+    status = models.CharField('Status', max_length=15,
+                              choices=STATUS_CHOICES, default=TERSEDIA)
 
     # Harga (null/0 = gratis untuk jenis donasi/pinjam)
     harga = models.PositiveIntegerField(
@@ -107,13 +112,13 @@ class Barang(models.Model):
     )
 
     # Timestamps
-    dibuat_pada   = models.DateTimeField('Dibuat Pada', default=timezone.now)
+    dibuat_pada = models.DateTimeField('Dibuat Pada', default=timezone.now)
     diperbarui_pada = models.DateTimeField('Diperbarui Pada', auto_now=True)
 
     class Meta:
-        db_table    = 'katalog_barang'
-        ordering    = ['-dibuat_pada']
-        verbose_name        = 'Barang'
+        db_table = 'katalog_barang'
+        ordering = ['-dibuat_pada']
+        verbose_name = 'Barang'
         verbose_name_plural = 'Daftar Barang'
 
     def __str__(self):

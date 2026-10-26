@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block title %}{{ barang.nama }} — Bakara{% endblock title %}
-{% block meta_description %}{{ barang.nama }} — {{ barang.get_jenis_display }} oleh {{ barang.penjual.username }} di Bakara.{% endblock meta_description %}
+{% block meta_description %}{{ barang.nama }} — {{ barang.get_jenis_display }} oleh {{ barang.penjual.username }} di
+Bakara.{% endblock meta_description %}
 
 {% block content %}
 <div class="detail-page">
@@ -17,14 +18,14 @@
             <!-- ── Kiri: Foto ──────────────────────────────────────────── -->
             <div class="detail-img-wrap">
                 {% if barang.foto_url %}
-                    <img src="{{ barang.foto_url }}" alt="{{ barang.nama }}">
+                <img src="{{ barang.foto_url }}" alt="{{ barang.nama }}">
                 {% else %}
-                    {% if barang.kategori == 'buku' %}📚
-                    {% elif barang.kategori == 'elektronik' %}💻
-                    {% elif barang.kategori == 'pakaian' %}👕
-                    {% elif barang.kategori == 'furnitur' %}🪑
-                    {% elif barang.kategori == 'olahraga' %}⚽
-                    {% else %}📦{% endif %}
+                {% if barang.kategori == 'buku' %}📚
+                {% elif barang.kategori == 'elektronik' %}💻
+                {% elif barang.kategori == 'pakaian' %}👕
+                {% elif barang.kategori == 'furnitur' %}🪑
+                {% elif barang.kategori == 'olahraga' %}⚽
+                {% else %}📦{% endif %}
                 {% endif %}
             </div>
 
@@ -80,19 +81,35 @@
 
                 <!-- Actions -->
                 <div class="detail-actions">
-                    {% if user.is_authenticated and barang.status == 'tersedia' %}
-                        {# Placeholder — tombol "Saya Tertarik" (modul Kontak & Minat oleh Faatir) #}
-                        <button class="btn btn-primary" disabled title="Fitur minat segera hadir">
-                            🤝 Saya Tertarik
-                        </button>
+                    {% if user.is_authenticated and user != barang.penjual and barang.status == 'tersedia' %}
+                    {% if sudah_berminat %}
+                    <form action="{% url 'minat:checkout' minat_obj.pk %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Ajukan Checkout</button>
+                    </form>
+                    <form action="{% url 'minat:batalkan_minat' barang.pk %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-ghost">Batalkan Minat</button>
+                    </form>
+                    {% else %}
+                    <form action="{% url 'minat:tandai_minat' barang.pk %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">🤝 Saya Tertarik</button>
+                    </form>
+                    {% endif %}
                     {% elif not user.is_authenticated %}
-                        <a href="{% url 'authentication:login' %}" class="btn btn-primary">Masuk untuk Berminat</a>
+                    <a href="{% url 'authentication:login' %}" class="btn btn-primary">
+                        Masuk untuk Berminat
+                    </a>
                     {% endif %}
 
                     {% if user == barang.penjual %}
+                    <a href="{% url 'minat:daftar_peminat' %}" class="btn btn-ghost">
+                        Lihat Peminat
+                    </a>
                     <a href="{% url 'katalog:edit_barang' barang.pk %}" class="btn btn-ghost">✏️ Edit</a>
                     <form action="{% url 'katalog:hapus_barang' barang.pk %}" method="post"
-                          onsubmit="return confirm('Yakin hapus listing ini?')">
+                        onsubmit="return confirm('Yakin hapus listing ini?')">
                         {% csrf_token %}
                         <button type="submit" class="btn-danger">🗑 Hapus</button>
                     </form>
@@ -105,4 +122,3 @@
     </div>
 </div>
 {% endblock content %}
-

@@ -1196,6 +1196,58 @@ ol {
     color:         var(--color-primary);
 }
 
+/* Peminat and transaction pages */
+.interest-page { padding-top: var(--spacing-xl); padding-bottom: var(--spacing-2xl); }
+.interest-heading { margin-bottom: var(--spacing-xl); }
+.interest-heading h1 { font-size: 34px; margin: 4px 0 8px; }
+.interest-heading > p:last-child { color: var(--color-secondary); }
+.interest-eyebrow { color: var(--color-secondary); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.interest-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr)); gap: var(--spacing-md); }
+.interest-card, .transaction-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+.interest-card { padding: var(--spacing-md); }
+.interest-card-heading { padding-bottom: 9px; border-bottom: 1px solid var(--color-border); }
+.interest-item-link { display: block; font-weight: 700; font-size: 14px; margin-top: 2px; }
+.interest-item-link:hover { text-decoration: underline; }
+.interest-item-photo, .interest-item-placeholder { width: 76px; height: 76px; flex: 0 0 76px; border-radius: var(--radius-md); object-fit: cover; background: var(--color-accent-light); }
+.interest-item-placeholder { display: grid; place-items: center; font-size: 30px; }
+.interest-item h2 { font-size: 18px; margin: 3px 0; }
+.interest-item p { color: var(--color-secondary); font-size: 13px; }
+.interest-person { display: flex; align-items: center; gap: 10px; padding: 12px 0 8px; }
+.interest-avatar { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 50%; object-fit: cover; border: 1px solid var(--color-border); }
+.interest-avatar-fallback { display: grid; place-items: center; background: var(--color-primary); color: white; font-size: 16px; font-weight: 700; }
+.interest-person-info h3 { font-size: 15px; }
+.interest-person-info p { color: var(--color-secondary); font-size: 13px; }
+.interest-details { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: var(--spacing-md); background: var(--color-bg); border-radius: var(--radius-md); }
+.interest-details dt { color: var(--color-secondary); font-size: 11px; text-transform: uppercase; font-weight: 700; }
+.interest-details dd { overflow-wrap: anywhere; font-size: 13px; font-weight: 600; }
+.interest-contacts { display: flex; flex-wrap: wrap; gap: 8px; }
+.interest-contact { min-width: 120px; display: flex; flex-direction: column; padding: 7px 10px; background: var(--color-bg); border-radius: var(--radius-sm); }
+.interest-contact span { color: var(--color-secondary); font-size: 10px; text-transform: uppercase; font-weight: 700; }
+.interest-contact strong { font-size: 12px; overflow-wrap: anywhere; }
+.interest-no-contact { color: var(--color-secondary); font-size: 12px; }
+.interest-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--color-border); color: var(--color-secondary); font-size: 12px; }
+.interest-status { font-weight: 700; }
+.interest-transaction-link { color: var(--color-primary); font-weight: 700; white-space: nowrap; }
+.interest-empty { grid-column: 1 / -1; text-align: center; padding: var(--spacing-2xl) var(--spacing-md); background: white; border: 1px dashed var(--color-border); border-radius: var(--radius-lg); }
+.interest-empty > span { display: block; font-size: 42px; margin-bottom: 8px; }
+.interest-empty h2 { margin-bottom: 6px; }
+.interest-empty p { color: var(--color-secondary); margin-bottom: var(--spacing-md); }
+.transaction-list { display: grid; gap: var(--spacing-md); }
+.transaction-card { display: flex; align-items: flex-start; gap: 14px; padding: 14px; }
+.transaction-photo, .transaction-photo-placeholder { width: 76px; height: 76px; flex: 0 0 76px; border-radius: var(--radius-md); object-fit: cover; background: var(--color-accent-light); }
+.transaction-photo-placeholder { display: grid; place-items: center; font-size: 28px; }
+.transaction-main { flex: 1; min-width: 0; }
+.transaction-title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.transaction-title-row h2 { font-size: 17px; }
+.transaction-title-row p, .transaction-partner, .transaction-main small { color: var(--color-secondary); font-size: 13px; }
+.transaction-partner { margin-top: 8px; }
+.transaction-badge { border-radius: 20px; padding: 4px 10px; white-space: nowrap; background: var(--color-accent-light); font-size: 12px; font-weight: 700; }
+.transaction-selesai { background: #E8F5E9; color: var(--color-success); }
+.transaction-dibatalkan { background: #FFEBEE; color: #B42318; }
+.transaction-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.transaction-actions form { margin: 0; }
+@media (max-width: 600px) { .transaction-photo, .transaction-photo-placeholder { width: 58px; height: 58px; flex-basis: 58px; } .transaction-title-row { flex-wrap: wrap; } .transaction-actions .btn, .transaction-actions .btn-danger { padding: 8px 12px; font-size: 12px; } .interest-heading h1 { font-size: 28px; } }
+
 /* --- Halaman Detail Barang --- */
 .detail-page {
     padding: var(--spacing-xl) 0 var(--spacing-2xl);

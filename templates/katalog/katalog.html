@@ -65,7 +65,8 @@
     <div class="container">
         <div class="katalog-meta">
             <p class="katalog-count">
-                Menampilkan <strong>{{ total_barang }}</strong> barang tersedia
+                Menampilkan <strong>{{ total_barang }}</strong> barang
+                {% if user.is_authenticated %}(termasuk listing milikmu){% else %}tersedia{% endif %}
                 {% if search_query %}untuk "<strong>{{ search_query }}</strong>"{% endif %}
                 {% if filter_kategori %}dalam kategori <strong>{{ filter_kategori }}</strong>{% endif %}
                 {% if filter_jenis %}jenis <strong>{{ filter_jenis }}</strong>{% endif %}
@@ -100,7 +101,7 @@
                     <div class="card-badges">
                         <span class="badge badge-{{ b.jenis }}">{{ b.get_jenis_display }}</span>
                         {% if b.status != 'tersedia' %}
-                        <span class="badge badge-status">{{ b.get_status_display }}</span>
+                        <span class="badge badge-status badge-status-{{ b.status }}">{% if b.status == 'selesai' %}✓ {% endif %}{{ b.get_status_display }}</span>
                         {% endif %}
                     </div>
                 </div>
