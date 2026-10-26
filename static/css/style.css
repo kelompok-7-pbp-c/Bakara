@@ -164,24 +164,6 @@ ol {
     flex-shrink: 0;
 }
 
-.nav-icon-btn {
-    display:         flex;
-    align-items:     center;
-    justify-content: center;
-    width:           36px;
-    height:          36px;
-    border-radius:   var(--radius-md);
-    color:           var(--color-secondary);
-    transition:      background-color var(--transition-fast),
-                     color var(--transition-fast);
-    cursor:          pointer;
-}
-
-.nav-icon-btn:hover {
-    background-color: var(--color-bg);
-    color:            var(--color-primary);
-}
-
 /* Avatar / Profile Button */
 .nav-avatar {
     width:           36px;
@@ -198,6 +180,13 @@ ol {
     cursor:          pointer;
     text-decoration: none;
     transition:      opacity var(--transition-fast);
+}
+
+.nav-avatar-photo {
+    width:         100%;
+    height:        100%;
+    border-radius: 50%;
+    object-fit:    cover;
 }
 
 .nav-avatar:hover {
@@ -221,14 +210,6 @@ ol {
     color:            var(--color-primary);
     transform:        translateY(-1px);
 }
-
-/* Nav User Label */
-.nav-user {
-    color:       var(--color-secondary);
-    font-weight: 600;
-    font-size:   14px;
-}
-
 
 /* =========================================
    MOBILE NAV — HAMBURGER
@@ -704,25 +685,11 @@ ol {
     color:       var(--color-primary);
 }
 
-/* Tombol Keluar di navbar (form POST, tampil seperti link) */
-.nav-logout-form {
-    display: inline;
-}
-
-.nav-logout-btn {
-    background:  none;
+/* Tombol Keluar (form POST) memakai .btn-nav-primary, tinggal hilangkan gaya bawaan <button> */
+.nav-logout-form button {
     border:      none;
-    padding:     0;
     cursor:      pointer;
     font-family: var(--font-body);
-    font-size:   15px;
-    font-weight: 500;
-    color:       var(--color-primary);
-    transition:  color var(--transition-fast);
-}
-
-.nav-logout-btn:hover {
-    color: var(--color-secondary);
 }
 
 
@@ -822,16 +789,17 @@ ol {
         transition:       max-height var(--transition-slow);
     }
 
-    .site-header nav a,
-    .site-header nav .nav-user {
+    .site-header nav a {
         padding:       14px 24px;
         width:         100%;
         border-bottom: 1px solid var(--color-border);
         font-size:     15px;
     }
 
+    /* Tombol Masuk/Keluar + foto profil tetap tampil, menempel di kiri tombol hamburger */
     .nav-actions {
-        display: none;
+        margin-left: auto;
+        gap:         var(--spacing-sm);
     }
 
     /* Hamburger open state */
