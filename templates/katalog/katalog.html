@@ -88,12 +88,12 @@
                         <img src="{{ b.foto_url }}" alt="{{ b.nama }}" loading="lazy">
                     {% else %}
                         <div class="card-img-placeholder" aria-hidden="true">
-                            {% if b.kategori == 'buku' %}📚
-                            {% elif b.kategori == 'elektronik' %}💻
-                            {% elif b.kategori == 'pakaian' %}👕
-                            {% elif b.kategori == 'furnitur' %}🪑
-                            {% elif b.kategori == 'olahraga' %}⚽
-                            {% else %}📦{% endif %}
+                            {% if b.kategori == 'buku' %}
+                            {% elif b.kategori == 'elektronik' %}
+                            {% elif b.kategori == 'pakaian' %}
+                            {% elif b.kategori == 'furnitur' %}
+                            {% elif b.kategori == 'olahraga' %}
+                            {% else %}{% endif %}
                         </div>
                     {% endif %}
 
@@ -125,7 +125,7 @@
             </a>
             {% empty %}
             <div class="empty-state" style="grid-column: 1/-1;">
-                <span class="empty-state-icon">🔍</span>
+                <span class="empty-state-icon"></span>
                 <h2>Barang tidak ditemukan</h2>
                 <p>Coba ubah filter atau kata kunci pencarianmu.</p>
                 <a href="{% url 'katalog:show_katalog' %}" class="btn btn-ghost" style="margin-top: 16px;">Reset Filter</a>

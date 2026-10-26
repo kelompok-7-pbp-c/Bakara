@@ -19,12 +19,12 @@
                 {% if barang.foto_url %}
                     <img src="{{ barang.foto_url }}" alt="{{ barang.nama }}">
                 {% else %}
-                    {% if barang.kategori == 'buku' %}📚
-                    {% elif barang.kategori == 'elektronik' %}💻
-                    {% elif barang.kategori == 'pakaian' %}👕
-                    {% elif barang.kategori == 'furnitur' %}🪑
-                    {% elif barang.kategori == 'olahraga' %}⚽
-                    {% else %}📦{% endif %}
+                    {% if barang.kategori == 'buku' %}
+                    {% elif barang.kategori == 'elektronik' %}
+                    {% elif barang.kategori == 'pakaian' %}
+                    {% elif barang.kategori == 'furnitur' %}
+                    {% elif barang.kategori == 'olahraga' %}
+                    {% else %} {% endif %}
                 {% endif %}
             </div>
 
@@ -83,14 +83,14 @@
                     {% if user.is_authenticated and barang.status == 'tersedia' %}
                         {# Placeholder — tombol "Saya Tertarik" (modul Kontak & Minat oleh Faatir) #}
                         <button class="btn btn-primary" disabled title="Fitur minat segera hadir">
-                            🤝 Saya Tertarik
+                            Saya Tertarik
                         </button>
                     {% elif not user.is_authenticated %}
                         <a href="{% url 'authentication:login' %}" class="btn btn-primary">Masuk untuk Berminat</a>
                     {% endif %}
 
                     {% if user == barang.penjual %}
-                    <a href="{% url 'katalog:edit_barang' barang.pk %}" class="btn btn-ghost">✏️ Edit</a>
+                    <a href="{% url 'katalog:edit_barang' barang.pk %}" class="btn btn-ghost"> Edit</a>
                     <form action="{% url 'katalog:hapus_barang' barang.pk %}" method="post"
                           onsubmit="return confirm('Yakin hapus listing ini?')">
                         {% csrf_token %}

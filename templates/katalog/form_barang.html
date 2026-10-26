@@ -79,7 +79,7 @@
                 <!-- Actions -->
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
-                        {% if mode == 'tambah' %}🚀 Upload Barang{% else %}💾 Simpan Perubahan{% endif %}
+                        {% if mode == 'tambah' %} Upload Barang{% else %} Simpan Perubahan{% endif %}
                     </button>
                     <a href="{% if mode == 'edit' %}{% url 'katalog:detail_barang' barang.pk %}{% else %}{% url 'katalog:show_katalog' %}{% endif %}"
                        class="btn btn-ghost">Batal</a>
