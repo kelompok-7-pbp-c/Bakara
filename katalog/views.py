@@ -75,12 +75,14 @@ def tambah_barang(request):
     else:
         form = BarangForm()
 
-    return render(request, 'katalog/form_barang.html', {
+    context = {
         'brand_name': 'Bakara',
         'form':       form,
         'mode':       'tambah',
         'page_title': 'Upload Barang Baru',
-    })
+    }
+
+    return render(request, 'katalog/form_barang.html', context)
 
 # UPDATE — Edit Barang
 @login_required
@@ -95,13 +97,14 @@ def edit_barang(request, pk):
     else:
         form = BarangForm(instance=barang)
 
-    return render(request, 'katalog/form_barang.html', {
+    context = {
         'brand_name': 'Bakara',
         'form':       form,
         'mode':       'edit',
         'page_title': f'Edit: {barang.nama}',
         'barang':     barang,
-    })
+    }
+    return render(request, 'katalog/form_barang.html', context)
 
 # DELETE — Hapus Barang
 @login_required
