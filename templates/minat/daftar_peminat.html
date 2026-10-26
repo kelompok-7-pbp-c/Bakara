@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Peminat Barang Saya — Bakara{% endblock %}
+
+{% block extra_head %}
+<style>
+    .peminat-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,330px)); gap:16px; }
+    .peminat-profile { display:flex; flex-direction:column; gap:12px; padding:16px; background:#fff; border:1px solid #dbe3ee; border-radius:14px; box-shadow:0 3px 12px rgba(30,58,95,.07); }
+    .peminat-item { padding-bottom:10px; border-bottom:1px solid #e2e8f0; color:#5b7ea6; font-size:12px; }
+    .peminat-item a { display:block; color:#1e3a5f; font-size:14px; font-weight:700; }
+    .peminat-identity { display:flex; align-items:center; gap:11px; min-width:0; }
+    .peminat-photo { width:48px; height:48px; flex:0 0 48px; display:grid; place-items:center; overflow:hidden; border-radius:50%; object-fit:cover; background:#1e3a5f; color:#fff; font-weight:700; }
+    .peminat-name { overflow-wrap:anywhere; color:#1e3a5f; font-size:15px; font-weight:700; }
+    .peminat-subtitle { margin-top:2px; color:#5b7ea6; font-size:12px; }
+    .peminat-contact-list { display:grid; gap:7px; }
+    .peminat-contact { display:flex; justify-content:space-between; gap:10px; padding:8px 10px; border-radius:8px; background:#f4f7fb; font-size:12px; }
+    .peminat-contact span { color:#5b7ea6; }
+    .peminat-contact strong { overflow-wrap:anywhere; color:#1e3a5f; text-align:right; }
+    .peminat-status { display:flex; align-items:center; justify-content:space-between; gap:8px; padding-top:9px; border-top:1px solid #e2e8f0; color:#5b7ea6; font-size:12px; }
+    .peminat-status strong { color:#1e3a5f; }
+    @media(max-width:600px) { .peminat-list { grid-template-columns:1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="container interest-page">
+    <header class="interest-heading">
+        <p class="interest-eyebrow">Kelola listing</p>
+        <h1>Peminat Barang Saya</h1>
+        <p>Kenali mahasiswa yang tertarik dan mulai proses serah terima saat siap.</p>
+    </header>
+
+    <div class="peminat-list">
+        {% for minat in daftar_minat %}
+        <article class="peminat-profile">
+            <div class="peminat-item">Peminat barang
+                <a href="{% url 'katalog:detail_barang' minat.barang.pk %}">{{ minat.barang.nama }}</a>
+            </div>
+            <div class="peminat-identity">
+                {% if minat.pembeli.profile.photo %}<img src="{{ minat.pembeli.profile.photo.url }}" alt="Foto profil {{ minat.pembeli.profile.full_name|default:minat.pembeli.username }}" class="peminat-photo">
+                {% else %}<div class="peminat-photo">{{ minat.pembeli.username|first|upper }}</div>{% endif %}
+                <div>
+                    <div class="peminat-name">{{ minat.pembeli.profile.full_name|default:minat.pembeli.username }}</div>
+                    <div class="peminat-subtitle">{% if minat.pembeli.profile.faculty %}{{ minat.pembeli.profile.get_faculty_display }}{% endif %}{% if minat.pembeli.profile.faculty and minat.pembeli.profile.angkatan %} · {% endif %}{% if minat.pembeli.profile.angkatan %}Angkatan {{ minat.pembeli.profile.angkatan }}{% endif %}</div>
+                </div>
+            </div>
+            <div class="peminat-contact-list">
+                {% if minat.pembeli.profile.whatsapp %}<a href="{{ minat.pembeli.profile.whatsapp_link }}" target="_blank" rel="noopener" class="peminat-contact"><span>WhatsApp</span><strong>{{ minat.pembeli.profile.whatsapp }}</strong></a>{% endif %}
+                {% if minat.pembeli.profile.line_id %}<div class="peminat-contact"><span>LINE</span><strong>{{ minat.pembeli.profile.line_id }}</strong></div>{% endif %}
+                {% if not minat.pembeli.profile.whatsapp and not minat.pembeli.profile.line_id %}<div class="peminat-contact"><span>Kontak</span><strong>Belum dicantumkan</strong></div>{% endif %}
+            </div>
+            <footer class="peminat-status">
+                {% if minat.barang.status == 'tersedia' %}
+                <strong>Menunggu checkout</strong>
+                {% else %}<strong>{{ minat.barang.get_status_display }}</strong><a href="{% url 'main:show_transaksi' %}">Transaksi →</a>{% endif %}
+            </footer>
+        </article>
+        {% empty %}
+        <div class="interest-empty"><span>🤝</span><h2>Belum ada peminat</h2><p>Mahasiswa yang tertarik pada barangmu akan muncul di sini.</p></div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

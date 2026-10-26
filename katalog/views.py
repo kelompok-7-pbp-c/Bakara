@@ -1,10 +1,12 @@
 import json
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-
+from minat.models import MinatBarang
 from .forms import BarangForm
 from .models import Barang
 
@@ -12,7 +14,12 @@ from .models import Barang
 # READ — Halaman Katalog (Untuk cari barang)
 def show_katalog(request):
     """Tampilkan halaman katalog dengan filter & sorting."""
-    qs = Barang.objects.filter(status=Barang.TERSEDIA).select_related('penjual')
+    qs = Barang.objects.filter(status=Barang.TERSEDIA)
+    if request.user.is_authenticated:
+        qs = Barang.objects.filter(
+            Q(status=Barang.TERSEDIA) | Q(penjual=request.user)
+        )
+    qs = qs.select_related('penjual')
 
     # Filter kategori
     kategori = request.GET.get('kategori', '')
@@ -54,15 +61,33 @@ def show_katalog(request):
     return render(request, 'katalog/katalog.html', context)
 
 # READ — Detail Barang
+
+
 def detail_barang(request, pk):
     barang = get_object_or_404(Barang, pk=pk)
+
+    sudah_berminat = (
+        request.user.is_authenticated
+        and MinatBarang.objects.filter(
+            barang=barang,
+            pembeli=request.user,
+        ).exists()
+    )
+    minat_obj = None
+    if request.user.is_authenticated and sudah_berminat:
+        minat_obj = MinatBarang.objects.filter(barang=barang, pembeli=request.user).first()
+
     context = {
         'brand_name': 'Bakara',
-        'barang':     barang,
+        'barang': barang,
+        'sudah_berminat': sudah_berminat,
+        'minat_obj': minat_obj,
     }
     return render(request, 'katalog/detail_barang.html', context)
 
 # CREATE — Tambah Barang
+
+
 @login_required
 def tambah_barang(request):
     if request.method == 'POST':
@@ -85,6 +110,8 @@ def tambah_barang(request):
     return render(request, 'katalog/form_barang.html', context)
 
 # UPDATE — Edit Barang
+
+
 @login_required
 def edit_barang(request, pk):
     barang = get_object_or_404(Barang, pk=pk, penjual=request.user)
@@ -107,20 +134,28 @@ def edit_barang(request, pk):
     return render(request, 'katalog/form_barang.html', context)
 
 # DELETE — Hapus Barang
+
+
 @login_required
 @require_POST
 def hapus_barang(request, pk):
     barang = get_object_or_404(Barang, pk=pk, penjual=request.user)
+    if barang.minat.filter(transaksi__isnull=False).exists():
+        messages.error(request, 'Barang yang sudah memiliki riwayat transaksi tidak bisa dihapus.')
+        return redirect('katalog:detail_barang', pk=barang.pk)
     barang.delete()
     return redirect('katalog:show_katalog')
 
 # AJAX — JSON endpoint untuk Fetch API
+
+
 def katalog_json(request):
     """
     Mengembalikan daftar barang dalam format JSON untuk konsumsi Fetch API.
     Mendukung filter: kategori, jenis, q (search), sort.
     """
-    qs = Barang.objects.filter(status=Barang.TERSEDIA).select_related('penjual')
+    qs = Barang.objects.filter(
+        status=Barang.TERSEDIA).select_related('penjual')
 
     kategori = request.GET.get('kategori', '')
     if kategori:

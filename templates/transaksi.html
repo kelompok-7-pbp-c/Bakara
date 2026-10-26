@@ -1,16 +1,75 @@
 {% extends 'base.html' %}
+{% block title %}Transaksi — Bakara{% endblock %}
+{% block meta_description %}Lihat dan kelola transaksi barang di Bakara.{% endblock %}
 
-{% block title %}Transaksi — Bakara{% endblock title %}
-
-{% block meta_description %}Lihat riwayat dan status transaksi kamu di Bakara.{% endblock meta_description %}
+{% block extra_head %}
+<style>
+    .transaksi-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(285px,360px)); gap:16px; }
+    .transaksi-card { display:flex; flex-direction:column; gap:12px; padding:16px; background:#fff; border:1px solid #dbe3ee; border-radius:14px; box-shadow:0 3px 12px rgba(30,58,95,.07); }
+    .transaksi-item { display:flex; align-items:center; gap:11px; padding-bottom:11px; border-bottom:1px solid #e2e8f0; }
+    .transaksi-photo { width:56px; height:56px; flex:0 0 56px; display:grid; place-items:center; overflow:hidden; border-radius:10px; object-fit:cover; background:#fff7e0; font-size:24px; }
+    .transaksi-item-info { flex:1; min-width:0; }
+    .transaksi-item-name { overflow-wrap:anywhere; color:#1e3a5f; font-size:15px; font-weight:700; }
+    .transaksi-item-meta { margin-top:3px; color:#5b7ea6; font-size:12px; }
+    .transaksi-badge { flex:0 0 auto; padding:5px 9px; border-radius:20px; background:#fff7e0; color:#765300; font-size:11px; font-weight:700; }
+    .transaksi-badge-selesai { background:#e8f5e9; color:#2e7d32; }
+    .transaksi-badge-dibatalkan { background:#ffebee; color:#b42318; }
+    .transaksi-person { display:flex; justify-content:space-between; gap:8px; font-size:13px; }
+    .transaksi-person span, .transaksi-date { color:#5b7ea6; }
+    .transaksi-person strong { color:#1e3a5f; text-align:right; }
+    .transaksi-note { margin:0; color:#5b7ea6; font-size:12px; line-height:1.5; }
+    .transaksi-date { padding-top:9px; border-top:1px solid #e2e8f0; font-size:11px; }
+    .transaksi-actions { display:flex; flex-wrap:wrap; gap:7px; }
+    .transaksi-actions form { margin:0; }
+    .transaksi-actions .btn, .transaksi-actions .btn-danger { padding:8px 12px; font-size:12px; }
+    @media(max-width:600px) { .transaksi-list { grid-template-columns:1fr; } }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="page-stub">
-    <div class="page-stub-inner">
-        <span class="page-stub-icon">📦</span>
+<section class="container interest-page">
+    <header class="interest-heading">
+        <p class="interest-eyebrow">Riwayat dan status</p>
         <h1>Transaksi</h1>
-        <p>Lihat riwayat dan status transaksi kamu di sini.<br>Fitur ini sedang dalam pengembangan.</p>
-        <a href="{% url 'main:show_beranda' %}" class="btn btn-primary">← Kembali ke Beranda</a>
+        <p>Atur komunikasi dan serah terima langsung dengan pembeli atau penjual.</p>
+    </header>
+
+    <div class="transaksi-list">
+        {% for transaksi in transaksi_list %}
+        <article class="transaksi-card">
+            <div class="transaksi-item">
+                {% if transaksi.barang.foto_url %}<img src="{{ transaksi.barang.foto_url }}" alt="" class="transaksi-photo">
+                {% else %}<div class="transaksi-photo">📦</div>{% endif %}
+                <div class="transaksi-item-info">
+                    <div class="transaksi-item-name">{{ transaksi.barang.nama }}</div>
+                    <div class="transaksi-item-meta">{{ transaksi.barang.harga_display }}{% if transaksi.barang.lokasi %} · {{ transaksi.barang.lokasi }}{% endif %}</div>
+                </div>
+                <span class="transaksi-badge transaksi-badge-{{ transaksi.status }}">{% if transaksi.status == 'selesai' %}✓ {% endif %}{{ transaksi.get_status_display }}</span>
+            </div>
+
+            <div class="transaksi-person">
+                {% if user == transaksi.pembeli %}
+                <span>Penjual</span><strong>{{ transaksi.barang.penjual.profile.full_name|default:transaksi.barang.penjual.username }}</strong>
+                {% else %}
+                <span>Pembeli</span><strong>{{ transaksi.pembeli.profile.full_name|default:transaksi.pembeli.username }}</strong>
+                {% endif %}
+            </div>
+
+            {% if user == transaksi.barang.penjual and transaksi.status == 'menunggu' %}
+            <div class="transaksi-actions">
+                {% if transaksi.pembeli.profile.whatsapp %}<a class="btn btn-ghost" href="{{ transaksi.pembeli.profile.whatsapp_link }}" target="_blank" rel="noopener">WhatsApp</a>{% endif %}
+                <form method="post" action="{% url 'minat:ubah_status_transaksi' transaksi.pk %}">{% csrf_token %}<input type="hidden" name="aksi" value="selesai"><button class="btn btn-primary" type="submit">Tandai Selesai</button></form>
+                <form method="post" action="{% url 'minat:ubah_status_transaksi' transaksi.pk %}" onsubmit="return confirm('Batalkan transaksi dan kembalikan barang ke status tersedia?')">{% csrf_token %}<input type="hidden" name="aksi" value="batalkan"><button class="btn-danger" type="submit">Batalkan</button></form>
+            </div>
+            {% elif transaksi.status == 'menunggu' %}
+            <p class="transaksi-note">Hubungi penjual untuk mengatur waktu dan tempat serah terima.</p>
+            {% endif %}
+
+            <div class="transaksi-date">Diajukan {{ transaksi.dibuat_pada|date:"d M Y, H:i" }}</div>
+        </article>
+        {% empty %}
+        <div class="interest-empty"><span>📦</span><h2>Belum ada transaksi</h2><p>Transaksi yang dibuat lewat checkout akan muncul di sini.</p><a href="{% url 'katalog:show_katalog' %}" class="btn btn-primary">Jelajahi Katalog</a></div>
+        {% endfor %}
     </div>
-</div>
-{% endblock content %}
+</section>
+{% endblock %}
