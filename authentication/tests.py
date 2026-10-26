@@ -187,6 +187,12 @@ class ProfileTest(TestCase):
             {'photo', 'full_name', 'faculty', 'angkatan', 'whatsapp', 'line_id'},
         )
 
+    def test_navbar_shows_uploaded_photo(self):
+        self.post_profile()
+        photo_url = Profile.objects.get(user=self.user).photo.url
+        response = self.client.get(reverse('main:show_beranda'))
+        self.assertContains(response, f'<img src="{photo_url}"')
+
     def test_edit_profile_requires_photo(self):
         response = self.post_profile(photo=False)
         self.assertIn('photo', response.context['form'].errors)
@@ -246,6 +252,30 @@ class ProfileTest(TestCase):
         url = reverse('authentication:edit_profile')
         response = self.client.get(url)
         self.assertRedirects(response, f"{reverse('authentication:login')}?next={url}")
+
+
+class NavbarTest(TestCase):
+    def test_guest_sees_masuk_without_daftar_and_bell(self):
+        response = self.client.get(reverse('main:show_beranda'))
+        self.assertContains(response, 'Masuk')
+        self.assertNotContains(response, 'Notifikasi')
+        self.assertNotContains(response, f'href="{reverse("authentication:register")}" class="btn-nav-primary"')
+
+    def test_logged_in_navbar_hides_username_and_shows_keluar(self):
+        user = User.objects.create_user('kesya.clara', 'kesya@ui.ac.id', 'BakaraPass123!')
+        self.client.force_login(user)
+        response = self.client.get(reverse('main:show_beranda'))
+        self.assertNotContains(response, 'kesya.clara')
+        self.assertContains(response, '<button type="submit" class="btn-nav-primary">Keluar</button>')
+        self.assertNotContains(response, '>Masuk<')
+
+    def test_navbar_without_profile_shows_initial(self):
+        # User tanpa Profile (belum pernah buka halaman profil) tetap bisa membuka halaman
+        user = User.objects.create_user('kesya', 'kesya@ui.ac.id', 'BakaraPass123!')
+        self.client.force_login(user)
+        response = self.client.get(reverse('main:show_beranda'))
+        self.assertContains(response, 'class="nav-avatar"')
+        self.assertFalse(Profile.objects.filter(user=user).exists())
 
 
 class SSOLoginTest(TestCase):
