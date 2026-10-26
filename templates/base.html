@@ -41,22 +41,15 @@
                 <a href="{% url 'main:show_katalog' %}">Katalog</a>
                 <a href="{% url 'main:show_transaksi' %}">Transaksi</a>
                 <a href="{% url 'main:show_tentang' %}">Tentang Kami</a>
-
-                {% if user.is_authenticated %}
-                    <span class="nav-user">{{ user.username }}</span>
-                    <form action="{% url 'authentication:logout' %}" method="POST" class="nav-logout-form">
-                        {% csrf_token %}
-                        <button type="submit" class="nav-logout-btn">Keluar</button>
-                    </form>
-                {% else %}
-                    {# Di mobile nav-actions disembunyikan, jadi tombol Masuk ditaruh juga di menu #}
-                    <a href="{% url 'authentication:login' %}" class="btn-nav-primary nav-mobile-only">Masuk</a>
-                {% endif %}
             </nav>
 
             <!-- Action Icons -->
             <div class="nav-actions">
                 {% if user.is_authenticated %}
+                    <form action="{% url 'authentication:logout' %}" method="POST" class="nav-logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-nav-primary">Keluar</button>
+                    </form>
                     <a href="{% url 'main:show_profil' %}" class="nav-avatar" aria-label="Profil saya">
                         {% if user.profile.photo %}
                             <img src="{{ user.profile.photo.url }}" alt="" class="nav-avatar-photo">

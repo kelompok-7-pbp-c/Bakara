@@ -261,6 +261,14 @@ class NavbarTest(TestCase):
         self.assertNotContains(response, 'Notifikasi')
         self.assertNotContains(response, f'href="{reverse("authentication:register")}" class="btn-nav-primary"')
 
+    def test_logged_in_navbar_hides_username_and_shows_keluar(self):
+        user = User.objects.create_user('kesya.clara', 'kesya@ui.ac.id', 'BakaraPass123!')
+        self.client.force_login(user)
+        response = self.client.get(reverse('main:show_beranda'))
+        self.assertNotContains(response, 'kesya.clara')
+        self.assertContains(response, '<button type="submit" class="btn-nav-primary">Keluar</button>')
+        self.assertNotContains(response, '>Masuk<')
+
     def test_navbar_without_profile_shows_initial(self):
         # User tanpa Profile (belum pernah buka halaman profil) tetap bisa membuka halaman
         user = User.objects.create_user('kesya', 'kesya@ui.ac.id', 'BakaraPass123!')

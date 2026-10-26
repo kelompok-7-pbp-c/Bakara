@@ -211,18 +211,6 @@ ol {
     transform:        translateY(-1px);
 }
 
-.nav-mobile-only {
-    display: none;
-}
-
-/* Nav User Label */
-.nav-user {
-    color:       var(--color-secondary);
-    font-weight: 600;
-    font-size:   14px;
-}
-
-
 /* =========================================
    MOBILE NAV — HAMBURGER
    ========================================= */
@@ -697,25 +685,11 @@ ol {
     color:       var(--color-primary);
 }
 
-/* Tombol Keluar di navbar (form POST, tampil seperti link) */
-.nav-logout-form {
-    display: inline;
-}
-
-.nav-logout-btn {
-    background:  none;
+/* Tombol Keluar (form POST) memakai .btn-nav-primary, tinggal hilangkan gaya bawaan <button> */
+.nav-logout-form button {
     border:      none;
-    padding:     0;
     cursor:      pointer;
     font-family: var(--font-body);
-    font-size:   15px;
-    font-weight: 500;
-    color:       var(--color-primary);
-    transition:  color var(--transition-fast);
-}
-
-.nav-logout-btn:hover {
-    color: var(--color-secondary);
 }
 
 
@@ -815,21 +789,17 @@ ol {
         transition:       max-height var(--transition-slow);
     }
 
-    .site-header nav a,
-    .site-header nav .nav-user {
+    .site-header nav a {
         padding:       14px 24px;
         width:         100%;
         border-bottom: 1px solid var(--color-border);
         font-size:     15px;
     }
 
+    /* Tombol Masuk/Keluar + foto profil tetap tampil, menempel di kiri tombol hamburger */
     .nav-actions {
-        display: none;
-    }
-
-    .nav-mobile-only {
-        display: inline-block;
-        align-self: flex-start;
+        margin-left: auto;
+        gap:         var(--spacing-sm);
     }
 
     /* Hamburger open state */
