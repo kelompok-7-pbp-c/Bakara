@@ -10,6 +10,7 @@ urlpatterns = [
     path('<uuid:pk>/', views.detail_barang, name='detail_barang'),
     # Create 
     path('tambah/', views.tambah_barang, name='tambah_barang'),
+    path('tambah-ajax/', views.tambah_barang_ajax, name='tambah_barang_ajax'),
     # Update 
     path('<uuid:pk>/edit/', views.edit_barang, name='edit_barang'),
     # Delete 
@@ -17,4 +18,3 @@ urlpatterns = [
     # AJAX / JSON endpoints 
     path('api/list/', views.katalog_json, name='katalog_json'),
 ]
-

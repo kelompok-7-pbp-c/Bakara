@@ -69,9 +69,9 @@ def detail_barang(request, pk):
 
 @login_required
 def tambah_barang(request):
-    """Menangani penambahan listing barang baru oleh user yang sedang login."""
+    """Menangani penambahan listing barang baru (form biasa dengan redirect)."""
     if request.method == 'POST':
-        form = BarangForm(request.POST)
+        form = BarangForm(request.POST, request.FILES)
         if form.is_valid():
             barang = form.save(commit=False)
             barang.penjual = request.user
@@ -81,12 +81,40 @@ def tambah_barang(request):
     else:
         form = BarangForm()
 
-    return render(request, 'katalog/form_barang.html', {
+    context = {
         'brand_name': 'Bakara',
         'form': form,
         'mode': 'tambah',
-        'page_title': 'Pasang Barang',
-    })
+        'page_title': 'Upload Barang',
+    }
+    return render(request, 'katalog/form_barang.html', context)
+
+
+@login_required
+@require_POST
+def tambah_barang_ajax(request):
+    """Endpoint AJAX: tambah barang via fetch(). return JSON 201/400."""
+    form = BarangForm(request.POST, request.FILES)
+    if form.is_valid():
+        barang = form.save(commit=False)
+        barang.penjual = request.user
+        barang.save()
+        return JsonResponse({
+            'id': str(barang.id),
+            'nama': barang.nama,
+            'kategori': barang.get_kategori_display(),
+            'jenis': barang.jenis,
+            'jenis_label': barang.get_jenis_display(),
+            'kondisi': barang.get_kondisi_display(),
+            'status': barang.status,
+            'harga': barang.harga,
+            'harga_display': barang.harga_display,
+            'lokasi': barang.lokasi,
+            'foto_url': barang.foto_url,
+            'detail_url': f'/katalog/{barang.id}/',
+        }, status=201)
+
+    return JsonResponse({'errors': form.errors}, status=400)
 
 
 @login_required
@@ -97,7 +125,7 @@ def edit_barang(request, pk):
         raise PermissionDenied("Kamu tidak memiliki izin untuk mengedit barang ini.")
 
     if request.method == 'POST':
-        form = BarangForm(request.POST, instance=barang)
+        form = BarangForm(request.POST, request.FILES, instance=barang)
         if form.is_valid():
             form.save()
             messages.success(request, f'Perubahan pada "{barang.nama}" berhasil disimpan.')
@@ -105,13 +133,14 @@ def edit_barang(request, pk):
     else:
         form = BarangForm(instance=barang)
 
-    return render(request, 'katalog/form_barang.html', {
+    context = {
         'brand_name': 'Bakara',
         'form': form,
         'mode': 'edit',
         'page_title': f'Edit: {barang.nama}',
         'barang': barang,
-    })
+    }
+    return render(request, 'katalog/form_barang.html', context)
 
 
 @login_required
@@ -123,10 +152,11 @@ def hapus_barang(request, pk):
         raise PermissionDenied("Kamu tidak memiliki izin untuk menghapus barang ini.")
 
     nama_barang = barang.nama
+    is_moderator = request.user.is_staff and request.user != barang.penjual
     barang.delete()
 
-    if request.user.is_staff and request.user != barang.penjual:
-        messages.warning(request, f'Barang "{nama_barang}" telah dihapus oleh Admin.')
+    if is_moderator:
+        messages.warning(request, f'Barang "{nama_barang}" telah dihapus oleh Moderator.')
     else:
         messages.success(request, f'Listing "{nama_barang}" berhasil dihapus.')
 
@@ -161,7 +191,7 @@ def katalog_json(request):
             'harga': b.harga,
             'harga_display': b.harga_display,
             'lokasi': b.lokasi,
-            'foto_url': b.foto_url,
+            'foto_url': b.foto.url if b.foto else None,
             'penjual': {
                 'username': b.penjual.username,
                 'nama': getattr(profile, 'full_name', '') or b.penjual.username,

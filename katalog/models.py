@@ -17,7 +17,7 @@ class BarangQuerySet(models.QuerySet):
             qs = qs.filter(jenis=jenis)
         if search_query:
             qs = qs.filter(Q(nama__icontains=search_query) | Q(deskripsi__icontains=search_query))
-        
+
         sort_map = {
             '-dibuat_pada': '-dibuat_pada',
             'dibuat_pada': 'dibuat_pada',
@@ -109,7 +109,13 @@ class Barang(models.Model):
         blank=True,
         help_text='Contoh: Asrama UI, Fakultas Teknik, dll.'
     )
-    foto_url = models.URLField('URL Foto Barang', blank=True, help_text='Link foto barang (opsional).')
+    foto = models.ImageField(
+        'Foto Barang',
+        upload_to='barang_photos/',
+        blank=False,
+        null=False,
+        help_text='Upload foto barang (wajib, maks. 5 MB).'
+    )
     dibuat_pada = models.DateTimeField('Dibuat Pada', default=timezone.now)
     diperbarui_pada = models.DateTimeField('Diperbarui Pada', auto_now=True)
 
@@ -123,6 +129,12 @@ class Barang(models.Model):
 
     def __str__(self):
         return f'{self.nama} ({self.get_jenis_display()}) — {self.penjual.username}'
+
+    @property
+    def foto_url(self):
+        if self.foto:
+            return self.foto.url
+        return ''
 
     @property
     def harga_display(self):
