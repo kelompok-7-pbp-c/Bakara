@@ -81,15 +81,34 @@ Bakara.{% endblock meta_description %}
 
                 <!-- Actions -->
                 <div class="detail-actions">
-                    {% if user.is_authenticated and barang.status == 'tersedia' %}
-                        {# Placeholder — tombol "Saya Tertarik" (modul Kontak & Minat oleh Faatir) #}
-                        <button class="btn btn-primary" disabled title="Fitur minat segera hadir">
-                            🤝 Saya Tertarik
-                        </button>
-                    {% elif not user.is_authenticated %}
-                    <a href="{% url 'authentication:login' %}" class="btn btn-primary">
-                        Masuk untuk Berminat
-                    </a>
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'authentication:login' %}" class="btn btn-primary">
+                            🔑 Masuk untuk Berminat
+                        </a>
+                    {% elif user == barang.penjual %}
+                        {# Penjual tidak bisa berminat pada barangnya sendiri #}
+                    {% elif barang.status != 'tersedia' %}
+                        <button class="btn btn-primary" disabled>Barang Tidak Tersedia</button>
+                    {% elif sudah_berminat %}
+                        {% if ada_transaksi_aktif %}
+                            <a href="{% url 'main:show_transaksi' %}" class="btn btn-primary">
+                                ✅ Lihat Transaksi Aktif
+                            </a>
+                        {% else %}
+                            <form action="{% url 'minat:checkout' minat_obj.id %}" method="post" style="display:inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">🛒 Ajukan Checkout</button>
+                            </form>
+                            <form action="{% url 'minat:batalkan_minat' barang.pk %}" method="post" style="display:inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-ghost">❌ Batalkan Minat</button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <form action="{% url 'minat:tandai_minat' barang.pk %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">🤝 Saya Tertarik</button>
+                        </form>
                     {% endif %}
 
                     {% if user == barang.penjual %}
