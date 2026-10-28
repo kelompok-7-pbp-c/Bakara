@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from minat.models import MinatBarang, Transaksi
+from minat.models import MinatBarang
 
 from .forms import BarangForm
 from .models import Barang
@@ -45,24 +45,17 @@ def detail_barang(request, pk):
 
     sudah_berminat = False
     minat_obj = None
-    ada_transaksi_aktif = False
-
     if request.user.is_authenticated and request.user != barang.penjual:
         minat_obj = MinatBarang.objects.filter(
             barang=barang, pembeli=request.user
-        ).prefetch_related('transaksi').first()
+        ).first()
         sudah_berminat = minat_obj is not None
-        if minat_obj:
-            ada_transaksi_aktif = minat_obj.transaksi.filter(
-                status=Transaksi.MENUNGGU
-            ).exists()
 
     context = {
         'brand_name': 'Bakara',
         'barang': barang,
         'sudah_berminat': sudah_berminat,
         'minat_obj': minat_obj,
-        'ada_transaksi_aktif': ada_transaksi_aktif,
     }
     return render(request, 'katalog/detail_barang.html', context)
 

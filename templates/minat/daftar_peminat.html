@@ -1,63 +1,159 @@
 {% extends 'base.html' %}
 
-{% block title %}Peminat Barang Saya — Bakara{% endblock %}
-
-{% block extra_head %}
-<style>
-    .peminat-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,330px)); gap:16px; }
-    .peminat-profile { display:flex; flex-direction:column; gap:12px; padding:16px; background:#fff; border:1px solid #dbe3ee; border-radius:14px; box-shadow:0 3px 12px rgba(30,58,95,.07); }
-    .peminat-item { padding-bottom:10px; border-bottom:1px solid #e2e8f0; color:#5b7ea6; font-size:12px; }
-    .peminat-item a { display:block; color:#1e3a5f; font-size:14px; font-weight:700; }
-    .peminat-identity { display:flex; align-items:center; gap:11px; min-width:0; }
-    .peminat-photo { width:48px; height:48px; flex:0 0 48px; display:grid; place-items:center; overflow:hidden; border-radius:50%; object-fit:cover; background:#1e3a5f; color:#fff; font-weight:700; }
-    .peminat-name { overflow-wrap:anywhere; color:#1e3a5f; font-size:15px; font-weight:700; }
-    .peminat-subtitle { margin-top:2px; color:#5b7ea6; font-size:12px; }
-    .peminat-contact-list { display:grid; gap:7px; }
-    .peminat-contact { display:flex; justify-content:space-between; gap:10px; padding:8px 10px; border-radius:8px; background:#f4f7fb; font-size:12px; }
-    .peminat-contact span { color:#5b7ea6; }
-    .peminat-contact strong { overflow-wrap:anywhere; color:#1e3a5f; text-align:right; }
-    .peminat-status { display:flex; align-items:center; justify-content:space-between; gap:8px; padding-top:9px; border-top:1px solid #e2e8f0; color:#5b7ea6; font-size:12px; }
-    .peminat-status strong { color:#1e3a5f; }
-    @media(max-width:600px) { .peminat-list { grid-template-columns:1fr; } }
-</style>
-{% endblock %}
+{% block title %}Minat & Kontak — Bakara{% endblock %}
 
 {% block content %}
-<section class="container interest-page">
-    <header class="interest-heading">
-        <p class="interest-eyebrow">Kelola listing</p>
-        <h1>Peminat Barang Saya</h1>
-        <p>Kenali mahasiswa yang tertarik dan mulai proses serah terima saat siap.</p>
+<main class="container interest-page">
+    <header class="transaksi-header interest-heading">
+        <p class="transaksi-eyebrow">Koneksi komunitas</p>
+        <h1 class="transaksi-title">Minat &amp; Kontak</h1>
+        <p class="transaksi-subtitle">Hubungi pemilik atau peminat barang secara langsung untuk membicarakan detailnya.</p>
     </header>
 
-    <div class="peminat-list">
-        {% for minat in daftar_minat %}
-        <article class="peminat-profile">
-            <div class="peminat-item">Peminat barang
-                <a href="{% url 'katalog:detail_barang' minat.barang.pk %}">{{ minat.barang.nama }}</a>
+    <section class="interest-section" aria-labelledby="minat-saya-heading">
+        <div class="interest-section-heading">
+            <div>
+                <p class="transaksi-eyebrow">Daftar tersimpan</p>
+                <h2 id="minat-saya-heading">Barang yang Saya Minati</h2>
             </div>
-            <div class="peminat-identity">
-                {% if minat.pembeli.profile.photo %}<img src="{{ minat.pembeli.profile.photo.url }}" alt="Foto profil {{ minat.pembeli.profile.full_name|default:minat.pembeli.username }}" class="peminat-photo">
-                {% else %}<div class="peminat-photo">{{ minat.pembeli.username|first|upper }}</div>{% endif %}
-                <div>
-                    <div class="peminat-name">{{ minat.pembeli.profile.full_name|default:minat.pembeli.username }}</div>
-                    <div class="peminat-subtitle">{% if minat.pembeli.profile.faculty %}{{ minat.pembeli.profile.get_faculty_display }}{% endif %}{% if minat.pembeli.profile.faculty and minat.pembeli.profile.angkatan %} · {% endif %}{% if minat.pembeli.profile.angkatan %}Angkatan {{ minat.pembeli.profile.angkatan }}{% endif %}</div>
+            <span class="interest-section-count">{{ minat_saya|length }} barang</span>
+        </div>
+        <div class="interest-grid">
+            {% for minat in minat_saya %}
+            {% with barang=minat.barang profile=minat.barang.penjual.profile %}
+            <article class="interest-card">
+                <div class="interest-item">
+                    {% if barang.foto %}
+                    <img class="interest-item-photo" src="{{ barang.foto.url }}" alt="Foto {{ barang.nama }}">
+                    {% else %}
+                    <div class="interest-item-placeholder" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m3 7 9-4 9 4v10l-9 4-9-4V7Z"/><path d="m3 7 9 4 9-4M12 11v10"/></svg></div>
+                    {% endif %}
+                    <div class="interest-item-info">
+                        <a class="interest-item-link" href="{% url 'katalog:detail_barang' barang.pk %}">{{ barang.nama }}</a>
+                        <span class="interest-type interest-type-{{ barang.jenis }}">{{ barang.get_jenis_display }}</span>
+                        <p>{{ barang.harga_display }}</p>
+                        <span class="interest-status {% if minat.transaksi_status == 'disetujui' %}interest-status-dalam_proses{% elif minat.transaksi_status == 'selesai' %}interest-status-selesai{% elif barang.status == 'dalam_proses' %}interest-status-dalam_proses{% elif barang.status == 'selesai' %}interest-status-selesai{% else %}interest-status-tersedia{% endif %}">
+                            {% if minat.transaksi_status == 'menunggu' %}Menunggu konfirmasi penjual
+                            {% elif minat.transaksi_status == 'disetujui' %}Dalam proses
+                            {% elif minat.transaksi_status == 'selesai' %}Transaksi selesai
+                            {% elif minat.transaksi_status == 'dibatalkan' %}Transaksi dibatalkan
+                            {% elif minat.transaksi_status == 'ditolak' %}Pengajuan ditolak
+                            {% elif barang.status == 'dalam_proses' %}Peminat lain sedang diproses
+                            {% elif barang.status == 'selesai' %}Tidak terpilih
+                            {% else %}{{ barang.get_status_display }}{% endif %}
+                        </span>
+                    </div>
                 </div>
+                <div class="interest-person">
+                    {% if profile.photo %}
+                    <img class="interest-avatar" src="{{ profile.photo.url }}" alt="Foto profil {{ profile.full_name|default:minat.barang.penjual.username }}">
+                    {% else %}
+                    <div class="interest-avatar interest-avatar-fallback">{{ minat.barang.penjual.username|first|upper }}</div>
+                    {% endif %}
+                    <div class="interest-person-info">
+                        <h3>{{ profile.full_name|default:minat.barang.penjual.username }}</h3>
+                        <p>Pemilik barang{% if profile.faculty %} · {{ profile.get_faculty_display }}{% endif %}{% if profile.angkatan %} · Angkatan {{ profile.angkatan }}{% endif %}</p>
+                    </div>
+                </div>
+                <div class="interest-contacts">
+                    {% if profile.whatsapp %}
+                    <div class="interest-contact"><span>WhatsApp</span><a href="{{ profile.whatsapp_link }}" target="_blank" rel="noopener">{{ profile.whatsapp }}</a></div>
+                    {% endif %}
+                    {% if profile.line_id %}<div class="interest-contact"><span>LINE</span><strong>{{ profile.line_id }}</strong></div>{% endif %}
+                    {% if not profile.whatsapp and not profile.line_id %}<div class="interest-contact"><span>Kontak</span><strong>Belum dicantumkan</strong></div>{% endif %}
+                </div>
+                <div class="interest-card-footer">
+                    <span class="interest-status">Ditandai {{ minat.dibuat_pada|date:"d M Y" }}</span>
+                    <form action="{% url 'minat:batalkan_minat' barang.pk %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-ghost">Batalkan Minat</button>
+                    </form>
+                </div>
+            </article>
+            {% endwith %}
+            {% empty %}
+            <div class="interest-empty"><h3>Belum ada barang yang diminati</h3><p>Barang yang kamu tandai tertarik akan muncul di sini beserta kontak pemiliknya.</p></div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="interest-section" aria-labelledby="peminat-heading">
+        <div class="interest-section-heading">
+            <div>
+                <p class="transaksi-eyebrow">Listing saya</p>
+                <h2 id="peminat-heading">Peminat Barang Saya</h2>
             </div>
-            <div class="peminat-contact-list">
-                {% if minat.pembeli.profile.whatsapp %}<a href="{{ minat.pembeli.profile.whatsapp_link }}" target="_blank" rel="noopener" class="peminat-contact"><span>WhatsApp</span><strong>{{ minat.pembeli.profile.whatsapp }}</strong></a>{% endif %}
-                {% if minat.pembeli.profile.line_id %}<div class="peminat-contact"><span>LINE</span><strong>{{ minat.pembeli.profile.line_id }}</strong></div>{% endif %}
-                {% if not minat.pembeli.profile.whatsapp and not minat.pembeli.profile.line_id %}<div class="peminat-contact"><span>Kontak</span><strong>Belum dicantumkan</strong></div>{% endif %}
-            </div>
-            <footer class="peminat-status">
-                {% if minat.barang.status == 'tersedia' %}
-                <strong>Menunggu checkout</strong>
-                {% else %}<strong>{{ minat.barang.get_status_display }}</strong><a href="{% url 'main:show_transaksi' %}">Transaksi →</a>{% endif %}
-            </footer>
-        </article>
-        {% empty %}
-        <div class="interest-empty"><span>🤝</span><h2>Belum ada peminat</h2><p>Mahasiswa yang tertarik pada barangmu akan muncul di sini.</p></div>
-        {% endfor %}
-    </div>
-</section>
+            <span class="interest-section-count">{{ peminat_barang_saya|length }} peminat</span>
+        </div>
+        <div class="interest-grid">
+            {% for minat in peminat_barang_saya %}
+            {% with profile=minat.pembeli.profile %}
+            <article class="interest-card">
+                <div class="interest-item">
+                    {% if minat.barang.foto %}
+                    <img class="interest-item-photo" src="{{ minat.barang.foto.url }}" alt="Foto {{ minat.barang.nama }}">
+                    {% else %}
+                    <div class="interest-item-placeholder" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m3 7 9-4 9 4v10l-9 4-9-4V7Z"/><path d="m3 7 9 4 9-4M12 11v10"/></svg></div>
+                    {% endif %}
+                    <div class="interest-item-info">
+                        <a class="interest-item-link" href="{% url 'katalog:detail_barang' minat.barang.pk %}">{{ minat.barang.nama }}</a>
+                        <span class="interest-type interest-type-{{ minat.barang.jenis }}">{{ minat.barang.get_jenis_display }}</span>
+                        <p>{{ minat.barang.harga_display }}</p>
+                        <span class="interest-status {% if minat.transaksi_status == 'disetujui' %}interest-status-dalam_proses{% elif minat.transaksi_status == 'selesai' %}interest-status-selesai{% elif minat.barang.status == 'dalam_proses' %}interest-status-dalam_proses{% elif minat.barang.status == 'selesai' %}interest-status-selesai{% else %}interest-status-tersedia{% endif %}">
+                            {% if minat.transaksi_status == 'menunggu' %}Menunggu konfirmasi
+                            {% elif minat.transaksi_status == 'disetujui' %}Dalam proses
+                            {% elif minat.transaksi_status == 'selesai' %}Transaksi selesai
+                            {% elif minat.transaksi_status == 'dibatalkan' %}Transaksi dibatalkan
+                            {% elif minat.transaksi_status == 'ditolak' %}Pengajuan ditolak
+                            {% elif minat.barang.status == 'dalam_proses' %}Belum dipilih
+                            {% elif minat.barang.status == 'selesai' %}Tidak terpilih
+                            {% else %}Menunggu dipilih{% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="interest-person">
+                    {% if profile.photo %}
+                    <img class="interest-avatar" src="{{ profile.photo.url }}" alt="Foto profil {{ profile.full_name|default:minat.pembeli.username }}">
+                    {% else %}
+                    <div class="interest-avatar interest-avatar-fallback">{{ minat.pembeli.username|first|upper }}</div>
+                    {% endif %}
+                    <div class="interest-person-info">
+                        <h3>{{ profile.full_name|default:minat.pembeli.username }}</h3>
+                        <p>Peminat{% if profile.faculty %} · {{ profile.get_faculty_display }}{% endif %}{% if profile.angkatan %} · Angkatan {{ profile.angkatan }}{% endif %}</p>
+                    </div>
+                </div>
+                <div class="interest-contacts">
+                    {% if profile.whatsapp %}
+                    <div class="interest-contact"><span>WhatsApp</span><a href="{{ profile.whatsapp_link }}" target="_blank" rel="noopener">{{ profile.whatsapp }}</a></div>
+                    {% endif %}
+                    {% if profile.line_id %}<div class="interest-contact"><span>LINE</span><strong>{{ profile.line_id }}</strong></div>{% endif %}
+                    {% if not profile.whatsapp and not profile.line_id %}<div class="interest-contact"><span>Kontak</span><strong>Belum dicantumkan</strong></div>{% endif %}
+                </div>
+                <div class="interest-card-footer">
+                    <span class="interest-status">Tertarik {{ minat.dibuat_pada|date:"d M Y" }}</span>
+                    {% if minat.barang.status == 'tersedia' and minat.transaksi_status != 'menunggu' and minat.transaksi_status != 'disetujui' %}
+                    <form action="{% url 'minat:proses_transaksi' minat.pk %}" method="post" onsubmit="return confirm('Pilih peminat ini dan mulai transaksi resmi?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Pilih &amp; Proses</button>
+                    </form>
+                    {% elif minat.transaksi_status == 'menunggu' %}
+                    <span class="interest-status">Menunggu konfirmasi</span>
+                    {% elif minat.transaksi_status == 'disetujui' %}
+                    <span class="interest-status">Peminat terpilih</span>
+                    {% elif minat.barang.status == 'dalam_proses' %}
+                    <span class="interest-status">Peminat lain sedang diproses</span>
+                    {% elif minat.barang.status == 'selesai' %}
+                    <span class="interest-status">Tidak terpilih</span>
+                    {% else %}
+                    <span class="interest-status">{{ minat.barang.get_status_display }}</span>
+                    {% endif %}
+                </div>
+            </article>
+            {% endwith %}
+            {% empty %}
+            <div class="interest-empty"><h3>Belum ada peminat</h3><p>Mahasiswa yang tertarik pada barangmu akan muncul di sini bersama informasi kontaknya.</p></div>
+            {% endfor %}
+        </div>
+    </section>
+</main>
 {% endblock %}

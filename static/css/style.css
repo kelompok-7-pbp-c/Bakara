@@ -1233,6 +1233,47 @@ ol {
 .interest-empty > span { display: block; font-size: 42px; margin-bottom: 8px; }
 .interest-empty h2 { margin-bottom: 6px; }
 .interest-empty p { color: var(--color-secondary); margin-bottom: var(--spacing-md); }
+.interest-section { margin-top: var(--spacing-xl); }
+.interest-section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--spacing-md); margin-bottom: var(--spacing-md); }
+.interest-section-heading h2 { display: flex; align-items: center; gap: 9px; color: var(--color-primary); font-family: var(--font-heading); font-size: 20px; margin-top: 3px; }
+.interest-section-heading h2::before { content: ''; width: 5px; height: 22px; flex: 0 0 5px; border-radius: var(--radius-pill); background: var(--color-accent-gold); }
+.interest-section-heading .transaksi-eyebrow { margin-bottom: 2px; }
+.interest-section-count { flex: 0 0 auto; padding: 6px 12px; border-radius: var(--radius-pill); background: var(--color-accent-light); border: 1px solid rgba(255, 196, 69, .55); color: var(--color-primary); font-size: 12px; font-weight: 700; }
+.interest-heading .transaksi-eyebrow { display: inline-flex; padding: 5px 10px; border-left: 3px solid var(--color-accent-gold); border-radius: var(--radius-sm); background: var(--color-accent-light); }
+.interest-card { display: flex; flex-direction: column; gap: var(--spacing-md); border-top: 3px solid var(--color-accent-gold); transition: box-shadow var(--transition-base), transform var(--transition-base), border-color var(--transition-base); }
+.interest-card:hover { border-top-color: #e6b03e; box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.interest-item { display: flex; align-items: center; gap: 12px; min-width: 0; padding-bottom: 12px; border-bottom: 1px solid var(--color-border); }
+.interest-item-placeholder { color: var(--color-primary); }
+.interest-item-info { min-width: 0; }
+.interest-item-info > p { color: var(--color-secondary); font-size: 13px; margin-top: 3px; }
+.interest-item-placeholder svg { width: 30px; height: 30px; }
+.interest-item-info .interest-type { display: inline-flex; margin-top: 5px; padding: 4px 9px; border-radius: var(--radius-pill); font-size: 10px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; }
+.interest-type-jual { background: var(--badge-jual-bg); color: var(--badge-jual-text); }
+.interest-type-pinjam { background: var(--badge-pinjam-bg); color: var(--badge-pinjam-text); }
+.interest-type-donasi { background: var(--badge-donasi-bg); color: var(--badge-donasi-text); }
+.interest-item-info .interest-status { display: inline-block; margin-top: 7px; padding: 4px 9px; border-radius: var(--radius-sm); background: var(--color-bg); color: var(--color-secondary); font-size: 11px; }
+.interest-item-info .interest-status-tersedia { background: #e8f5e9; color: var(--color-success); }
+.interest-item-info .interest-status-dalam_proses { background: var(--status-disetujui-bg); color: var(--status-disetujui-text); }
+.interest-item-info .interest-status-selesai { background: var(--status-batal-bg); color: var(--status-batal-text); }
+.interest-person { min-width: 0; }
+.interest-person-info { min-width: 0; }
+.interest-person-info h3 { color: var(--color-primary); font-size: 14px; overflow-wrap: anywhere; }
+.interest-person-info p { color: var(--color-secondary); font-size: 12px; margin-top: 3px; }
+.interest-card .interest-avatar-fallback { background: var(--color-accent-gold); color: var(--color-primary); border-color: transparent; }
+.interest-contacts { gap: var(--spacing-sm); }
+.interest-contact { min-width: min(140px, 100%); flex: 1 1 120px; }
+.interest-contact a { display: inline-flex; align-self: flex-start; margin-top: 4px; padding: 4px 8px; border-radius: var(--radius-pill); background: var(--color-accent-light); color: var(--color-primary); font-size: 12px; font-weight: 700; overflow-wrap: anywhere; text-decoration: none; }
+.interest-contact a:hover { text-decoration: underline; }
+.interest-card-footer { margin-top: auto; padding-top: 12px; border-top-color: rgba(255, 196, 69, .45); }
+.interest-card-footer form { margin: 0; }
+.interest-card-footer .btn { white-space: nowrap; }
+@media (max-width: 600px) {
+    .interest-section-heading { align-items: flex-start; }
+    .interest-section-heading h2 { font-size: 18px; }
+    .interest-section-count { font-size: 11px; padding: 5px 9px; }
+    .interest-card-footer { align-items: flex-start; flex-direction: column; }
+    .interest-card-footer form, .interest-card-footer .btn { width: 100%; }
+}
 .transaction-list { display: grid; gap: var(--spacing-md); }
 .transaction-card { display: flex; align-items: flex-start; gap: 14px; padding: 14px; }
 .transaction-photo, .transaction-photo-placeholder { width: 76px; height: 76px; flex: 0 0 76px; border-radius: var(--radius-md); object-fit: cover; background: var(--color-accent-light); }
