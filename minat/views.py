@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.db.models import OuterRef, Subquery
+from django.db.models import Exists, OuterRef, Subquery
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -52,22 +52,29 @@ def daftar_peminat(request):
         barang_id=OuterRef('barang_id'),
         pembeli_id=OuterRef('pembeli_id'),
     ).order_by('-dibuat_pada').values('status')[:1]
+    transaksi_selesai = Transaksi.objects.filter(
+        barang_id=OuterRef('barang_id'),
+        pembeli_id=OuterRef('pembeli_id'),
+        status=Transaksi.SELESAI,
+    )
 
     minat_saya = MinatBarang.objects.filter(
         pembeli=request.user,
     ).select_related(
         'barang', 'barang__penjual', 'barang__penjual__profile'
     ).annotate(
-        transaksi_status=Subquery(status_transaksi_terakhir)
-    ).exclude(transaksi_status=Transaksi.SELESAI)
+        transaksi_status=Subquery(status_transaksi_terakhir),
+        transaksi_selesai=Exists(transaksi_selesai),
+    ).filter(transaksi_selesai=False)
 
     peminat_barang_saya = MinatBarang.objects.filter(
         barang__penjual=request.user,
     ).select_related(
         'barang', 'pembeli', 'pembeli__profile'
     ).annotate(
-        transaksi_status=Subquery(status_transaksi_terakhir)
-    ).exclude(transaksi_status=Transaksi.SELESAI)
+        transaksi_status=Subquery(status_transaksi_terakhir),
+        transaksi_selesai=Exists(transaksi_selesai),
+    ).filter(transaksi_selesai=False)
 
     return render(request, 'minat/daftar_peminat.html', {
         'brand_name': 'Bakara',
