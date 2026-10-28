@@ -18,9 +18,25 @@ class BarangForm(forms.ModelForm):
             'kategori': forms.Select(attrs={'class': 'form-input'}),
             'jenis': forms.Select(attrs={'class': 'form-input'}),
             'kondisi': forms.Select(attrs={'class': 'form-input'}),
-            'harga': forms.NumberInput(attrs={'placeholder': 'Wajib diisi jika dijual, kosongkan jika donasi', 'class': 'form-input', 'min': 0}),
-            'lokasi': forms.TextInput(attrs={'placeholder': 'Contoh: Asrama UI, Gedung B FASILKOM', 'class': 'form-input'}),
-            'foto_url': forms.URLInput(attrs={'placeholder': 'https://...', 'class': 'form-input'}),
+            'harga': forms.NumberInput(attrs={
+                'placeholder': 'Wajib diisi jika dijual, kosongkan jika donasi/pinjam',
+                'class': 'form-input',
+                'min': 0,
+            }),
+            'lokasi': forms.TextInput(attrs={
+                'placeholder': 'Opsional — lokasi bisa disepakati langsung dengan pembeli',
+                'class': 'form-input',
+            }),
+            'foto': forms.FileInput(attrs={
+                'class': 'form-input',
+                'accept': 'image/*',
+            }),
+        }
+        error_messages = {
+            'foto': {
+                'required': 'Foto barang wajib diunggah.',
+                'invalid': 'Unggah berkas gambar yang valid.',
+            },
         }
 
     def clean(self):

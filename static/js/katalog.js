@@ -119,7 +119,9 @@ async function fetchBarang(params = null) {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
-    if (!data.barang || data.barang.length === 0) {
+    const barangList = Array.isArray(data) ? data : (data.barang || []);
+
+    if (barangList.length === 0) {
       grid.innerHTML = `
         <div class="empty-state" style="grid-column:1/-1">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-state-svg" style="margin: 0 auto 12px; color: var(--color-secondary);">
@@ -132,12 +134,12 @@ async function fetchBarang(params = null) {
           </button>
         </div>`;
     } else {
-      grid.innerHTML = data.barang.map(renderKartuBarang).join('');
+      grid.innerHTML = barangList.map(renderKartuBarang).join('');
     }
 
     // Perbarui jumlah barang di meta bar
     const counter = document.querySelector('.katalog-count strong');
-    if (counter) counter.textContent = data.total;
+    if (counter) counter.textContent = Array.isArray(data) ? data.length : (data.total || barangList.length);
 
     // Perbarui URL browser tanpa reload halaman
     if (window.history.replaceState) {
