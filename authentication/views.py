@@ -34,10 +34,6 @@ def _safe_next_url(request):
 
 
 def _build_sso_client(request):
-    """
-    Membangun instance CASClient untuk autentikasi SSO UI.
-    Service URL dikirimkan ke CAS harus identik saat redirect dan verifikasi.
-    """
     scheme = 'https' if request.is_secure() or settings.SSO_UI_FORCE_SERVICE_HTTPS else 'http'
     service_url = f'{scheme}://{request.get_host()}{request.path}'
     session = requests.Session()
@@ -52,10 +48,6 @@ def _build_sso_client(request):
 
 
 def _get_or_create_sso_user(sso_username):
-    """
-    Mengembalikan User yang sudah ada atau membuat User baru dari data SSO UI.
-    Akun dengan email @ui.ac.id yang sama akan ditautkan secara otomatis.
-    """
     User = get_user_model()
     username = sso_username.lower()
     email = f'{username}@ui.ac.id'
@@ -78,10 +70,6 @@ def _get_or_create_sso_user(sso_username):
 
 
 def _prefill_profile_from_sso(user, attributes):
-    """
-    Mengisi field profil dari atribut CAS/LDAP SSO UI hanya jika masih kosong.
-    Tidak menimpa data yang sudah diisi oleh pengguna sebelumnya.
-    """
     profile, _ = Profile.objects.get_or_create(user=user)
     changed = False
 
@@ -149,11 +137,6 @@ def login_user(request):
 
 
 def login_sso(request):
-    """
-    Alur autentikasi SSO UI menggunakan protokol CAS 2.0.
-    Langkah 1 – redirect ke halaman login SSO UI.
-    Langkah 2 – CAS redirect kembali ke sini dengan query param 'ticket'.
-    """
     if request.user.is_authenticated:
         return redirect('main:show_beranda')
 
@@ -177,9 +160,19 @@ def login_sso(request):
     user = _get_or_create_sso_user(sso_username)
     _prefill_profile_from_sso(user, attributes or {})
     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-    messages.success(request, f'Selamat datang, {user.username}!')
-    return redirect(request.session.pop('sso_next', None) or 'main:show_beranda')
 
+    # Tambahan UX: Jika pengguna SSO belum melengkapi nomor WhatsApp,
+    # berikan info peringatan ramah tanpa menghalangi alur login
+    profile = getattr(user, 'profile', None)
+    if profile and not profile.whatsapp:
+        messages.warning(
+            request,
+            f'Selamat datang, {user.username}! Harap lengkapi nomor WhatsApp kamu di menu Profil agar dapat dihubungi saat transaksi.'
+        )
+    else:
+        messages.success(request, f'Selamat datang, {user.username}!')
+
+    return redirect(request.session.pop('sso_next', None) or 'main:show_beranda')
 
 @require_POST
 def logout_user(request):
