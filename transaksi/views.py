@@ -80,6 +80,16 @@ def update_transaction_status(request, transaksi_id):
 
     with transaction.atomic():
         if aksi == 'setujui' and transaksi.bisa_disetujui_oleh(request.user):
+            # jangan izinkan menyetujui jika barang sudah disetujui untuk pembeli lain
+            sudah_ada_disetujui = Transaksi.objects.filter(
+                barang=transaksi.barang,
+                status=Transaksi.DISETUJUI,
+            ).exclude(pk=transaksi.pk).exists()
+
+            if sudah_ada_disetujui or transaksi.barang.status != Barang.TERSEDIA:
+                messages.error(request, 'Barang ini sudah dalam proses serah terima dengan orang lain.')
+                return redirect('transaksi:show_transaction')
+
             transaksi.status = Transaksi.DISETUJUI
             transaksi.barang.status = Barang.DALAM_PROSES
             transaksi.save(update_fields=['status', 'diperbarui_pada'])
@@ -95,9 +105,18 @@ def update_transaction_status(request, transaksi_id):
 
         elif aksi == 'tolak' and transaksi.bisa_ditolak_oleh(request.user):
             transaksi.status = Transaksi.DITOLAK
-            transaksi.barang.status = Barang.TERSEDIA
             transaksi.save(update_fields=['status', 'diperbarui_pada'])
-            transaksi.barang.save(update_fields=['status', 'diperbarui_pada'])
+
+            # Hanya ubah status barang ke TERSEDIA jika TIDAK ADA transaksi lain yang sedang disetujui
+            ada_transaksi_disetujui = Transaksi.objects.filter(
+                barang=transaksi.barang,
+                status=Transaksi.DISETUJUI,
+            ).exclude(pk=transaksi.pk).exists()
+
+            if not ada_transaksi_disetujui and transaksi.barang.status != Barang.SELESAI:
+                transaksi.barang.status = Barang.TERSEDIA
+                transaksi.barang.save(update_fields=['status', 'diperbarui_pada'])
+
             messages.info(request, 'Transaksi telah ditolak.')
 
         else:
@@ -118,10 +137,14 @@ def cancel_transaction(request, transaksi_id):
         raise PermissionDenied
 
     with transaction.atomic():
+        status_awal = transaksi.status
         transaksi.status = Transaksi.DIBATALKAN
-        transaksi.barang.status = Barang.TERSEDIA
         transaksi.save(update_fields=['status', 'diperbarui_pada'])
-        transaksi.barang.save(update_fields=['status', 'diperbarui_pada'])
+
+        # Kembalikan status barang ke TERSEDIA hanya jika transaksi yang dibatalkan ini memang yang sebelumnya berstatus DISETUJUI (sedang diproses)
+        if status_awal == Transaksi.DISETUJUI and transaksi.barang.status != Barang.SELESAI:
+            transaksi.barang.status = Barang.TERSEDIA
+            transaksi.barang.save(update_fields=['status', 'diperbarui_pada'])
 
     messages.success(request, 'Transaksi berhasil dibatalkan dan barang kembali tersedia.')
     return redirect('transaksi:show_transaction')
@@ -147,9 +170,11 @@ def get_transaction_json(request):
 
         partner_name = partner.username
         partner_wa = ''
+        partner_line = ''
         if partner_profile:
             partner_name = partner_profile.full_name or partner.username
             partner_wa = partner_profile.whatsapp_link if partner_profile.whatsapp else ''
+            partner_line = partner_profile.line_id or ''
 
         if t.barang.jenis == 'donasi':
             partner_role = 'Penerima Donasi' if is_penjual else 'Donatur'
@@ -184,6 +209,7 @@ def get_transaction_json(request):
             'partner_role': partner_role,
             'partner_name': partner_name,
             'partner_wa': partner_wa,
+            'partner_line': partner_line,
             'status': t.status,
             'status_label': t.get_status_display(),
             'catatan_pembeli': t.catatan_pembeli,
