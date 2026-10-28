@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'authentication',
     'katalog',
     'minat',
+    'transaksi',
 ]
 
 MIDDLEWARE = [
