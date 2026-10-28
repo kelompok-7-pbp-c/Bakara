@@ -10,7 +10,7 @@ from transaksi.models import Transaksi
 from .models import MinatBarang
 
 
-@login_required
+@login_required(login_url='/auth/login/')
 @require_POST
 def tandai_minat(request, barang_id):
     barang = get_object_or_404(Barang, pk=barang_id)
@@ -32,7 +32,7 @@ def tandai_minat(request, barang_id):
     return redirect('katalog:detail_barang', pk=barang.pk)
 
 
-@login_required
+@login_required(login_url='/auth/login/')
 @require_POST
 def batalkan_minat(request, barang_id):
     barang = get_object_or_404(Barang, pk=barang_id)
@@ -46,7 +46,7 @@ def batalkan_minat(request, barang_id):
     return redirect('katalog:detail_barang', pk=barang.pk)
 
 
-@login_required
+@login_required(login_url='/auth/login/')
 def daftar_peminat(request):
     status_transaksi_terakhir = Transaksi.objects.filter(
         barang_id=OuterRef('barang_id'),
@@ -83,7 +83,7 @@ def daftar_peminat(request):
     })
 
 
-@login_required
+@login_required(login_url='/auth/login/')
 @require_POST
 def proses_transaksi(request, minat_id):
     """Penjual memilih satu peminat untuk dilanjutkan ke transaksi resmi."""

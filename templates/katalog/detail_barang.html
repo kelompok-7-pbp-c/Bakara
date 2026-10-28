@@ -149,7 +149,6 @@
                         <button class="btn btn-primary" disabled>Barang Tidak Tersedia</button>
 
                     {% elif sudah_berminat %}
-                        <span class="btn btn-ghost" aria-live="polite">Kamu sudah tertarik</span>
                         <a href="{% url 'minat:daftar_peminat' %}" class="btn btn-primary">Lihat Kontak Penjual</a>
                         <form action="{% url 'minat:batalkan_minat' barang.pk %}" method="post" style="display:inline">
                             {% csrf_token %}
