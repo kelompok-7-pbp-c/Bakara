@@ -29,7 +29,8 @@ SECRET_KEY = 'django-insecure-@g)nft5mun!)t-16u5^=08#pr0hx^-wr!tpy-p67z9&lvf3r&(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "darrel-rifathir-bakara.pws.cs.ui.ac.id"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1",
+                 "darrel-rifathir-bakara.pws.cs.ui.ac.id"]
 CSRF_TRUSTED_ORIGINS = ["https://darrel-rifathir-bakara.pws.cs.ui.ac.id"]
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'main',
     'authentication',
     'katalog',
+    'minat',
 ]
 
 MIDDLEWARE = [
@@ -128,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Jakarta'
 
 USE_I18N = True
 

@@ -1017,10 +1017,12 @@ ol {
     width:            100%;
     height:           100%;
     display:          flex;
+    flex-direction:   column;
     align-items:      center;
     justify-content:  center;
-    font-size:        48px;
-    background-color: var(--color-accent-light);
+    gap:              6px;
+    background-color: #F1F5F9;
+    color:            #94A3B8;
 }
 
 .card-badges {
@@ -1163,6 +1165,58 @@ ol {
     margin-bottom: var(--spacing-sm);
     color:         var(--color-primary);
 }
+
+/* Peminat and transaction pages */
+.interest-page { padding-top: var(--spacing-xl); padding-bottom: var(--spacing-2xl); }
+.interest-heading { margin-bottom: var(--spacing-xl); }
+.interest-heading h1 { font-size: 34px; margin: 4px 0 8px; }
+.interest-heading > p:last-child { color: var(--color-secondary); }
+.interest-eyebrow { color: var(--color-secondary); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.interest-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr)); gap: var(--spacing-md); }
+.interest-card, .transaction-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+.interest-card { padding: var(--spacing-md); }
+.interest-card-heading { padding-bottom: 9px; border-bottom: 1px solid var(--color-border); }
+.interest-item-link { display: block; font-weight: 700; font-size: 14px; margin-top: 2px; }
+.interest-item-link:hover { text-decoration: underline; }
+.interest-item-photo, .interest-item-placeholder { width: 76px; height: 76px; flex: 0 0 76px; border-radius: var(--radius-md); object-fit: cover; background: var(--color-accent-light); }
+.interest-item-placeholder { display: grid; place-items: center; font-size: 30px; }
+.interest-item h2 { font-size: 18px; margin: 3px 0; }
+.interest-item p { color: var(--color-secondary); font-size: 13px; }
+.interest-person { display: flex; align-items: center; gap: 10px; padding: 12px 0 8px; }
+.interest-avatar { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 50%; object-fit: cover; border: 1px solid var(--color-border); }
+.interest-avatar-fallback { display: grid; place-items: center; background: var(--color-primary); color: white; font-size: 16px; font-weight: 700; }
+.interest-person-info h3 { font-size: 15px; }
+.interest-person-info p { color: var(--color-secondary); font-size: 13px; }
+.interest-details { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: var(--spacing-md); background: var(--color-bg); border-radius: var(--radius-md); }
+.interest-details dt { color: var(--color-secondary); font-size: 11px; text-transform: uppercase; font-weight: 700; }
+.interest-details dd { overflow-wrap: anywhere; font-size: 13px; font-weight: 600; }
+.interest-contacts { display: flex; flex-wrap: wrap; gap: 8px; }
+.interest-contact { min-width: 120px; display: flex; flex-direction: column; padding: 7px 10px; background: var(--color-bg); border-radius: var(--radius-sm); }
+.interest-contact span { color: var(--color-secondary); font-size: 10px; text-transform: uppercase; font-weight: 700; }
+.interest-contact strong { font-size: 12px; overflow-wrap: anywhere; }
+.interest-no-contact { color: var(--color-secondary); font-size: 12px; }
+.interest-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--color-border); color: var(--color-secondary); font-size: 12px; }
+.interest-status { font-weight: 700; }
+.interest-transaction-link { color: var(--color-primary); font-weight: 700; white-space: nowrap; }
+.interest-empty { grid-column: 1 / -1; text-align: center; padding: var(--spacing-2xl) var(--spacing-md); background: white; border: 1px dashed var(--color-border); border-radius: var(--radius-lg); }
+.interest-empty > span { display: block; font-size: 42px; margin-bottom: 8px; }
+.interest-empty h2 { margin-bottom: 6px; }
+.interest-empty p { color: var(--color-secondary); margin-bottom: var(--spacing-md); }
+.transaction-list { display: grid; gap: var(--spacing-md); }
+.transaction-card { display: flex; align-items: flex-start; gap: 14px; padding: 14px; }
+.transaction-photo, .transaction-photo-placeholder { width: 76px; height: 76px; flex: 0 0 76px; border-radius: var(--radius-md); object-fit: cover; background: var(--color-accent-light); }
+.transaction-photo-placeholder { display: grid; place-items: center; font-size: 28px; }
+.transaction-main { flex: 1; min-width: 0; }
+.transaction-title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.transaction-title-row h2 { font-size: 17px; }
+.transaction-title-row p, .transaction-partner, .transaction-main small { color: var(--color-secondary); font-size: 13px; }
+.transaction-partner { margin-top: 8px; }
+.transaction-badge { border-radius: 20px; padding: 4px 10px; white-space: nowrap; background: var(--color-accent-light); font-size: 12px; font-weight: 700; }
+.transaction-selesai { background: #E8F5E9; color: var(--color-success); }
+.transaction-dibatalkan { background: #FFEBEE; color: #B42318; }
+.transaction-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.transaction-actions form { margin: 0; }
+@media (max-width: 600px) { .transaction-photo, .transaction-photo-placeholder { width: 58px; height: 58px; flex-basis: 58px; } .transaction-title-row { flex-wrap: wrap; } .transaction-actions .btn, .transaction-actions .btn-danger { padding: 8px 12px; font-size: 12px; } .interest-heading h1 { font-size: 28px; } }
 
 /* --- Halaman Detail Barang --- */
 .detail-page {
@@ -1443,4 +1497,259 @@ textarea.form-input {
     .form-row {
         grid-template-columns: 1fr;
     }
+}
+
+
+/* 
+   MODUL KATALOG — AJAX and Modal*/
+
+/* ── Modal Overlay ─────────────────────────────────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+    backdrop-filter: blur(3px);
+    animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.modal-box {
+    background: var(--color-surface);
+    border-radius: 16px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 640px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 32px;
+    animation: slideUp 0.22s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(24px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 12px;
+}
+
+.modal-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--color-secondary);
+    line-height: 1;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+.modal-close:hover {
+    background: var(--color-bg);
+    color: var(--color-primary);
+}
+
+/* ── AJAX Error List ────────────────────────────────────────────────────────── */
+.ajax-errors {
+    margin-bottom: 16px;
+}
+
+.ajax-error-list {
+    background: #fff5f5;
+    border: 1px solid var(--color-error);
+    border-radius: 8px;
+    padding: 12px 16px 12px 28px;
+    margin: 0;
+    font-size: 0.875rem;
+    color: #c0392b;
+}
+
+.ajax-error-list li {
+    margin-bottom: 4px;
+}
+
+/* ── Toast Notification ─────────────────────────────────────────────────────── */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 2000;
+    background: var(--color-primary);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transform: translateY(16px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    pointer-events: none;
+    max-width: 320px;
+}
+
+.toast.toast-show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast.toast-success { background: var(--color-success); }
+.toast.toast-error   { background: #c0392b; }
+
+/* ── Foto Preview (form edit) ───────────────────────────────────────────────── */
+.foto-preview-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.foto-preview-thumb {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+}
+
+/* ── Penjual Avatar (foto profil) ───────────────────────────────────────────── */
+.penjual-avatar-img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--color-border);
+}
+
+.penjual-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.penjual-meta {
+    font-size: 0.8rem;
+    color: var(--color-secondary);
+    margin: 2px 0 0;
+}
+
+/* ── WhatsApp button ─────────────────────────────────────────────────────────── */
+.btn-wa {
+    background: #25D366;
+    color: #fff;
+    border-radius: var(--radius-pill);
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+.btn-wa:hover {
+    background: #1ebe57;
+    color: #fff;
+}
+
+/* ── btn-danger ─────────────────────────────────────────────────────────────── */
+.btn-danger, .btn.btn-danger {
+    background: var(--color-error);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 10px 24px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+}
+.btn-danger:hover, .btn.btn-danger:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+}
+
+/* ── Detail img placeholder (neutral minimalist) ────────────────────────────── */
+.detail-img-placeholder {
+    width: 100%;
+    aspect-ratio: 4/3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: #F1F5F9;
+    border-radius: 12px;
+    color: #94A3B8;
+}
+
+.placeholder-icon {
+    stroke: currentColor;
+}
+
+.placeholder-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: #94A3B8;
+}
+
+/* ── Filter Select & Reset Button ───────────────────────────────────────────── */
+.filter-select {
+    padding:          10px 14px;
+    border:           1.5px solid var(--color-border);
+    border-radius:    var(--radius-pill);
+    font-family:      var(--font-body);
+    font-size:        14px;
+    background-color: var(--color-surface);
+    color:            var(--color-primary);
+    cursor:           pointer;
+    transition:       border-color 0.15s, box-shadow 0.15s;
+}
+
+.filter-select:focus {
+    border-color: var(--color-accent-gold);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 196, 69, 0.2);
+}
+
+.btn-reset {
+    padding:       10px 18px;
+    font-size:     13px;
+    font-weight:   600;
+    border-radius: var(--radius-pill);
+    border:        1.5px solid var(--color-border);
+    background:    transparent;
+    color:         var(--color-secondary);
+    cursor:        pointer;
+    transition:    all 0.15s ease;
+    white-space:   nowrap;
+}
+
+.btn-reset:hover {
+    background:   var(--color-surface);
+    color:        var(--color-primary);
+    border-color: var(--color-secondary);
+}
+
+/* Required asterisk */
+.required {
+    color: var(--color-error);
 }

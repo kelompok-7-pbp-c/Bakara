@@ -1,7 +1,9 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.shortcuts import render
 
 from authentication.models import Profile
+from minat.models import Transaksi
 
 
 def show_beranda(request):
@@ -16,7 +18,13 @@ def show_beranda(request):
 
 @login_required
 def show_transaksi(request):
-    return render(request, 'transaksi.html')
+    transaksi_list = Transaksi.objects.filter(
+        Q(minat__pembeli=request.user) | Q(minat__barang__penjual=request.user)
+    ).select_related('minat__barang', 'minat__pembeli', 'minat__barang__penjual')
+    return render(request, 'transaksi.html', {
+        'transaksi_list': transaksi_list,
+        'brand_name': 'Bakara',
+    })
 
 @login_required
 def show_profil(request):

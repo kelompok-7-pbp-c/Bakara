@@ -1,18 +1,10 @@
 from django import forms
-
 from .models import Barang
 
-
 class BarangForm(forms.ModelForm):
-    """Form untuk membuat dan mengedit listing barang."""
-
     class Meta:
-        model  = Barang
-        fields = [
-            'nama', 'deskripsi', 'kategori',
-            'jenis', 'kondisi', 'harga',
-            'lokasi', 'foto_url',
-        ]
+        model = Barang
+        fields = ['nama', 'deskripsi', 'kategori', 'jenis', 'kondisi', 'harga', 'lokasi', 'foto']
         widgets = {
             'nama': forms.TextInput(attrs={
                 'placeholder': 'Contoh: Kalkulator Casio FX-991EX',
@@ -20,46 +12,35 @@ class BarangForm(forms.ModelForm):
             }),
             'deskripsi': forms.Textarea(attrs={
                 'rows': 4,
-                'placeholder': 'Deskripsikan kondisi, kelengkapan, dan info penting lainnya…',
+                'placeholder': 'Deskripsikan kondisi barang...',
                 'class': 'form-input',
             }),
             'kategori': forms.Select(attrs={'class': 'form-input'}),
-            'jenis':    forms.Select(attrs={'class': 'form-input'}),
-            'kondisi':  forms.Select(attrs={'class': 'form-input'}),
-            'harga': forms.NumberInput(attrs={
-                'placeholder': 'Kosongkan jika gratis',
-                'class': 'form-input',
-                'min': 0,
-            }),
-            'lokasi': forms.TextInput(attrs={
-                'placeholder': 'Contoh: Asrama UI Wismarini, Fakultas Teknik UI',
-                'class': 'form-input',
-            }),
-            'foto_url': forms.URLInput(attrs={
-                'placeholder': 'https://i.imgur.com/contoh.jpg (opsional)',
-                'class': 'form-input',
-            }),
-        }
-        labels = {
-            'nama':     'Nama Barang',
-            'deskripsi':'Deskripsi',
-            'kategori': 'Kategori',
-            'jenis':    'Jenis Transaksi',
-            'kondisi':  'Kondisi Barang',
-            'harga':    'Harga (Rp)',
-            'lokasi':   'Lokasi Pengambilan',
-            'foto_url': 'URL Foto (opsional)',
-        }
-        help_texts = {
-            'harga':    'Biarkan kosong untuk barang gratis / donasi / pinjaman.',
-            'foto_url': 'Paste link gambar langsung (JPG/PNG) dari Imgur, Drive publik, dll.',
+            'jenis': forms.Select(attrs={'class': 'form-input'}),
+            'kondisi': forms.Select(attrs={'class': 'form-input'}),
+            'harga': forms.NumberInput(attrs={'placeholder': 'Wajib diisi jika dijual, kosongkan jika donasi', 'class': 'form-input', 'min': 0}),
+            'lokasi': forms.TextInput(attrs={'placeholder': 'Contoh: Asrama UI, Gedung B FASILKOM', 'class': 'form-input'}),
+            'foto_url': forms.URLInput(attrs={'placeholder': 'https://...', 'class': 'form-input'}),
         }
 
-    def clean_harga(self):
-        harga = self.cleaned_data.get('harga')
-        jenis = self.cleaned_data.get('jenis')
-        # Jika jenis donasi, paksa harga = None
-        if jenis == Barang.DONASI:
-            return None
-        return harga
+    def clean(self):
+        cleaned_data = super().clean()
+        jenis = cleaned_data.get('jenis')
+        harga = cleaned_data.get('harga')
+        foto = cleaned_data.get('foto')
 
+        # Validasi wajib foto
+        if not foto and not (self.instance and self.instance.pk and self.instance.foto):
+            self.add_error('foto', 'Foto barang wajib diunggah.')
+
+        if jenis == Barang.DONASI or jenis == Barang.PINJAM:
+            # Barang donasi/pinjam tidak perlu harga
+            cleaned_data['harga'] = None
+        elif jenis == Barang.JUAL:
+            if not harga or harga <= 0:
+                self.add_error(
+                    'harga',
+                    'Barang yang dijual wajib mencantumkan harga lebih dari Rp 0.'
+                )
+
+        return cleaned_data

@@ -15,12 +15,12 @@
                 {% else %}Perbarui informasi listing barangmu.{% endif %}
             </p>
 
-            <form method="post" novalidate>
+            <form method="post" enctype="multipart/form-data" novalidate>
                 {% csrf_token %}
 
                 <!-- Nama Barang -->
                 <div class="form-group">
-                    <label for="{{ form.nama.id_for_label }}">{{ form.nama.label }}</label>
+                    <label for="{{ form.nama.id_for_label }}">{{ form.nama.label }} <span class="required">*</span></label>
                     {{ form.nama }}
                     {% if form.nama.errors %}<span class="form-error">{{ form.nama.errors.0 }}</span>{% endif %}
                 </div>
@@ -28,12 +28,12 @@
                 <!-- Kategori + Jenis -->
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="{{ form.kategori.id_for_label }}">{{ form.kategori.label }}</label>
+                        <label for="{{ form.kategori.id_for_label }}">{{ form.kategori.label }} <span class="required">*</span></label>
                         {{ form.kategori }}
                         {% if form.kategori.errors %}<span class="form-error">{{ form.kategori.errors.0 }}</span>{% endif %}
                     </div>
                     <div class="form-group">
-                        <label for="{{ form.jenis.id_for_label }}">{{ form.jenis.label }}</label>
+                        <label for="{{ form.jenis.id_for_label }}">{{ form.jenis.label }} <span class="required">*</span></label>
                         {{ form.jenis }}
                         {% if form.jenis.errors %}<span class="form-error">{{ form.jenis.errors.0 }}</span>{% endif %}
                     </div>
@@ -42,7 +42,7 @@
                 <!-- Kondisi + Harga -->
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="{{ form.kondisi.id_for_label }}">{{ form.kondisi.label }}</label>
+                        <label for="{{ form.kondisi.id_for_label }}">{{ form.kondisi.label }} <span class="required">*</span></label>
                         {{ form.kondisi }}
                         {% if form.kondisi.errors %}<span class="form-error">{{ form.kondisi.errors.0 }}</span>{% endif %}
                     </div>
@@ -65,21 +65,28 @@
                 <div class="form-group">
                     <label for="{{ form.lokasi.id_for_label }}">{{ form.lokasi.label }}</label>
                     {{ form.lokasi }}
+                    <span class="form-help">{{ form.lokasi.help_text }}</span>
                     {% if form.lokasi.errors %}<span class="form-error">{{ form.lokasi.errors.0 }}</span>{% endif %}
                 </div>
 
-                <!-- Foto URL -->
+                <!-- Foto Upload -->
                 <div class="form-group">
-                    <label for="{{ form.foto_url.id_for_label }}">{{ form.foto_url.label }}</label>
-                    {{ form.foto_url }}
-                    <span class="form-help">{{ form.foto_url.help_text }}</span>
-                    {% if form.foto_url.errors %}<span class="form-error">{{ form.foto_url.errors.0 }}</span>{% endif %}
+                    <label for="{{ form.foto.id_for_label }}">{{ form.foto.label }} <span class="required">*</span></label>
+                    {% if mode == 'edit' and barang.foto %}
+                    <div class="foto-preview-wrap">
+                        <img src="{{ barang.foto.url }}" alt="Foto saat ini" class="foto-preview-thumb">
+                        <span class="form-help">Foto saat ini. Upload berkas baru untuk mengganti.</span>
+                    </div>
+                    {% endif %}
+                    {{ form.foto }}
+                    <span class="form-help">{{ form.foto.help_text }}</span>
+                    {% if form.foto.errors %}<span class="form-error">{{ form.foto.errors.0 }}</span>{% endif %}
                 </div>
 
                 <!-- Actions -->
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
-                        {% if mode == 'tambah' %}🚀 Upload Barang{% else %}💾 Simpan Perubahan{% endif %}
+                        {% if mode == 'tambah' %}Upload Barang{% else %}Simpan Perubahan{% endif %}
                     </button>
                     <a href="{% if mode == 'edit' %}{% url 'katalog:detail_barang' barang.pk %}{% else %}{% url 'katalog:show_katalog' %}{% endif %}"
                        class="btn btn-ghost">Batal</a>
@@ -89,4 +96,3 @@
     </div>
 </div>
 {% endblock content %}
-
