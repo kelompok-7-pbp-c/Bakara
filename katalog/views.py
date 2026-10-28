@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from minat.models import MinatBarang, Transaksi
+from minat.models import MinatBarang
 
 from .forms import BarangForm
 from .models import Barang
@@ -41,28 +41,22 @@ def show_katalog(request):
 
 def detail_barang(request, pk):
     """Menampilkan detail spesifik suatu barang beserta data profil penjual."""
-    barang = get_object_or_404(Barang.objects.select_related('penjual__profile'), pk=pk)
+    barang = get_object_or_404(
+        Barang.objects.select_related('penjual__profile'), pk=pk)
 
     sudah_berminat = False
     minat_obj = None
-    ada_transaksi_aktif = False
-
     if request.user.is_authenticated and request.user != barang.penjual:
         minat_obj = MinatBarang.objects.filter(
             barang=barang, pembeli=request.user
-        ).prefetch_related('transaksi').first()
+        ).first()
         sudah_berminat = minat_obj is not None
-        if minat_obj:
-            ada_transaksi_aktif = minat_obj.transaksi.filter(
-                status=Transaksi.MENUNGGU
-            ).exists()
 
     context = {
         'brand_name': 'Bakara',
         'barang': barang,
         'sudah_berminat': sudah_berminat,
         'minat_obj': minat_obj,
-        'ada_transaksi_aktif': ada_transaksi_aktif,
     }
     return render(request, 'katalog/detail_barang.html', context)
 
@@ -76,7 +70,8 @@ def tambah_barang(request):
             barang = form.save(commit=False)
             barang.penjual = request.user
             barang.save()
-            messages.success(request, f'Barang "{barang.nama}" berhasil dipublikasikan.')
+            messages.success(
+                request, f'Barang "{barang.nama}" berhasil dipublikasikan.')
             return redirect('katalog:detail_barang', pk=barang.pk)
     else:
         form = BarangForm()
@@ -122,13 +117,15 @@ def edit_barang(request, pk):
     """Menangani pengeditan barang hanya jika user adalah pemilik atau staff/admin."""
     barang = get_object_or_404(Barang, pk=pk)
     if not barang.bisa_diedit_oleh(request.user):
-        raise PermissionDenied("Kamu tidak memiliki izin untuk mengedit barang ini.")
+        raise PermissionDenied(
+            "Kamu tidak memiliki izin untuk mengedit barang ini.")
 
     if request.method == 'POST':
         form = BarangForm(request.POST, request.FILES, instance=barang)
         if form.is_valid():
             form.save()
-            messages.success(request, f'Perubahan pada "{barang.nama}" berhasil disimpan.')
+            messages.success(
+                request, f'Perubahan pada "{barang.nama}" berhasil disimpan.')
             return redirect('katalog:detail_barang', pk=barang.pk)
     else:
         form = BarangForm(instance=barang)
@@ -149,14 +146,16 @@ def hapus_barang(request, pk):
     """Menangani penghapusan barang hanya jika user adalah pemilik atau staff/admin."""
     barang = get_object_or_404(Barang, pk=pk)
     if not barang.bisa_dihapus_oleh(request.user):
-        raise PermissionDenied("Kamu tidak memiliki izin untuk menghapus barang ini.")
+        raise PermissionDenied(
+            "Kamu tidak memiliki izin untuk menghapus barang ini.")
 
     nama_barang = barang.nama
     is_moderator = request.user.is_staff and request.user != barang.penjual
     barang.delete()
 
     if is_moderator:
-        messages.warning(request, f'Barang "{nama_barang}" telah dihapus oleh Moderator.')
+        messages.warning(
+            request, f'Barang "{nama_barang}" telah dihapus oleh Moderator.')
     else:
         messages.success(request, f'Listing "{nama_barang}" berhasil dihapus.')
 

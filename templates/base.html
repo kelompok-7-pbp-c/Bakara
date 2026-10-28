@@ -40,6 +40,7 @@
                 <a href="{% url 'main:show_beranda' %}">Beranda</a>
                 <a href="{% url 'katalog:show_katalog' %}">Katalog</a>
                 <a href="{% url 'transaksi:show_transaction' %}">Transaksi</a>
+                    {% if user.is_authenticated %}<a href="{% url 'minat:daftar_peminat' %}">Minat &amp; Kontak</a>{% endif %}
                 <a href="{% url 'main:show_tentang' %}">Tentang Kami</a>
             </nav>
 

@@ -149,33 +149,12 @@
                         <button class="btn btn-primary" disabled>Barang Tidak Tersedia</button>
 
                     {% elif sudah_berminat %}
-                        <!-- Sudah berminat -->
-                        {% if ada_transaksi_aktif %}
-                            <a href="{% url 'transaksi:show_transaction' %}" class="btn btn-primary">
-                                Lihat Transaksi Aktif
-                            </a>
-                        {% else %}
-                            <form action="{% url 'transaksi:create_transaction' barang.pk %}" method="post">
-                                {% csrf_token %}
-                                <div style="margin-bottom: 10px;">
-                                    <input type="text" name="catatan_pembeli" class="form-input" 
-                                        placeholder="Catatan serah terima (opsional, misal: bisa COD di Fasilkom)">
-                                </div>
-                                <button type="submit" class="btn btn-primary">
-                                    {% if barang.jenis == 'donasi' %}
-                                        Ajukan Menerima Donasi
-                                    {% elif barang.jenis == 'pinjam' %}
-                                        Ajukan Peminjaman
-                                    {% else %}
-                                        Beli Sekarang
-                                    {% endif %}
-                                </button>
-                            </form>
-                            <form action="{% url 'minat:batalkan_minat' barang.pk %}" method="post" style="display:inline">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-ghost">Batalkan Minat</button>
-                            </form>
-                        {% endif %}
+                        <span class="btn btn-ghost" aria-live="polite">Kamu sudah tertarik</span>
+                        <a href="{% url 'minat:daftar_peminat' %}" class="btn btn-primary">Lihat Kontak Penjual</a>
+                        <form action="{% url 'minat:batalkan_minat' barang.pk %}" method="post" style="display:inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-ghost">Batalkan Minat</button>
+                        </form>
 
                     {% else %}
                         <!-- PEMBELI: belum berminat -->

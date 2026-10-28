@@ -9,6 +9,6 @@ urlpatterns = [
     path('<uuid:barang_id>/tandai/', views.tandai_minat, name='tandai_minat'),
     path('<uuid:barang_id>/batalkan/',
          views.batalkan_minat, name='batalkan_minat'),
-    path('checkout/<int:minat_id>/', views.checkout, name='checkout'),
-    path('transaksi/<int:transaksi_id>/status/', views.ubah_status_transaksi, name='ubah_status_transaksi'),
+    path('<int:minat_id>/proses-transaksi/',
+         views.proses_transaksi, name='proses_transaksi'),
 ]
