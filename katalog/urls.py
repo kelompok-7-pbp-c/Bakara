@@ -16,5 +16,6 @@ urlpatterns = [
     # Delete 
     path('<uuid:pk>/hapus/', views.hapus_barang, name='hapus_barang'),
     # AJAX / JSON endpoints 
-    path('api/list/', views.katalog_json, name='katalog_json'),
+    path('json/', views.katalog_json, name='katalog_json'),
+    path('api/list/', views.katalog_json, name='katalog_json_api'),
 ]

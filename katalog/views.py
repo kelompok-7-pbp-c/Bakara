@@ -202,4 +202,4 @@ def katalog_json(request):
             'detail_url': f'/katalog/{b.id}/',
         })
 
-    return JsonResponse({'barang': data, 'total': len(data)})
+    return JsonResponse(data, safe=False)
