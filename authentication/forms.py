@@ -9,11 +9,6 @@ from authentication.models import Profile
 
 
 class RegisterForm(UserCreationForm):
-    """
-    Form registrasi pengguna baru.
-    Mewarisi UserCreationForm Django dengan tambahan validasi email @ui.ac.id.
-    """
-
     email = forms.EmailField(
         label='Email UI',
         help_text='Gunakan email @ui.ac.id kamu.',
@@ -37,16 +32,9 @@ class RegisterForm(UserCreationForm):
 
 
 class LoginForm(AuthenticationForm):
-    """
-    Form login yang mendukung autentikasi dengan username maupun email UI.
-    """
-
     username = forms.CharField(label='Username atau Email')
 
     def clean(self):
-        """
-        Jika input berupa email, konversikan ke username sebelum autentikasi.
-        """
         identifier = self.cleaned_data.get('username', '')
         if '@' in identifier:
             User = get_user_model()
@@ -56,12 +44,7 @@ class LoginForm(AuthenticationForm):
         return super().clean()
 
 
-class ProfileForm(forms.ModelForm):
-    """
-    Form pengisian dan pembaruan profil mahasiswa Bakara.
-    Semua field diwajibkan saat submit meskipun model mengizinkan blank.
-    """
-
+class ProfileForm(forms.ModelForm): 
     MIN_ANGKATAN = 1950
     MAX_PHOTO_SIZE = 2 * 1024 * 1024  # 2 MB
     PHOTO_FORMATS = ('JPEG', 'PNG', 'WEBP')
@@ -91,9 +74,14 @@ class ProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Semua field wajib diisi saat pengguna menyimpan profil.
-        for field in self.fields.values():
-            field.required = True
+        # Field wajib untuk transaksi mahasiswa UI
+        required_fields = ('full_name', 'faculty', 'angkatan', 'whatsapp')
+        for field_name in required_fields:
+            self.fields[field_name].required = True
+        
+        # Field opsional
+        self.fields['line_id'].required = False
+        self.fields['photo'].required = False
         self.fields['faculty'].choices = [('', 'Pilih fakultas')] + Profile.FACULTY_CHOICES
 
     def clean_full_name(self):
@@ -122,16 +110,19 @@ class ProfileForm(forms.ModelForm):
         return '0' + match.group(1)
 
     def clean_line_id(self):
-        line_id = self.cleaned_data['line_id'].strip().lower()
+        # Validasi ID LINE hanya jika pengguna mengisinya.
+        line_id = self.cleaned_data.get('line_id', '').strip().lower()
+        if not line_id:
+            return ''  # Boleh kosong jika tidak punya LINE
         if not re.fullmatch(r'[a-z0-9._-]{4,20}', line_id):
             raise forms.ValidationError(
                 'ID LINE harus 4–20 karakter dan hanya berisi huruf, angka, '
                 'titik, tanda hubung, atau garis bawah.'
             )
         return line_id
-
+    
     def clean_photo(self):
-        photo = self.cleaned_data['photo']
+        photo = self.cleaned_data.get('photo')
         # Foto lama yang tidak diganti tidak perlu dicek ulang.
         if photo and photo != self.instance.photo:
             if photo.size > self.MAX_PHOTO_SIZE:

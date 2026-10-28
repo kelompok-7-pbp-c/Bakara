@@ -1,16 +1,10 @@
+import re
 import uuid
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-
 class User(AbstractUser):
-    """
-    Custom User model untuk platform Bakara.
-    Mewarisi seluruh field AbstractUser (username, email, is_staff, dll.)
-    dengan mengganti primary key menjadi UUID untuk keamanan.
-    """
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -28,11 +22,6 @@ class User(AbstractUser):
 
 
 class Profile(models.Model):
-    """
-    Profil tambahan Mahasiswa yang terhubung OneToOne dengan User.
-    Dibuat otomatis via signal saat User baru terdaftar.
-    """
-
     FACULTY_CHOICES = [
         ('FK', 'Fakultas Kedokteran'),
         ('FKG', 'Fakultas Kedokteran Gigi'),
@@ -79,19 +68,24 @@ class Profile(models.Model):
 
     @property
     def is_complete(self):
-        """Memeriksa apakah seluruh informasi profil wajib telah terisi."""
         return all((
             self.full_name,
             self.faculty,
             self.angkatan,
             self.whatsapp,
-            self.line_id,
-            self.photo,
         ))
 
     @property
     def whatsapp_link(self):
-        """Menghasilkan tautan wa.me dengan kode negara Indonesia (+62)."""
         if not self.whatsapp:
             return ''
-        return f'https://wa.me/62{self.whatsapp[1:]}'
+        
+        # Bersihkan semua karakter selain angka
+        clean_number = re.sub(r'\D', '', self.whatsapp)
+        
+        # Standarisasi ke awalan 62
+        if clean_number.startswith('0'):
+            clean_number = '62' + clean_number[1:]
+        elif not clean_number.startswith('62'):
+            clean_number = '62' + clean_number
+        return f'https://wa.me/{clean_number}'
