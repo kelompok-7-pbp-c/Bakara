@@ -151,13 +151,25 @@
                     {% elif sudah_berminat %}
                         <!-- Sudah berminat -->
                         {% if ada_transaksi_aktif %}
-                            <a href="{% url 'main:show_transaksi' %}" class="btn btn-primary">
+                            <a href="{% url 'transaksi:show_transaction' %}" class="btn btn-primary">
                                 Lihat Transaksi Aktif
                             </a>
                         {% else %}
-                            <form action="{% url 'minat:checkout' minat_obj.id %}" method="post" style="display:inline">
+                            <form action="{% url 'transaksi:create_transaction' barang.pk %}" method="post">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-primary">Ajukan Checkout</button>
+                                <div style="margin-bottom: 10px;">
+                                    <input type="text" name="catatan_pembeli" class="form-input" 
+                                        placeholder="Catatan serah terima (opsional, misal: bisa COD di Fasilkom)">
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    {% if barang.jenis == 'donasi' %}
+                                        Ajukan Menerima Donasi
+                                    {% elif barang.jenis == 'pinjam' %}
+                                        Ajukan Peminjaman
+                                    {% else %}
+                                        Beli Sekarang
+                                    {% endif %}
+                                </button>
                             </form>
                             <form action="{% url 'minat:batalkan_minat' barang.pk %}" method="post" style="display:inline">
                                 {% csrf_token %}
