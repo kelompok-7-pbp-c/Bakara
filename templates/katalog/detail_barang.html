@@ -151,11 +151,11 @@
                     {% elif sudah_berminat %}
                         <!-- Sudah berminat -->
                         {% if ada_transaksi_aktif %}
-                            <a href="{% url 'transaksi:daftar_transaksi' %}" class="btn btn-primary">
+                            <a href="{% url 'transaksi:show_transaction' %}" class="btn btn-primary">
                                 Lihat Transaksi Aktif
                             </a>
                         {% else %}
-                            <form action="{% url 'transaksi:buat_transaksi' barang.pk %}" method="post">
+                            <form action="{% url 'transaksi:create_transaction' barang.pk %}" method="post">
                                 {% csrf_token %}
                                 <div style="margin-bottom: 10px;">
                                     <input type="text" name="catatan_pembeli" class="form-input" 

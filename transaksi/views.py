@@ -4,6 +4,7 @@ from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from katalog.models import Barang
@@ -11,7 +12,7 @@ from .models import Transaksi
 
 
 @login_required(login_url='/auth/login/')
-def daftar_transaksi(request):
+def show_transaction(request):
     transaksi_beli = Transaksi.objects.filter(
         pembeli=request.user
     ).select_related('barang', 'barang__penjual__profile')
@@ -33,7 +34,7 @@ def daftar_transaksi(request):
 
 @login_required(login_url='/auth/login/')
 @require_POST
-def buat_transaksi(request, barang_id):
+def create_transaction(request, barang_id):
     barang = get_object_or_404(Barang, pk=barang_id)
 
     if barang.penjual == request.user:
@@ -52,7 +53,7 @@ def buat_transaksi(request, barang_id):
 
     if sudah_ada:
         messages.info(request, 'Kamu sudah memiliki transaksi aktif untuk barang ini.')
-        return redirect('transaksi:daftar_transaksi')
+        return redirect('transaksi:show_transaction')
 
     Transaksi.objects.create(
         barang=barang,
@@ -61,12 +62,12 @@ def buat_transaksi(request, barang_id):
     )
 
     messages.success(request, f'Pengajuan transaksi untuk "{barang.nama}" berhasil diajukan!')
-    return redirect('transaksi:daftar_transaksi')
+    return redirect('transaksi:show_transaction')
 
 
 @login_required(login_url='/auth/login/')
 @require_POST
-def ubah_status_transaksi(request, transaksi_id):
+def update_transaction_status(request, transaksi_id):
     transaksi = get_object_or_404(
         Transaksi.objects.select_related('barang'),
         pk=transaksi_id,
@@ -102,12 +103,12 @@ def ubah_status_transaksi(request, transaksi_id):
         else:
             messages.error(request, 'Aksi tidak valid atau status transaksi tidak memungkinkan.')
 
-    return redirect('transaksi:daftar_transaksi')
+    return redirect('transaksi:show_transaction')
 
 
 @login_required(login_url='/auth/login/')
 @require_POST
-def batalkan_transaksi(request, transaksi_id):
+def cancel_transaction(request, transaksi_id):
     transaksi = get_object_or_404(
         Transaksi.objects.select_related('barang'),
         pk=transaksi_id,
@@ -123,11 +124,11 @@ def batalkan_transaksi(request, transaksi_id):
         transaksi.barang.save(update_fields=['status', 'diperbarui_pada'])
 
     messages.success(request, 'Transaksi berhasil dibatalkan dan barang kembali tersedia.')
-    return redirect('transaksi:daftar_transaksi')
+    return redirect('transaksi:show_transaction')
 
 
 @login_required(login_url='/auth/login/')
-def transaksi_json(request):
+def get_transaction_json(request):
     transaksi_list = Transaksi.objects.filter(
         models.Q(pembeli=request.user) | models.Q(barang__penjual=request.user)
     ).select_related(
@@ -186,7 +187,7 @@ def transaksi_json(request):
             'status': t.status,
             'status_label': t.get_status_display(),
             'catatan_pembeli': t.catatan_pembeli,
-            'dibuat_pada': t.dibuat_pada.strftime('%d %b %Y, %H:%M'),
+            'dibuat_pada': timezone.localtime(t.dibuat_pada).strftime('%d %b %Y, %H:%M'),
         })
 
     return JsonResponse({'transaksi': data, 'total': len(data)})
