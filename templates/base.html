@@ -38,35 +38,27 @@
             <!-- Navigation Links -->
             <nav aria-label="Navigasi utama">
                 <a href="{% url 'main:show_beranda' %}">Beranda</a>
-                <a href="{% url 'main:show_katalog' %}">Katalog</a>
-                <a href="{% url 'main:show_transaksi' %}">Transaksi</a>
+                <a href="{% url 'katalog:show_katalog' %}">Katalog</a>
+                <a href="{% url 'transaksi:show_transaction' %}">Transaksi</a>
                 <a href="{% url 'main:show_tentang' %}">Tentang Kami</a>
-
-                {% if user.is_authenticated %}
-                    <span class="nav-user">{{ user.username }}</span>
-                    <form action="{% url 'authentication:logout' %}" method="POST" class="nav-logout-form">
-                        {% csrf_token %}
-                        <button type="submit" class="nav-logout-btn">Keluar</button>
-                    </form>
-                {% else %}
-                    <a href="{% url 'authentication:login' %}">Masuk</a>
-                    <a href="{% url 'authentication:register' %}" class="btn-nav-primary">Daftar</a>
-                {% endif %}
             </nav>
 
             <!-- Action Icons -->
             <div class="nav-actions">
-                <a href="#" class="nav-icon-btn" aria-label="Notifikasi">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                    </svg>
-                </a>
                 {% if user.is_authenticated %}
+                    <form action="{% url 'authentication:logout' %}" method="POST" class="nav-logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-nav-primary">Keluar</button>
+                    </form>
                     <a href="{% url 'main:show_profil' %}" class="nav-avatar" aria-label="Profil saya">
-                        {{ user.username }}
+                        {% if user.profile.photo %}
+                            <img src="{{ user.profile.photo.url }}" alt="" class="nav-avatar-photo">
+                        {% else %}
+                            {{ user.username|first|upper }}
+                        {% endif %}
                     </a>
                 {% else %}
+                    <a href="{% url 'authentication:login' %}" class="btn-nav-primary">Masuk</a>
                     <a href="{% url 'authentication:login' %}" class="nav-avatar" aria-label="Masuk atau Daftar">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -100,6 +92,8 @@
             <p class="footer-copy">&copy; 2026 {{ brand_name }}. Kelompok 7 PBP C</p>
         </div>
     </footer>
+
+    {% block script %}{% endblock script %}
 </body>
 
 </html>
