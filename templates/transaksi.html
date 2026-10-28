@@ -39,6 +39,7 @@
 
 <script>
     const TRANSAKSI_API_ENDPOINT = "{% url 'transaksi:get_transaction_json' %}";
+    const CSRF_TOKEN = "{{ csrf_token }}";
     let allTransactions = [];
     let currentFilter = 'all';
 
@@ -47,21 +48,6 @@
     const trxEmpty = document.getElementById('trx-empty');
     const trxContainer = document.getElementById('trx-container');
     const filterButtons = document.querySelectorAll('.filter-btn');
-
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
 
     function escapeHtml(value) {
         return String(value ?? '')
@@ -88,26 +74,29 @@
         const id = item.id;
         const changeStatusBaseUrl = "{% url 'transaksi:update_transaction_status' '00000000-0000-0000-0000-000000000000' %}";
         const cancelBaseUrl = "{% url 'transaksi:cancel_transaction' '00000000-0000-0000-0000-000000000000' %}";
-
         const changeStatusUrl = changeStatusBaseUrl.replace('00000000-0000-0000-0000-000000000000', id);
         const cancelUrl = cancelBaseUrl.replace('00000000-0000-0000-0000-000000000000', id);
 
         let actionsHtml = '';
 
+        // Kontak Partner: WhatsApp & LINE
         if (item.partner_wa) {
             actionsHtml += `<a href="${item.partner_wa}" target="_blank" rel="noopener" class="btn-action btn-wa">WhatsApp</a>`;
+        }
+        if (item.partner_line) {
+            actionsHtml += `<span class="btn-action" style="background:#06C755; color:#ffffff;" title="LINE ID">LINE: ${escapeHtml(item.partner_line)}</span>`;
         }
 
         if (item.is_penjual) {
             if (item.status === 'menunggu') {
                 actionsHtml += `
                     <form method="post" action="${changeStatusUrl}">
-                        <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
                         <input type="hidden" name="aksi" value="setujui">
                         <button type="submit" class="btn-action btn-approve">Setujui</button>
                     </form>
                     <form method="post" action="${changeStatusUrl}">
-                        <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
                         <input type="hidden" name="aksi" value="tolak">
                         <button type="submit" class="btn-action btn-reject">Tolak</button>
                     </form>
@@ -115,12 +104,12 @@
             } else if (item.status === 'disetujui') {
                 actionsHtml += `
                     <form method="post" action="${changeStatusUrl}">
-                        <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
                         <input type="hidden" name="aksi" value="selesai">
                         <button type="submit" class="btn-action btn-complete">Tandai Selesai</button>
                     </form>
                     <form method="post" action="${cancelUrl}" onsubmit="return confirm('Batalkan proses serah terima ini? Barang akan kembali tersedia.');">
-                        <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
                         <button type="submit" class="btn-action btn-reject">Batalkan</button>
                     </form>
                 `;
@@ -129,13 +118,12 @@
             if (['menunggu', 'disetujui'].includes(item.status)) {
                 actionsHtml += `
                     <form method="post" action="${cancelUrl}" onsubmit="return confirm('Yakin ingin membatalkan pengajuan ini?');">
-                        <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
                         <button type="submit" class="btn-action btn-reject">Batalkan</button>
                     </form>
                 `;
             }
         }
-
         return actionsHtml;
     }
 
