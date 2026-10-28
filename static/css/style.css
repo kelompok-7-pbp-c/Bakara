@@ -17,6 +17,25 @@
     --font-heading: 'Plus Jakarta Sans', sans-serif;
     --font-body:    'Inter', sans-serif;
 
+    /* Bagde (Jenis) */
+    --badge-jual-bg:#FFC445;
+    --badge-jual-text:#1E3A5F;
+    --badge-pinjam-bg:#C9D8EC;
+    --badge-pinjam-text:#1E3A5F;
+    --badge-donasi-bg:#A8CFA0;
+    --badge-donasi-text:#1F5A24;
+
+    /* Badge (Status Transaksi) */
+    --status-menunggu-bg:#FFF1CC;
+    --status-menunggu-text:#7A5A00;
+    --status-disetujui-bg:#DCE6F2;
+    --status-disetujui-text:#1E3A5F;
+    --status-selesai-bg:#DDEEDA;
+    --status-selesai-text:#2E7D32;
+    --status-batal-bg:#FBE4E4;
+    --status-batal-text:#B94A48;
+
+
     /* Spacing */
     --spacing-xs:  4px;
     --spacing-sm:  8px;
@@ -76,6 +95,18 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     color:       var(--color-primary);
     line-height: 1.2;
+}
+
+button, input, select, textarea {
+    font-family: inherit;
+}
+
+.transaksi-item-title,
+.card-nama,
+.transaksi-title,
+.badge,
+.badge-status {
+    font-family: var(--font-heading);
 }
 
 a {
@@ -1044,18 +1075,18 @@ ol {
 }
 
 .badge-jual {
-    background-color: var(--color-accent-gold);
-    color:            var(--color-primary);
+    background-color: var(--badge-jual-bg);
+    color: var(--badge-jual-text); 
 }
 
-.badge-pinjam {
-    background-color: #DBEAFE;
-    color:            #1E40AF;
+.badge-pinjam { 
+    background-color: var(--badge-pinjam-bg); 
+    color: var(--badge-pinjam-text); 
 }
 
-.badge-donasi {
-    background-color: #DCFCE7;
-    color:            #166534;
+.badge-donasi { 
+    background-color: var(--badge-donasi-bg); 
+    color: var(--badge-donasi-text); 
 }
 
 .badge-status {
@@ -1807,6 +1838,7 @@ textarea.form-input {
 }
 
 .filter-btn {
+    font-family: inherit;
     padding: 6px 16px;
     border-radius: var(--radius-pill, 50px);
     border: 1px solid var(--color-border, #E2E8F0);
@@ -1904,18 +1936,43 @@ textarea.form-input {
     flex-shrink: 0;
 }
 
-.badge-status {
+.transaksi-badges .badge {
+    border-radius: var(--radius-sm, 6px);
     padding: 4px 10px;
-    border-radius: var(--radius-pill, 50px);
+}
+
+.badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: none;
+    border-radius: var(--radius-sm, 6px);
     font-size: 11px;
     font-weight: 700;
+    letter-spacing: 0.02em;
     white-space: nowrap;
 }
 
-.status-menunggu { background: #fff7e0; color: #765300; }
-.status-disetujui { background: #e0f2fe; color: #0369a1; }
-.status-selesai { background: #e8f5e9; color: #2e7d32; }
-.status-dibatalkan, .status-ditolak { background: #ffebee; color: #b42318; }
+.status-menunggu { 
+    background: var(--status-menunggu-bg);  
+    color: var(--status-menunggu-text); 
+}
+
+.status-disetujui { 
+    background: var(--status-disetujui-bg); 
+    color: var(--status-disetujui-text); 
+}
+
+.status-selesai { 
+    background: var(--status-selesai-bg);   
+    color: var(--status-selesai-text); 
+}
+
+.status-dibatalkan, .status-ditolak { 
+    background: var(--status-batal-bg);     
+    color: var(--status-batal-text); 
+}
 
 .transaksi-party {
     display: flex;
@@ -1937,6 +1994,7 @@ textarea.form-input {
 }
 
 .btn-action {
+    font-family: inherit;
     padding: 7px 14px;
     font-size: 12px;
     font-weight: 600;
