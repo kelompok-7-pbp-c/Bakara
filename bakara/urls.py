@@ -26,6 +26,7 @@ urlpatterns = [
     path('katalog/', include('katalog.urls')),
     path('minat/', include('minat.urls')),
     path('transaksi/', include('transaksi.urls')),
+    path('review/', include('review.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

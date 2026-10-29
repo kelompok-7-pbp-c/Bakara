@@ -2079,3 +2079,232 @@ textarea.form-input {
 .state-box.hide, .transaksi-grid.hide, .hide {
     display: none;
 }
+
+
+/* =========================================
+   MODUL REVIEW — Rating & Ulasan
+   ========================================= */
+
+.review-section {
+    padding: var(--spacing-xl) 0 var(--spacing-3xl);
+}
+
+.review-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: var(--spacing-lg);
+    align-items: start;
+}
+
+.review-main {
+    min-width: 0;
+}
+
+.review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* .hide di atas kalah urutan dari display di sini, jadi perlu aturan sendiri */
+.review-list.hide {
+    display: none;
+}
+
+.review-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.review-card-top .transaksi-item-title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+}
+
+.review-stars {
+    display: inline-flex;
+    gap: 2px;
+    font-size: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.star-on  { color: var(--color-accent-gold); }
+.star-off { color: var(--color-border); }
+
+.review-komentar {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-primary);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.review-komentar-empty {
+    color: var(--color-secondary);
+    font-style: italic;
+}
+
+/* Sidebar */
+.review-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    position: sticky;
+    top: calc(var(--header-height) + var(--spacing-md));
+}
+
+.review-panel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    box-shadow: var(--shadow-sm);
+}
+
+.review-panel-title {
+    font-size: 16px;
+    margin-bottom: var(--spacing-md);
+}
+
+.review-score {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.review-score-num {
+    font-family: var(--font-heading);
+    font-size: 44px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--color-primary);
+}
+
+.review-score-total {
+    font-size: 12px;
+    color: var(--color-secondary);
+    margin-top: 4px;
+}
+
+.review-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.review-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--color-secondary);
+}
+
+.review-bar-row > span:first-child {
+    width: 28px;
+    flex-shrink: 0;
+}
+
+.review-bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--color-border);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+
+.review-bar-fill {
+    height: 100%;
+    background: var(--color-accent-gold);
+    border-radius: var(--radius-pill);
+}
+
+.review-bar-count {
+    width: 24px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+/* Form ulasan */
+.review-form-hint {
+    font-size: 13px;
+    color: var(--color-secondary);
+}
+
+.review-form-target {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-primary);
+    background: var(--color-bg);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-md);
+    overflow-wrap: anywhere;
+}
+
+.review-field-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-primary);
+}
+
+/* Input bintang: radio disembunyikan, label ★ yang tampil.
+   Urutan DOM 5→1 + row-reverse supaya hover/checked mewarnai bintang di kirinya. */
+.star-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.star-input input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    padding: 0;
+    border: 0;
+}
+
+.star-input label {
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--color-border);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.star-input input:checked ~ label,
+.star-input label:hover,
+.star-input label:hover ~ label {
+    color: var(--color-accent-gold);
+}
+
+.star-input input:focus-visible + label {
+    outline: 2px solid var(--color-secondary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+@media (max-width: 900px) {
+    .review-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .review-sidebar {
+        position: static;
+    }
+}
+.btn-reviewed {
+    background: var(--status-selesai-bg);
+    color: var(--status-selesai-text);
+    cursor: default;
+}
