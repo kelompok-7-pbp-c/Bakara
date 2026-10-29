@@ -22,7 +22,7 @@
                     type="search"
                     name="q"
                     value="{{ search_query }}"
-                    placeholder="Cari barang… (mis. kalkulator, buku)"
+                    placeholder="Cari di Bakara..."
                     class="search-input"
                     id="search-input"
                     autocomplete="off"
@@ -67,7 +67,7 @@
                 {% if user.is_authenticated %}(termasuk listing milikmu){% else %}tersedia{% endif %}
             </p>
             {% if user.is_authenticated %}
-            <a href="{% url 'katalog:tambah_barang' %}" class="btn btn-primary" id="btn-tambah-barang-page">
+            <a href="{% url 'katalog:tambah_barang' %}" class="btn btn-primary" id="btn-open-modal-tambah">
                 + Upload Barang
             </a>
             {% endif %}
@@ -134,12 +134,15 @@
 
         <!-- CTA Upload -->
         {% if user.is_authenticated %}
-        <div class="katalog-cta-bar">
-            <p>Punya barang yang tidak terpakai? Bagikan ke sesama mahasiswa UI!</p>
-            <a href="{% url 'katalog:tambah_barang' %}" class="btn btn-primary">
-                + Upload Barang
-            </a>
-        </div>
+            <!--- Hanya tampil jika pengguna belum pernah mengunggah barang sama sekali -->
+            {% if not user.barang_listing.exists %}
+            <div class="katalog-cta-bar">
+                <p>Punya barang yang tidak terpakai? Bagikan ke sesama mahasiswa UI!</p>
+                <a href="{% url 'katalog:tambah_barang' %}" class="btn btn-primary">
+                    + Upload Barang
+                </a>
+            </div>
+            {% endif %}
         {% else %}
         <div class="katalog-cta-bar">
             <p>Masuk untuk mulai berbagi atau mencatat minatmu pada barang ini.</p>
@@ -155,7 +158,10 @@
      aria-modal="true" aria-labelledby="modal-title-tambah">
     <div class="modal-box">
         <div class="modal-header">
-            <h2 id="modal-title-tambah">Upload Barang (AJAX)</h2>
+            <h2 id="modal-title-tambah">Upload Barang Cepat</h2>
+            <p class="modal-subtitle" style="font-size: 0.85rem; color: var(--color-muted); margin-top: 2px;">
+                Isi formulir ringkas di bawah atau gunakan form penuh untuk opsi lengkap.
+            </p>
             <button id="btn-close-modal-tambah" class="modal-close" aria-label="Tutup">&times;</button>
         </div>
 
