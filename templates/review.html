@@ -278,6 +278,23 @@
             renderSummary(result.ringkasan);
             updateCounts();
             renderList();
+
+            // Cek parameter 'view_transaksi' untuk melihat ulasan yang sudah dibuat
+            const viewTargetId = new URLSearchParams(window.location.search).get('view_transaksi');
+            if (viewTargetId) {
+                const index = reviewData.diberikan.findIndex(item => item.transaksi_id === viewTargetId);
+                if (index !== -1) {
+                    currentTab = 'diberikan';
+                    tabButtons.forEach(b => b.classList.toggle('active', b.dataset.tab === 'diberikan'));
+                    renderList();
+                    const card = reviewList.querySelectorAll('.transaksi-card')[index];
+                    if (card) {
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        card.style.border = '2px solid #4f46e5'; // Biar keliatan disorot
+                    }
+                }
+            }
+            
         } catch (error) {
             console.error(error);
             setViewState({ showError: true });
