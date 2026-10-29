@@ -127,7 +127,7 @@
             }
         } if (item.status === 'selesai') {
             if (item.sudah_diulas) {
-                actionsHtml += `<span class="btn-action btn-reviewed">Sudah Diulas</span>`;
+               actionsHtml += `<a href="${REVIEW_PAGE_URL}?view_transaksi=${item.id}" class="btn-action btn-reviewed">Lihat Ulasan</a>`;
             } else {
                 actionsHtml += `<a href="${REVIEW_PAGE_URL}?transaksi=${item.id}" class="btn-action btn-complete">Beri Ulasan</a>`;
             }
