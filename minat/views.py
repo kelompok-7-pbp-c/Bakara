@@ -60,6 +60,7 @@ def daftar_peminat(request):
 
     minat_saya = MinatBarang.objects.filter(
         pembeli=request.user,
+        barang__status__in=[Barang.TERSEDIA, Barang.DALAM_PROSES],
     ).select_related(
         'barang', 'barang__penjual', 'barang__penjual__profile'
     ).annotate(
@@ -69,6 +70,7 @@ def daftar_peminat(request):
 
     peminat_barang_saya = MinatBarang.objects.filter(
         barang__penjual=request.user,
+        barang__status__in=[Barang.TERSEDIA, Barang.DALAM_PROSES],
     ).select_related(
         'barang', 'pembeli', 'pembeli__profile'
     ).annotate(
