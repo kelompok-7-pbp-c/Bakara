@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST
 
 from katalog.models import Barang
 from .models import Transaksi
-
+from review.models import Review
 
 @login_required(login_url='/auth/login/')
 def show_transaction(request):
@@ -162,6 +162,10 @@ def get_transaction_json(request):
         'barang__penjual__profile'
     ).order_by('-dibuat_pada')
 
+    sudah_diulas_ids = set(
+        Review.objects.filter(reviewer=request.user).values_list('transaksi_id', flat=True)
+    )
+
     data = []
     for t in transaksi_list:
         is_penjual = (t.barang.penjual_id == request.user.id)
@@ -214,6 +218,7 @@ def get_transaction_json(request):
             'status_label': t.get_status_display(),
             'catatan_pembeli': t.catatan_pembeli,
             'dibuat_pada': timezone.localtime(t.dibuat_pada).strftime('%d %b %Y, %H:%M'),
+            'sudah_diulas': t.id in sudah_diulas_ids,
         })
 
     return JsonResponse({'transaksi': data, 'total': len(data)})

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'katalog',
     'minat',
     'transaksi',
+    'review',
 ]
 
 MIDDLEWARE = [

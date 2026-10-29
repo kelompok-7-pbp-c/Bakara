@@ -43,6 +43,8 @@
     let allTransactions = [];
     let currentFilter = 'all';
 
+    const REVIEW_PAGE_URL = "{% url 'review:show_review' %}"; 
+
     const trxLoading = document.getElementById('trx-loading');
     const trxError = document.getElementById('trx-error');
     const trxEmpty = document.getElementById('trx-empty');
@@ -123,7 +125,15 @@
                     </form>
                 `;
             }
+        } if (item.status === 'selesai') {
+            if (item.sudah_diulas) {
+                actionsHtml += `<span class="btn-action btn-reviewed">Sudah Diulas</span>`;
+            } else {
+                actionsHtml += `<a href="${REVIEW_PAGE_URL}?transaksi=${item.id}" class="btn-action btn-complete">Beri Ulasan</a>`;
+            }
         }
+
+
         return actionsHtml;
     }
 
