@@ -1,7 +1,7 @@
 import uuid
 from django.conf import settings
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, F
 from django.utils import timezone
 
 
@@ -21,8 +21,8 @@ class BarangQuerySet(models.QuerySet):
         sort_map = {
             '-dibuat_pada': '-dibuat_pada',
             'dibuat_pada': 'dibuat_pada',
-            'harga': 'harga',
-            '-harga': '-harga',
+            'harga': F('harga').asc(nulls_first=True), #Harga termurah: gratis/donasi (NULL) di awal
+            '-harga': F('harga').desc(nulls_last=True), #Harga termahal: gratis/donasi (NULL) di akhir
             'nama': 'nama',
         }
         return qs.order_by(sort_map.get(sort, '-dibuat_pada'))

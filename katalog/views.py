@@ -4,7 +4,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-
+from django.db.models import Q
 from minat.models import MinatBarang
 
 from .forms import BarangForm
@@ -18,6 +18,14 @@ def show_katalog(request):
     q = request.GET.get('q', '').strip()
     sort = request.GET.get('sort', '-dibuat_pada')
 
+    if request.user.is_authenticated:
+    # Pembeli melihat barang yang tersedia, penjual juga bisa melihat barang miliknya sendiri (meski sedang diproses)
+        base_qs = Barang.objects.filter(
+            Q(status=Barang.TERSEDIA) | Q(penjual=request.user)
+        ).select_related('penjual__profile')
+    else:
+        base_qs = Barang.objects.tersedia()
+    
     barang_list = Barang.objects.tersedia().filter_katalog(
         kategori=kategori,
         jenis=jenis,
