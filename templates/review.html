@@ -7,8 +7,7 @@
 <main class="review-section">
     <div class="container">
         <header class="transaksi-header">
-            <p class="transaksi-eyebrow">Reputasi Komunitas</p>
-            <h1 class="transaksi-title">Rating &amp; Ulasan Komunitas</h1>
+            <h1 class="transaksi-title">Rating &amp; Ulasan</h1>
             <p class="transaksi-subtitle">Lihat ulasan yang kamu terima, kelola ulasan yang kamu berikan, dan tulis ulasan untuk transaksi yang sudah selesai.</p>
         </header>
 
@@ -279,15 +278,6 @@
             renderSummary(result.ringkasan);
             updateCounts();
             renderList();
-                    const targetId = new URLSearchParams(window.location.search).get('transaksi');
-                    
-            if (targetId) {
-                const index = reviewData.menunggu.findIndex(item => item.transaksi_id === targetId);
-                if (index !== -1) {
-                    document.querySelector('.filter-btn[data-tab="menunggu"]').click();
-                    openCreateForm(reviewData.menunggu[index]);
-                }
-            }
         } catch (error) {
             console.error(error);
             setViewState({ showError: true });
