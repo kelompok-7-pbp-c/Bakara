@@ -43,11 +43,6 @@ class BarangForm(forms.ModelForm):
         cleaned_data = super().clean()
         jenis = cleaned_data.get('jenis')
         harga = cleaned_data.get('harga')
-        foto = cleaned_data.get('foto')
-
-        # Validasi wajib foto
-        if not foto and not (self.instance and self.instance.pk and self.instance.foto):
-            self.add_error('foto', 'Foto barang wajib diunggah.')
 
         if jenis == Barang.DONASI or jenis == Barang.PINJAM:
             # Barang donasi/pinjam tidak perlu harga
@@ -60,3 +55,17 @@ class BarangForm(forms.ModelForm):
                 )
 
         return cleaned_data
+
+    def clean_foto(self):
+        foto = self.cleaned_data.get('foto')
+        # Validasi wajib foto
+        if not foto and not (self.instance and self.instance.pk and self.instance.foto):
+            self.add_error('foto', 'Foto barang wajib diunggah.')
+
+        if foto:
+            # Validasi batas ukuran file (Maksimum 5 MB)
+            max_size = 5 * 1024 * 1024  # 5 Megabytes
+            if foto.size > max_size:
+                raise forms.ValidationError("Ukuran berkas foto tidak boleh melebihi 5 MB.")
+
+        return foto
