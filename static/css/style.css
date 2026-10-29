@@ -2306,5 +2306,14 @@ textarea.form-input {
 .btn-reviewed {
     background: var(--status-selesai-bg);
     color: var(--status-selesai-text);
-    cursor: default;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-reviewed:hover {
+    opacity: 0.85;
+    color: var(--status-selesai-text);
 }
