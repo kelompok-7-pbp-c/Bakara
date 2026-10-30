@@ -16,3 +16,11 @@ class BantuanPageTests(TestCase):
         self.assertContains(response, 'Pilih &amp; Proses')
         self.assertContains(response, 'mailto:james.adi@ui.ac.id')
         self.assertContains(response, reverse('main:show_bantuan'))
+
+    def test_halaman_bantuan_mengarah_ke_form_masuk(self):
+        response = self.client.get(reverse('main:show_bantuan'))
+
+        self.assertContains(response, 'Masuk ke Bakara menggunakan SSO UI.')
+        self.assertContains(response, reverse('authentication:login'))
+        self.assertNotContains(response, 'username atau email')
+        self.assertNotContains(response, 'Buat akun')
