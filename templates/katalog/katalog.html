@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Katalog Barang — Bakara{% endblock title %}
+{% block title %}Katalog Barang - Bakara{% endblock title %}
 {% block meta_description %}Jelajahi katalog barang di Bakara. Temukan barang untuk dibeli, dipinjam, atau didonasikan dari sesama mahasiswa UI.{% endblock meta_description %}
 
 {% block content %}
@@ -70,7 +70,7 @@
                 {% if user.is_authenticated %}(termasuk listing milikmu){% else %}tersedia{% endif %}
             </p>
             {% if user.is_authenticated %}
-            <a href="{% url 'katalog:tambah_barang' %}" class="btn btn-primary" id="btn-open-modal-tambah">
+            <a href="{% url 'katalog:tambah_barang' %}" class="btn btn-primary btn-open-modal-tambah" id="btn-open-modal-tambah" role="button" onclick="if(window.openTambahBarangModal){ window.openTambahBarangModal(event); }">
                 + Upload Barang
             </a>
             {% endif %}
@@ -141,7 +141,7 @@
             {% if not user.barang_listing.exists %}
             <div class="katalog-cta-bar">
                 <p>Punya barang yang tidak terpakai? Bagikan ke sesama mahasiswa UI!</p>
-                <a href="{% url 'katalog:tambah_barang' %}" class="btn btn-primary">
+                <a href="{% url 'katalog:tambah_barang' %}" class="btn btn-primary btn-open-modal-tambah" id="btn-open-modal-cta" role="button" onclick="if(window.openTambahBarangModal){ window.openTambahBarangModal(event); }"></a>>
                     + Upload Barang
                 </a>
             </div>
@@ -252,11 +252,11 @@
 </div>
 {% endif %}
 
-{% endblock content %}
-
 {% block script %}
 <script>
     window.KATALOG_JSON_URL = "{% url 'katalog:katalog_json' %}";
 </script>
-<script src="{% static 'js/katalog.js' %}"></script>
+<script src="{% static 'js/katalog.js' %}?v=1.1"></script>
 {% endblock script %}
+
+{% endblock content %}

@@ -1,5 +1,7 @@
 from django import forms
+from PIL import Image
 from .models import Barang
+
 
 class BarangForm(forms.ModelForm):
     class Meta:
@@ -24,7 +26,7 @@ class BarangForm(forms.ModelForm):
                 'min': 0,
             }),
             'lokasi': forms.TextInput(attrs={
-                'placeholder': 'Opsional — lokasi bisa disepakati langsung dengan pembeli',
+                'placeholder': 'Opsional, lokasi bisa disepakati langsung dengan pembeli',
                 'class': 'form-input',
             }),
             'foto': forms.FileInput(attrs={
@@ -36,16 +38,21 @@ class BarangForm(forms.ModelForm):
             'foto': {
                 'required': 'Foto barang wajib diunggah.',
                 'invalid': 'Unggah berkas gambar yang valid.',
+                'invalid_image': 'Berkas yang diunggah bukan gambar yang valid.',
             },
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk and self.instance.foto:
+            self.fields['foto'].required = False
 
     def clean(self):
         cleaned_data = super().clean()
         jenis = cleaned_data.get('jenis')
         harga = cleaned_data.get('harga')
 
-        if jenis == Barang.DONASI or jenis == Barang.PINJAM:
-            # Barang donasi/pinjam tidak perlu harga
+        if jenis in (Barang.DONASI, Barang.PINJAM):
             cleaned_data['harga'] = None
         elif jenis == Barang.JUAL:
             if not harga or harga <= 0:
@@ -58,14 +65,23 @@ class BarangForm(forms.ModelForm):
 
     def clean_foto(self):
         foto = self.cleaned_data.get('foto')
-        # Validasi wajib foto
-        if not foto and not (self.instance and self.instance.pk and self.instance.foto):
-            self.add_error('foto', 'Foto barang wajib diunggah.')
+        if not foto:
+            if not (self.instance and self.instance.pk and self.instance.foto):
+                raise forms.ValidationError("Foto barang wajib diunggah.")
+            return self.instance.foto
 
-        if foto:
-            # Validasi batas ukuran file (Maksimum 5 MB)
-            max_size = 5 * 1024 * 1024  # 5 Megabytes
-            if foto.size > max_size:
-                raise forms.ValidationError("Ukuran berkas foto tidak boleh melebihi 5 MB.")
+        # Validasi batas ukuran file (Maksimum 5 MB)
+        max_size = 5 * 1024 * 1024  # 5 Megabytes
+        if foto.size > max_size:
+            raise forms.ValidationError("Ukuran berkas foto tidak boleh melebihi 5 MB.")
+
+        try:
+            img = Image.open(foto)
+            img.verify()
+        except Exception:
+            raise forms.ValidationError("Berkas yang diunggah bukan gambar yang valid.")
+        finally:
+            if hasattr(foto, 'seek'):
+                foto.seek(0)
 
         return foto

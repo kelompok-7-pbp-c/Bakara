@@ -21,8 +21,8 @@ class BarangQuerySet(models.QuerySet):
         sort_map = {
             '-dibuat_pada': '-dibuat_pada',
             'dibuat_pada': 'dibuat_pada',
-            'harga': F('harga').asc(nulls_first=True), #Harga termurah: gratis/donasi (NULL) di awal
-            '-harga': F('harga').desc(nulls_last=True), #Harga termahal: gratis/donasi (NULL) di akhir
+            'harga': F('harga').asc(nulls_first=True),
+            '-harga': F('harga').desc(nulls_last=True),
             'nama': 'nama',
         }
         return qs.order_by(sort_map.get(sort, '-dibuat_pada'))
@@ -159,11 +159,11 @@ class Barang(models.Model):
         }.get(self.status, '')
 
     def bisa_diedit_oleh(self, user):
-        if not user.is_authenticated:
+        if not user or not user.is_authenticated:
             return False
-        return self.penjual == user or user.is_staff
+        return self.penjual == user or user.is_staff or user.is_superuser
 
     def bisa_dihapus_oleh(self, user):
-        if not user.is_authenticated:
+        if not user or not user.is_authenticated:
             return False
-        return self.penjual == user or user.is_staff
+        return self.penjual == user or user.is_staff or user.is_superuser
