@@ -3,7 +3,8 @@
 {% block title %}Minat & Kontak — Bakara{% endblock %}
 
 {% block content %}
-<main class="container interest-page">
+<main class="transaksi-section">
+  <div class="container">
     <header class="transaksi-header interest-heading">
         <p class="transaksi-eyebrow">Koneksi komunitas</p>
         <h1 class="transaksi-title">Minat &amp; Kontak</h1>
@@ -72,7 +73,7 @@
             </article>
             {% endwith %}
             {% empty %}
-            <div class="interest-empty"><h3>Belum ada barang yang diminati</h3><p>Barang yang kamu tandai tertarik akan muncul di sini beserta kontak pemiliknya.</p></div>
+            <div class="interest-empty state-box"><h3>Belum ada barang yang diminati</h3><p>Barang yang kamu tandai tertarik akan muncul di sini beserta kontak pemiliknya.</p></div>
             {% endfor %}
         </div>
     </section>
@@ -151,9 +152,10 @@
             </article>
             {% endwith %}
             {% empty %}
-            <div class="interest-empty"><h3>Belum ada peminat</h3><p>Mahasiswa yang tertarik pada barangmu akan muncul di sini bersama informasi kontaknya.</p></div>
+            <div class="interest-empty state-box"><h3>Belum ada peminat</h3><p>Mahasiswa yang tertarik pada barangmu akan muncul di sini bersama informasi kontaknya.</p></div>
             {% endfor %}
         </div>
     </section>
+  </div>
 </main>
 {% endblock %}
