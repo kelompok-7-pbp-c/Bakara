@@ -149,7 +149,16 @@
 
     function updateCounts() {
         Object.keys(reviewData).forEach(tab => {
-            document.getElementById(`count-${tab}`).textContent = reviewData[tab].length;
+            const count = reviewData[tab].length;
+            document.getElementById(`count-${tab}`).textContent = count;
+            
+            // Sembunyikan tombol tab jika jumlahnya 0 (khusus tab diberikan & menunggu)
+            if (tab === 'diberikan' || tab === 'menunggu') {
+                const tabBtn = document.querySelector(`.filter-btn[data-tab="${tab}"]`);
+                if (tabBtn) {
+                    tabBtn.style.display = count === 0 ? 'none' : 'inline-block';
+                }
+            }
         });
     }
 

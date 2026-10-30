@@ -51,7 +51,11 @@ def create_review(request, transaksi_id):
     )
     penjual = transaksi.barang.penjual
 
-    if request.user.id not in (transaksi.pembeli_id, penjual.id):
+    if request.user.id == penjual.id:
+        messages.error(request, 'Penjual tidak dapat memberikan ulasan untuk transaksi ini.')
+        return redirect('review:show_review')
+    
+    if request.user.id != transaksi.pembeli_id:
         raise PermissionDenied
 
     if not transaksi.is_selesai:
@@ -118,13 +122,19 @@ def get_review_json(request):
         reviewer=request.user
     ).select_related('reviewee__profile', 'transaksi__barang')
 
-    # Transaksi selesai milik user yang belum ia ulas
-    menunggu = Transaksi.objects.filter(
-        Q(pembeli=request.user) | Q(barang__penjual=request.user),
-        status=Transaksi.SELESAI,
-    ).exclude(
-        review__reviewer=request.user
-    ).select_related('barang', 'pembeli__profile', 'barang__penjual__profile')
+    # Transaksi selesai yang menunggu ulasan:
+    # HANYA untuk Pembeli (jika user adalah penjual, query menunggu dikosongkan/di-exclude)
+    if Transaksi.objects.filter(barang__penjual=request.user).exists() and not Transaksi.objects.filter(pembeli=request.user).exists():
+        # Jika user murni penjual pada transaksi tersebut, tidak ada daftar "menunggu" ulasan dari dia
+        menunggu = Transaksi.objects.none()
+    else:
+        # Jika sebagai pembeli, tampilkan transaksi selesai miliknya yang belum diulas
+        menunggu = Transaksi.objects.filter(
+            pembeli=request.user,
+            status=Transaksi.SELESAI,
+        ).exclude(
+            review__reviewer=request.user
+        ).select_related('barang', 'pembeli__profile', 'barang__penjual__profile')
 
     ringkasan = diterima.aggregate(rata_rata=Avg('rating'), total=Count('id'))
     jumlah_per_rating = {
