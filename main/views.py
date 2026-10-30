@@ -33,3 +33,9 @@ def show_profil(request):
 
 def show_tentang(request):
     return render(request, 'tentang.html')
+
+def show_kebijakan_privasi(request):
+    context = {
+        'brand_name': 'Bakara',
+    }
+    return render(request, 'kebijakan_privasi.html', context)
