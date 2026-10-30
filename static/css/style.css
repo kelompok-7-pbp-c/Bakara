@@ -1199,8 +1199,8 @@ ol {
 
 /* Peminat and transaction pages */
 .interest-page { padding-top: var(--spacing-xl); padding-bottom: var(--spacing-2xl); }
-.interest-heading { margin-bottom: var(--spacing-xl); }
-.interest-heading h1 { font-size: 34px; margin: 4px 0 8px; }
+.interest-heading { margin-bottom: var(--spacing-lg); }
+.interest-heading h1 { font-size: 28px; margin: 0 0 var(--spacing-xs); }
 .interest-heading > p:last-child { color: var(--color-secondary); }
 .interest-eyebrow { color: var(--color-secondary); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .interest-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr)); gap: var(--spacing-md); }
@@ -1229,17 +1229,17 @@ ol {
 .interest-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--color-border); color: var(--color-secondary); font-size: 12px; }
 .interest-status { font-weight: 700; }
 .interest-transaction-link { color: var(--color-primary); font-weight: 700; white-space: nowrap; }
-.interest-empty { grid-column: 1 / -1; text-align: center; padding: var(--spacing-2xl) var(--spacing-md); background: white; border: 1px dashed var(--color-border); border-radius: var(--radius-lg); }
+.interest-empty { grid-column: 1 / -1; text-align: center; }
 .interest-empty > span { display: block; font-size: 42px; margin-bottom: 8px; }
 .interest-empty h2 { margin-bottom: 6px; }
-.interest-empty p { color: var(--color-secondary); margin-bottom: var(--spacing-md); }
+.interest-empty h3 { color: var(--color-primary); font-size: 18px; margin: 0 0 4px; }
+.interest-empty p { color: var(--color-secondary); margin: 0; }
 .interest-section { margin-top: var(--spacing-xl); }
 .interest-section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--spacing-md); margin-bottom: var(--spacing-md); }
 .interest-section-heading h2 { display: flex; align-items: center; gap: 9px; color: var(--color-primary); font-family: var(--font-heading); font-size: 20px; margin-top: 3px; }
 .interest-section-heading h2::before { content: ''; width: 5px; height: 22px; flex: 0 0 5px; border-radius: var(--radius-pill); background: var(--color-accent-gold); }
 .interest-section-heading .transaksi-eyebrow { margin-bottom: 2px; }
 .interest-section-count { flex: 0 0 auto; padding: 6px 12px; border-radius: var(--radius-pill); background: var(--color-accent-light); border: 1px solid rgba(255, 196, 69, .55); color: var(--color-primary); font-size: 12px; font-weight: 700; }
-.interest-heading .transaksi-eyebrow { display: inline-flex; padding: 5px 10px; border-left: 3px solid var(--color-accent-gold); border-radius: var(--radius-sm); background: var(--color-accent-light); }
 .interest-card { display: flex; flex-direction: column; gap: var(--spacing-md); border-top: 3px solid var(--color-accent-gold); transition: box-shadow var(--transition-base), transform var(--transition-base), border-color var(--transition-base); }
 .interest-card:hover { border-top-color: #e6b03e; box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .interest-item { display: flex; align-items: center; gap: 12px; min-width: 0; padding-bottom: 12px; border-bottom: 1px solid var(--color-border); }
