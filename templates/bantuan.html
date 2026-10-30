@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+{% block title %}Bantuan — Bakara{% endblock title %}
+{% block meta_description %}Temukan panduan menggunakan akun, katalog, Minat &amp; Kontak, transaksi, dan ulasan di Bakara.{% endblock meta_description %}
+
+{% block content %}
+<main class="info-page help-page">
+    <div class="container">
+        <header class="info-header help-header">
+            <p class="info-eyebrow">Pusat Bantuan Bakara</p>
+            <h1>Bantuan</h1>
+            <p>
+                Temukan panduan singkat untuk menggunakan Bakara, mulai dari
+                mencari barang sampai menyelesaikan transaksi.
+            </p>
+            <a href="{% url 'katalog:show_katalog' %}" class="btn btn-primary">
+                Jelajahi Katalog <span aria-hidden="true">→</span>
+            </a>
+        </header>
+
+        <div class="info-layout help-layout">
+            <nav class="info-toc" aria-label="Topik bantuan">
+                <h2>Topik Bantuan</h2>
+                <ol>
+                    <li><a href="#akun-profil">Akun &amp; profil</a></li>
+                    <li><a href="#katalog">Katalog &amp; barang</a></li>
+                    <li><a href="#minat-kontak">Minat &amp; Kontak</a></li>
+                    <li><a href="#transaksi">Transaksi</a></li>
+                    <li><a href="#ulasan">Rating &amp; ulasan</a></li>
+                    <li><a href="#hubungi-kami">Hubungi kami</a></li>
+                </ol>
+            </nav>
+
+            <article class="info-content help-content">
+                <section id="akun-profil" aria-labelledby="akun-profil-heading">
+                    <h2 id="akun-profil-heading">1. Akun &amp; profil</h2>
+
+                    <details class="help-faq-item">
+                        <summary>Siapa yang dapat membuat akun Bakara?</summary>
+                        <div class="help-answer">
+                            <p>
+                                Pendaftaran Bakara menggunakan email dengan domain
+                                <strong>@ui.ac.id</strong>. Setelah terdaftar,
+                                kamu dapat masuk menggunakan username atau email
+                                dan kata sandi, atau menggunakan SSO UI.
+                            </p>
+                            <p>
+                                <a href="{% url 'authentication:register' %}">Buat akun</a>
+                                atau <a href="{% url 'authentication:login' %}">masuk ke Bakara</a>.
+                            </p>
+                        </div>
+                    </details>
+
+                    <details class="help-faq-item">
+                        <summary>Bagaimana cara melengkapi kontak saya?</summary>
+                        <div class="help-answer">
+                            <p>
+                                Buka menu Profil dan lengkapi nama, fakultas,
+                                angkatan, serta nomor WhatsApp. Informasi ini
+                                membantu pengguna lain menghubungimu. ID LINE
+                                dapat ditambahkan sebagai kontak opsional.
+                            </p>
+                            <p>
+                                <a href="{% url 'main:show_profil' %}">Buka Profil</a>
+                                untuk melihat atau memperbarui informasimu.
+                            </p>
+                        </div>
+                    </details>
+                </section>
+
+                <section id="katalog" aria-labelledby="katalog-heading">
+                    <h2 id="katalog-heading">2. Katalog &amp; barang</h2>
+
+                    <details class="help-faq-item">
+                        <summary>Bagaimana cara mencari barang?</summary>
+                        <div class="help-answer">
+                            <p>
+                                Buka Katalog untuk melihat barang yang tersedia.
+                                Gunakan kolom pencarian, kategori, jenis barang,
+                                dan pengurutan untuk menemukan barang yang kamu cari.
+                            </p>
+                            <p><a href="{% url 'katalog:show_katalog' %}">Buka Katalog</a></p>
+                        </div>
+                    </details>
+
+                    <details class="help-faq-item">
+                        <summary>Bagaimana cara menawarkan barang?</summary>
+                        <div class="help-answer">
+                            <p>
+                                Masuk ke akunmu lalu pilih Upload Barang. Isi
+                                informasi barang, pilih apakah barang dijual,
+                                dipinjamkan, atau didonasikan, lalu unggah foto.
+                                Foto wajib disertakan dan ukuran berkas maksimal
+                                5 MB. Untuk barang yang dijual, harga lebih dari
+                                Rp 0 juga wajib dicantumkan; barang donasi dan
+                                pinjam tidak memerlukan harga.
+                            </p>
+                            <p>
+                                <a href="{% url 'katalog:tambah_barang' %}">Upload Barang</a>
+                            </p>
+                        </div>
+                    </details>
+                </section>
+
+                <section id="minat-kontak" aria-labelledby="minat-kontak-heading">
+                    <h2 id="minat-kontak-heading">3. Minat &amp; Kontak</h2>
+
+                    <details class="help-faq-item">
+                        <summary>Apa yang terjadi saat saya menekan “Saya Tertarik”?</summary>
+                        <div class="help-answer">
+                            <p>
+                                Minatmu akan dicatat dan barang tersebut muncul
+                                di halaman Minat &amp; Kontak. Menandai minat
+                                belum membuat transaksi resmi.
+                            </p>
+                            <p>
+                                Di halaman itu kamu dapat melihat kontak yang
+                                dicantumkan pemilik barang. Jika kontak belum
+                                tersedia, pemilik belum menambahkannya ke profil.
+                            </p>
+                        </div>
+                    </details>
+
+                    <details class="help-faq-item">
+                        <summary>Bagaimana pemilik barang memilih peminat?</summary>
+                        <div class="help-answer">
+                            <p>
+                                Peminat barangmu terlihat di bagian Peminat Barang
+                                Saya pada halaman Minat &amp; Kontak. Pilih satu
+                                peminat dengan tombol <strong>Pilih &amp; Proses</strong>
+                                untuk membuat transaksi resmi. Barang lalu masuk
+                                ke status dalam proses.
+                            </p>
+                            <p>
+                                <a href="{% url 'minat:daftar_peminat' %}">Buka Minat &amp; Kontak</a>
+                            </p>
+                        </div>
+                    </details>
+
+                    <details class="help-faq-item">
+                        <summary>Bisakah saya membatalkan minat?</summary>
+                        <div class="help-answer">
+                            <p>
+                                Bisa. Batalkan minat melalui halaman Minat &amp;
+                                Kontak atau halaman detail barang selama minat
+                                tersebut masih tercatat.
+                            </p>
+                        </div>
+                    </details>
+                </section>
+
+                <section id="transaksi" aria-labelledby="transaksi-heading">
+                    <h2 id="transaksi-heading">4. Transaksi</h2>
+
+                    <details class="help-faq-item">
+                        <summary>Apa arti status transaksi?</summary>
+                        <div class="help-answer">
+                            <p>
+                                <strong>Menunggu</strong> berarti transaksi
+                                menunggu keputusan penjual. <strong>Disetujui</strong>
+                                berarti transaksi sedang dalam proses serah terima.
+                                <strong>Ditolak</strong>, <strong>Selesai</strong>,
+                                dan <strong>Dibatalkan</strong> menandakan hasil
+                                akhir atau pembatalan transaksi.
+                            </p>
+                            <p>
+                                Pada alur pemilihan peminat melalui Minat &amp;
+                                Kontak, transaksi resmi dibuat dengan status
+                                disetujui dan barang masuk ke dalam proses.
+                            </p>
+                        </div>
+                    </details>
+
+                    <details class="help-faq-item">
+                        <summary>Bagaimana cara menyelesaikan atau membatalkan transaksi?</summary>
+                        <div class="help-answer">
+                            <p>
+                                Penjual dapat menandai transaksi yang sedang
+                                diproses sebagai selesai dari halaman Transaksi.
+                                Pembeli atau penjual dapat membatalkan transaksi
+                                yang masih aktif. Jika transaksi dalam proses
+                                dibatalkan, barang akan kembali tersedia.
+                            </p>
+                            <p>
+                                <a href="{% url 'transaksi:show_transaction' %}">Buka Transaksi</a>
+                            </p>
+                        </div>
+                    </details>
+                </section>
+
+                <section id="ulasan" aria-labelledby="ulasan-heading">
+                    <h2 id="ulasan-heading">5. Rating &amp; ulasan</h2>
+
+                    <details class="help-faq-item">
+                        <summary>Kapan saya bisa memberikan ulasan?</summary>
+                        <div class="help-answer">
+                            <p>
+                                Pembeli dapat memberikan ulasan setelah transaksi
+                                selesai. Ulasan dapat dilihat dan dikelola melalui
+                                halaman Rating &amp; Ulasan.
+                            </p>
+                            <p>
+                                <a href="{% url 'review:show_review' %}">Buka Rating &amp; Ulasan</a>
+                            </p>
+                        </div>
+                    </details>
+                </section>
+
+                <section id="hubungi-kami" aria-labelledby="hubungi-kami-heading" class="help-contact">
+                    <h2 id="hubungi-kami-heading">6. Masih butuh bantuan?</h2>
+                    <p>
+                        Jika pertanyaanmu belum terjawab, hubungi tim Bakara
+                        melalui email.
+                    </p>
+                    <a class="help-contact-link" href="mailto:james.adi@ui.ac.id">
+                        james.adi@ui.ac.id
+                    </a>
+                </section>
+            </article>
+        </div>
+    </div>
+</main>
+{% endblock content %}
