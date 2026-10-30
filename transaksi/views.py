@@ -163,9 +163,9 @@ def get_transaction_json(request):
     ).order_by('-dibuat_pada')
 
     sudah_diulas_ids = set(
-        Review.objects.filter(reviewer=request.user).values_list('transaksi_id', flat=True)
+        Review.objects.values_list('transaksi_id', flat=True)
     )
-
+    
     data = []
     for t in transaksi_list:
         is_penjual = (t.barang.penjual_id == request.user.id)
