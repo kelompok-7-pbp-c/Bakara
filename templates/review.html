@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+
+{% block title %}Rating &amp; Ulasan - Bakara{% endblock title %}
+{% block meta_description %}Lihat dan kelola rating dan ulasan transaksimu di Bakara.{% endblock meta_description %}
+
+{% block content %}
+<main class="review-section">
+    <div class="container">
+        <header class="transaksi-header">
+            <h1 class="transaksi-title">Rating &amp; Ulasan</h1>
+            <p class="transaksi-subtitle">Lihat ulasan yang kamu terima, kelola ulasan yang kamu berikan, dan tulis ulasan untuk transaksi yang sudah selesai.</p>
+        </header>
+
+        <div class="review-layout">
+            <div class="review-main">
+                <div class="transaksi-filter-bar">
+                    <div class="filter-group">
+                        <button type="button" class="filter-btn active" data-tab="diterima">Diterima (<span id="count-diterima">0</span>)</button>
+                        <button type="button" class="filter-btn" data-tab="diberikan">Diberikan (<span id="count-diberikan">0</span>)</button>
+                        <button type="button" class="filter-btn" data-tab="menunggu">Menunggu (<span id="count-menunggu">0</span>)</button>
+                    </div>
+                </div>
+
+                <div id="review-loading" class="state-box">
+                    <p>Memuat ulasan...</p>
+                </div>
+
+                <div id="review-error" class="state-box hide">
+                    <p>Gagal memuat ulasan. Silakan refresh halaman.</p>
+                </div>
+
+                <div id="review-list" class="review-list hide"></div>
+            </div>
+
+            <aside class="review-sidebar">
+                <section class="review-panel">
+                    <h2 class="review-panel-title">Ringkasan Rating</h2>
+                    <div class="review-score">
+                        <span id="review-avg" class="review-score-num">0.0</span>
+                        <div>
+                            <div id="review-avg-stars" class="review-stars"></div>
+                            <p id="review-total" class="review-score-total">0 ulasan</p>
+                        </div>
+                    </div>
+                    <div id="review-bars" class="review-bars"></div>
+                </section>
+
+                <section class="review-panel">
+                    <h2 id="review-form-title" class="review-panel-title">Tulis Ulasan</h2>
+                    <p id="review-form-hint" class="review-form-hint">Pilih transaksi di tab Menunggu untuk menulis ulasan, atau tekan Edit pada ulasan yang sudah kamu berikan.</p>
+
+                    <form id="review-form" method="post" action="" class="hide">
+                        {% csrf_token %}
+                        <p id="review-form-target" class="review-form-target"></p>
+
+                        <div class="form-group">
+                            <p class="review-field-label">Rating</p>
+                            <div class="star-input">
+                                {% for n in "54321" %}
+                                <input type="radio" name="rating" id="star-{{ n }}" value="{{ n }}" required>
+                                <label for="star-{{ n }}" title="{{ n }} bintang">★</label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_komentar">Ulasan</label>
+                            <textarea name="komentar" id="id_komentar" rows="4" maxlength="500" class="form-input" placeholder="Ceritakan pengalamanmu bertransaksi..."></textarea>
+                            <div class="form-help">Opsional, maksimal 500 karakter.</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Kirim Ulasan</button>
+                        <button type="button" id="review-form-cancel" class="btn btn-ghost btn-block">Batal</button>
+                    </form>
+                </section>
+            </aside>
+        </div>
+    </div>
+</main>
+
+<script>
+    const REVIEW_API_ENDPOINT = "{% url 'review:get_review_json' %}";
+    const CSRF_TOKEN = "{{ csrf_token }}";
+    const NIL_UUID = '00000000-0000-0000-0000-000000000000';
+    const CREATE_URL_BASE = "{% url 'review:create_review' '00000000-0000-0000-0000-000000000000' %}";
+    const EDIT_URL_BASE = "{% url 'review:edit_review' '00000000-0000-0000-0000-000000000000' %}";
+    const DELETE_URL_BASE = "{% url 'review:delete_review' '00000000-0000-0000-0000-000000000000' %}";
+
+    const EMPTY_MESSAGES = {
+        diterima: 'Belum ada ulasan yang kamu terima.',
+        diberikan: 'Kamu belum memberi ulasan.',
+        menunggu: 'Tidak ada transaksi selesai yang menunggu ulasanmu.',
+    };
+
+    let reviewData = { diterima: [], diberikan: [], menunggu: [] };
+    let currentTab = 'diterima';
+
+    const reviewLoading = document.getElementById('review-loading');
+    const reviewError = document.getElementById('review-error');
+    const reviewList = document.getElementById('review-list');
+    const tabButtons = document.querySelectorAll('.filter-btn');
+
+    const reviewForm = document.getElementById('review-form');
+    const formTitle = document.getElementById('review-form-title');
+    const formHint = document.getElementById('review-form-hint');
+    const formTarget = document.getElementById('review-form-target');
+    const formCancel = document.getElementById('review-form-cancel');
+
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+
+    function setViewState({ showLoading = false, showError = false, showList = false }) {
+        reviewLoading.classList.toggle('hide', !showLoading);
+        reviewError.classList.toggle('hide', !showError);
+        reviewList.classList.toggle('hide', !showList);
+    }
+
+    function renderStars(rating) {
+        const total = Math.max(0, Math.min(5, Number(rating) || 0));
+        return '<span class="star-on">★</span>'.repeat(total) +
+               '<span class="star-off">★</span>'.repeat(5 - total);
+    }
+
+    function renderSummary(ringkasan) {
+        document.getElementById('review-avg').textContent = Number(ringkasan.rata_rata).toFixed(1);
+        document.getElementById('review-avg-stars').innerHTML = renderStars(Math.round(ringkasan.rata_rata));
+        document.getElementById('review-total').textContent = `${ringkasan.total} ulasan`;
+
+        let barsHtml = '';
+        for (let n = 5; n >= 1; n--) {
+            const count = ringkasan.sebaran[String(n)] || 0;
+            const percent = ringkasan.total ? Math.round((count / ringkasan.total) * 100) : 0;
+            barsHtml += `
+                <div class="review-bar-row">
+                    <span>${n} ★</span>
+                    <div class="review-bar-track"><div class="review-bar-fill" style="width:${percent}%"></div></div>
+                    <span class="review-bar-count">${count}</span>
+                </div>
+            `;
+        }
+        document.getElementById('review-bars').innerHTML = barsHtml;
+    }
+
+    function updateCounts() {
+        Object.keys(reviewData).forEach(tab => {
+            const count = reviewData[tab].length;
+            document.getElementById(`count-${tab}`).textContent = count;
+            
+            // Sembunyikan tombol tab jika jumlahnya 0 (khusus tab diberikan & menunggu)
+            if (tab === 'diberikan' || tab === 'menunggu') {
+                const tabBtn = document.querySelector(`.filter-btn[data-tab="${tab}"]`);
+                if (tabBtn) {
+                    tabBtn.style.display = count === 0 ? 'none' : 'inline-block';
+                }
+            }
+        });
+    }
+
+    function komentarHtml(komentar) {
+        return komentar
+            ? `<p class="review-komentar">${escapeHtml(komentar)}</p>`
+            : `<p class="review-komentar review-komentar-empty">Tidak ada komentar.</p>`;
+    }
+
+    function createReviewCard(item, index) {
+        const card = document.createElement('article');
+        card.className = 'transaksi-card';
+
+        if (currentTab === 'menunggu') {
+            const thumbHtml = item.barang_foto
+                ? `<img src="${escapeHtml(item.barang_foto)}" alt="" class="transaksi-thumb">`
+                : `<div class="transaksi-thumb">No Image</div>`;
+
+            card.innerHTML = `
+                <div class="transaksi-card-header">
+                    ${thumbHtml}
+                    <div class="transaksi-meta-item">
+                        <h2 class="transaksi-item-title">${escapeHtml(item.barang_nama)}</h2>
+                        <p class="transaksi-item-price">Transaksi dengan ${escapeHtml(item.pihak_nama)}</p>
+                    </div>
+                    <span class="badge-status status-selesai">Selesai</span>
+                </div>
+                <div class="transaksi-actions">
+                    <button type="button" class="btn-action btn-complete" data-action="tulis" data-index="${index}">Tulis Ulasan</button>
+                </div>
+            `;
+            return card;
+        }
+
+        const isDiterima = currentTab === 'diterima';
+        let actionsHtml = '';
+
+        if (!isDiterima) {
+            const deleteUrl = DELETE_URL_BASE.replace(NIL_UUID, item.id);
+            actionsHtml = `
+                <div class="transaksi-actions">
+                    <button type="button" class="btn-action btn-approve" data-action="edit" data-index="${index}">Edit</button>
+                    <form method="post" action="${deleteUrl}" onsubmit="return confirm('Hapus ulasan ini?');">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
+                        <button type="submit" class="btn-action btn-reject">Hapus</button>
+                    </form>
+                </div>
+            `;
+        }
+
+        card.innerHTML = `
+            <div class="review-card-top">
+                <h2 class="transaksi-item-title">${escapeHtml(item.barang_nama)}</h2>
+                <div class="review-stars" aria-label="Rating ${item.rating} dari 5">${renderStars(item.rating)}</div>
+            </div>
+            <div class="transaksi-party">
+                <span class="party-label">${isDiterima ? 'Dari' : 'Untuk'}</span>
+                <span class="party-val">${escapeHtml(item.pihak_nama)}</span>
+            </div>
+            ${komentarHtml(item.komentar)}
+            ${actionsHtml}
+            <div class="transaksi-date">Ditulis pada ${escapeHtml(item.dibuat_pada)} WIB</div>
+        `;
+        return card;
+    }
+
+    function renderList() {
+        const items = reviewData[currentTab];
+        reviewList.innerHTML = '';
+
+        if (items.length === 0) {
+            reviewList.innerHTML = `<div class="state-box"><p>${EMPTY_MESSAGES[currentTab]}</p></div>`;
+        } else {
+            items.forEach((item, index) => {
+                reviewList.appendChild(createReviewCard(item, index));
+            });
+        }
+        setViewState({ showList: true });
+    }
+
+    function showForm() {
+        formHint.classList.add('hide');
+        reviewForm.classList.remove('hide');
+        reviewForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function closeForm() {
+        reviewForm.reset();
+        reviewForm.classList.add('hide');
+        formHint.classList.remove('hide');
+        formTitle.textContent = 'Tulis Ulasan';
+    }
+
+    function openCreateForm(item) {
+        reviewForm.reset();
+        reviewForm.action = CREATE_URL_BASE.replace(NIL_UUID, item.transaksi_id);
+        formTitle.textContent = 'Tulis Ulasan';
+        formTarget.textContent = `${item.barang_nama} · transaksi dengan ${item.pihak_nama}`;
+        showForm();
+    }
+
+    function openEditForm(item) {
+        reviewForm.reset();
+        reviewForm.action = EDIT_URL_BASE.replace(NIL_UUID, item.id);
+        formTitle.textContent = 'Edit Ulasan';
+        formTarget.textContent = `${item.barang_nama} · untuk ${item.pihak_nama}`;
+        document.getElementById(`star-${item.rating}`).checked = true;
+        document.getElementById('id_komentar').value = item.komentar || '';
+        showForm();
+    }
+
+    async function loadReviews() {
+        setViewState({ showLoading: true });
+        try {
+            const response = await fetch(REVIEW_API_ENDPOINT, {
+                headers: { 'Accept': 'application/json' }
+            });
+            if (!response.ok) throw new Error('Gagal memuat API');
+            const result = await response.json();
+
+            reviewData = {
+                diterima: result.diterima || [],
+                diberikan: result.diberikan || [],
+                menunggu: result.menunggu || [],
+            };
+            renderSummary(result.ringkasan);
+            updateCounts();
+            renderList();
+
+            // Cek parameter 'view_transaksi' untuk melihat ulasan yang sudah dibuat
+            const viewTargetId = new URLSearchParams(window.location.search).get('view_transaksi');
+            if (viewTargetId) {
+                const index = reviewData.diberikan.findIndex(item => item.transaksi_id === viewTargetId);
+                if (index !== -1) {
+                    currentTab = 'diberikan';
+                    tabButtons.forEach(b => b.classList.toggle('active', b.dataset.tab === 'diberikan'));
+                    renderList();
+                    const card = reviewList.querySelectorAll('.transaksi-card')[index];
+                    if (card) {
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        card.style.border = '2px solid #4f46e5'; // Biar keliatan disorot
+                    }
+                }
+            }
+            
+        } catch (error) {
+            console.error(error);
+            setViewState({ showError: true });
+        }
+    }
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentTab = btn.dataset.tab;
+            renderList();
+        });
+    });
+
+    reviewList.addEventListener('click', event => {
+        const btn = event.target.closest('[data-action]');
+        if (!btn) return;
+        const index = Number(btn.dataset.index);
+
+        if (btn.dataset.action === 'tulis') openCreateForm(reviewData.menunggu[index]);
+        if (btn.dataset.action === 'edit') openEditForm(reviewData.diberikan[index]);
+    });
+
+    formCancel.addEventListener('click', closeForm);
+
+    loadReviews();
+</script>
+{% endblock content %}

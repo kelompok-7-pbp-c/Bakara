@@ -1,0 +1,224 @@
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.db import models, transaction
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.views.decorators.http import require_POST
+
+from katalog.models import Barang
+from .models import Transaksi
+from review.models import Review
+
+@login_required(login_url='/auth/login/')
+def show_transaction(request):
+    transaksi_beli = Transaksi.objects.filter(
+        pembeli=request.user
+    ).select_related('barang', 'barang__penjual__profile')
+
+    transaksi_jual = Transaksi.objects.filter(
+        barang__penjual=request.user
+    ).select_related('barang', 'pembeli__profile')
+
+    transaksi_list = (transaksi_beli | transaksi_jual).order_by('-dibuat_pada')
+
+    context = {
+        'brand_name': 'Bakara',
+        'transaksi_list': transaksi_list,
+        'transaksi_beli': transaksi_beli,
+        'transaksi_jual': transaksi_jual,
+    }
+    return render(request, 'transaksi.html', context)
+
+
+@login_required(login_url='/auth/login/')
+@require_POST
+def create_transaction(request, barang_id):
+    barang = get_object_or_404(Barang, pk=barang_id)
+
+    if barang.penjual == request.user:
+        messages.error(request, 'Kamu tidak bisa mengajukan transaksi untuk barang milikmu sendiri.')
+        return redirect('katalog:detail_barang', pk=barang.pk)
+
+    if barang.status != Barang.TERSEDIA:
+        messages.error(request, 'Barang ini sudah tidak tersedia.')
+        return redirect('katalog:detail_barang', pk=barang.pk)
+
+    sudah_ada = Transaksi.objects.filter(
+        barang=barang,
+        pembeli=request.user,
+        status__in=[Transaksi.MENUNGGU, Transaksi.DISETUJUI],
+    ).exists()
+
+    if sudah_ada:
+        messages.info(request, 'Kamu sudah memiliki transaksi aktif untuk barang ini.')
+        return redirect('transaksi:show_transaction')
+
+    Transaksi.objects.create(
+        barang=barang,
+        pembeli=request.user,
+        catatan_pembeli=request.POST.get('catatan_pembeli', '').strip(),
+    )
+
+    messages.success(request, f'Pengajuan transaksi untuk "{barang.nama}" berhasil diajukan!')
+    return redirect('transaksi:show_transaction')
+
+
+@login_required(login_url='/auth/login/')
+@require_POST
+def update_transaction_status(request, transaksi_id):
+    transaksi = get_object_or_404(
+        Transaksi.objects.select_related('barang'),
+        pk=transaksi_id,
+    )
+
+    if transaksi.barang.penjual != request.user:
+        raise PermissionDenied
+
+    aksi = request.POST.get('aksi')
+
+    with transaction.atomic():
+        if aksi == 'setujui' and transaksi.bisa_disetujui_oleh(request.user):
+            # jangan izinkan menyetujui jika barang sudah disetujui untuk pembeli lain
+            sudah_ada_disetujui = Transaksi.objects.filter(
+                barang=transaksi.barang,
+                status=Transaksi.DISETUJUI,
+            ).exclude(pk=transaksi.pk).exists()
+
+            if sudah_ada_disetujui or transaksi.barang.status != Barang.TERSEDIA:
+                messages.error(request, 'Barang ini sudah dalam proses serah terima dengan orang lain.')
+                return redirect('transaksi:show_transaction')
+
+            transaksi.status = Transaksi.DISETUJUI
+            transaksi.barang.status = Barang.DALAM_PROSES
+            transaksi.save(update_fields=['status', 'diperbarui_pada'])
+            transaksi.barang.save(update_fields=['status', 'diperbarui_pada'])
+            messages.success(request, 'Transaksi disetujui. Silakan atur serah terima barang.')
+
+        elif aksi == 'selesai' and transaksi.bisa_diselesaikan_oleh(request.user):
+            transaksi.status = Transaksi.SELESAI
+            transaksi.barang.status = Barang.SELESAI
+            transaksi.save(update_fields=['status', 'diperbarui_pada'])
+            transaksi.barang.save(update_fields=['status', 'diperbarui_pada'])
+            messages.success(request, 'Transaksi selesai! Terima kasih sudah berbagi.')
+
+        elif aksi == 'tolak' and transaksi.bisa_ditolak_oleh(request.user):
+            transaksi.status = Transaksi.DITOLAK
+            transaksi.save(update_fields=['status', 'diperbarui_pada'])
+
+            # Hanya ubah status barang ke TERSEDIA jika TIDAK ADA transaksi lain yang sedang disetujui
+            ada_transaksi_disetujui = Transaksi.objects.filter(
+                barang=transaksi.barang,
+                status=Transaksi.DISETUJUI,
+            ).exclude(pk=transaksi.pk).exists()
+
+            if not ada_transaksi_disetujui and transaksi.barang.status != Barang.SELESAI:
+                transaksi.barang.status = Barang.TERSEDIA
+                transaksi.barang.save(update_fields=['status', 'diperbarui_pada'])
+
+            messages.info(request, 'Transaksi telah ditolak.')
+
+        else:
+            messages.error(request, 'Aksi tidak valid atau status transaksi tidak memungkinkan.')
+
+    return redirect('transaksi:show_transaction')
+
+
+@login_required(login_url='/auth/login/')
+@require_POST
+def cancel_transaction(request, transaksi_id):
+    transaksi = get_object_or_404(
+        Transaksi.objects.select_related('barang'),
+        pk=transaksi_id,
+    )
+
+    if not transaksi.bisa_dibatalkan_oleh(request.user):
+        raise PermissionDenied
+
+    with transaction.atomic():
+        status_awal = transaksi.status
+        transaksi.status = Transaksi.DIBATALKAN
+        transaksi.save(update_fields=['status', 'diperbarui_pada'])
+
+        # Kembalikan status barang ke TERSEDIA hanya jika transaksi yang dibatalkan ini memang yang sebelumnya berstatus DISETUJUI (sedang diproses)
+        if status_awal == Transaksi.DISETUJUI and transaksi.barang.status != Barang.SELESAI:
+            transaksi.barang.status = Barang.TERSEDIA
+            transaksi.barang.save(update_fields=['status', 'diperbarui_pada'])
+
+    messages.success(request, 'Transaksi berhasil dibatalkan dan barang kembali tersedia.')
+    return redirect('transaksi:show_transaction')
+
+
+@login_required(login_url='/auth/login/')
+def get_transaction_json(request):
+    transaksi_list = Transaksi.objects.filter(
+        models.Q(pembeli=request.user) | models.Q(barang__penjual=request.user)
+    ).select_related(
+        'barang',
+        'pembeli',
+        'pembeli__profile',
+        'barang__penjual',
+        'barang__penjual__profile'
+    ).order_by('-dibuat_pada')
+
+    sudah_diulas_ids = set(
+        Review.objects.values_list('transaksi_id', flat=True)
+    )
+    
+    data = []
+    for t in transaksi_list:
+        is_penjual = (t.barang.penjual_id == request.user.id)
+        partner = t.pembeli if is_penjual else t.barang.penjual
+        partner_profile = getattr(partner, 'profile', None)
+
+        partner_name = partner.username
+        partner_wa = ''
+        partner_line = ''
+        if partner_profile:
+            partner_name = partner_profile.full_name or partner.username
+            partner_wa = partner_profile.whatsapp_link if partner_profile.whatsapp else ''
+            partner_line = partner_profile.line_id or ''
+
+        if t.barang.jenis == 'donasi':
+            partner_role = 'Penerima Donasi' if is_penjual else 'Donatur'
+            jenis_label = 'Donasi'
+            harga_display = 'Gratis'
+        elif t.barang.jenis == 'pinjam':
+            partner_role = 'Peminjam' if is_penjual else 'Pemilik Barang'
+            jenis_label = 'Pinjam'
+            harga_display = 'Dipinjamkan'
+        else:
+            partner_role = 'Pembeli' if is_penjual else 'Penjual'
+            jenis_label = 'Jual'
+            harga_display = t.barang.harga_display
+
+        barang_foto = ''
+        if t.barang.foto:
+            try:
+                barang_foto = t.barang.foto.url
+            except ValueError:
+                barang_foto = ''
+
+        data.append({
+            'id': str(t.id),
+            'barang_id': str(t.barang.id),
+            'barang_nama': t.barang.nama,
+            'barang_jenis': t.barang.jenis,
+            'barang_jenis_label': jenis_label,
+            'barang_harga': harga_display,
+            'barang_lokasi': t.barang.lokasi or '',
+            'barang_foto': barang_foto,
+            'is_penjual': is_penjual,
+            'partner_role': partner_role,
+            'partner_name': partner_name,
+            'partner_wa': partner_wa,
+            'partner_line': partner_line,
+            'status': t.status,
+            'status_label': t.get_status_display(),
+            'catatan_pembeli': t.catatan_pembeli,
+            'dibuat_pada': timezone.localtime(t.dibuat_pada).strftime('%d %b %Y, %H:%M'),
+            'sudah_diulas': t.id in sudah_diulas_ids,
+        })
+
+    return JsonResponse({'transaksi': data, 'total': len(data)})

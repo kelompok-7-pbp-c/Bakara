@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ barang.nama }} — Bakara{% endblock title %}
+{% block meta_description %}{{ barang.nama }} — {{ barang.get_jenis_display }} oleh {{ barang.penjual.username }} di Bakara.{% endblock meta_description %}
+
+{% block content %}
+<div class="detail-page">
+    <div class="container">
+
+        <a href="{% url 'katalog:show_katalog' %}" class="detail-back">
+            ← Kembali ke Katalog
+        </a>
+
+        <div class="detail-layout">
+
+            <!-- Bagian Kiri: Foto Barang -->
+            <div class="detail-img-wrap">
+                {% if barang.foto %}
+                    <img src="{{ barang.foto.url }}" alt="{{ barang.nama }}">
+                {% else %}
+                    <div class="detail-img-placeholder" aria-hidden="true">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="placeholder-icon">
+                            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                            <circle cx="9" cy="9" r="2"/>
+                            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                        </svg>
+                        <span class="placeholder-text">Foto tidak tersedia</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Bagian Kanan: Info Barang -->
+            <div class="detail-info">
+
+                <!-- Badges -->
+                <div class="detail-badges">
+                    <span class="badge badge-{{ barang.jenis }}">{{ barang.get_jenis_display }}</span>
+                    <span class="badge badge-status-{{ barang.status }}">{{ barang.get_status_display }}</span>
+                </div>
+
+                <!-- Nama & Harga -->
+                <h1 class="detail-nama">{{ barang.nama }}</h1>
+                <p class="detail-harga">{{ barang.harga_display }}</p>
+
+                <!-- Meta Grid -->
+                <dl class="detail-meta-grid">
+                    <div class="meta-item">
+                        <dt>Kategori</dt>
+                        <dd>{{ barang.get_kategori_display }}</dd>
+                    </div>
+                    <div class="meta-item">
+                        <dt>Kondisi</dt>
+                        <dd>{{ barang.get_kondisi_display }}</dd>
+                    </div>
+                    <div class="meta-item">
+                        <dt>Lokasi</dt>
+                        <dd>{{ barang.lokasi|default:"—" }}</dd>
+                    </div>
+                    <div class="meta-item">
+                        <dt>Diposting</dt>
+                        <dd>{{ barang.dibuat_pada|date:"d M Y, H:i" }} WIB</dd>
+                    </div>
+                </dl>
+
+                <!-- Deskripsi -->
+                {% if barang.deskripsi %}
+                <div>
+                    <p class="detail-deskripsi-label">Deskripsi</p>
+                    <p class="detail-deskripsi">{{ barang.deskripsi }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Kartu Penjual -->
+                <div class="detail-penjual-card">
+                    {% with profile=barang.penjual.profile %}
+                        <!-- Avatar: foto profil atau inisial -->
+                        {% if profile.photo %}
+                            <img src="{{ profile.photo.url }}"
+                                alt="{{ barang.penjual.username }}"
+                                class="penjual-avatar penjual-avatar-img">
+                        {% else %}
+                            <div class="penjual-avatar">{{ barang.penjual.username|first|upper }}</div>
+                        {% endif %}
+
+                        <div class="penjual-details">
+                            <!-- Nama lengkap atau username -->
+                            <p class="penjual-name">
+                                {{ profile.full_name|default:barang.penjual.username }}
+                            </p>
+                            <p class="penjual-label">Pemilik Barang</p>
+
+                            <!-- Fakultas & Angkatan -->
+                            {% if profile.faculty %}
+                            <p class="penjual-meta">
+                                {{ profile.get_faculty_display }}
+                                {% if profile.angkatan %}· Angkatan {{ profile.angkatan }}{% endif %}
+                            </p>
+                            {% endif %}
+
+                            <!-- WhatsApp -->
+                            {% if profile.whatsapp %}
+                                {% if user.is_authenticated and sudah_berminat or user == barang.penjual or user.is_staff %}
+                                    <a href="{{ profile.whatsapp_link }}"
+                                        target="_blank" rel="noopener noreferrer"
+                                        class="btn btn-wa" style="margin-top:8px; display:inline-flex; align-items:center; gap:6px;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                                            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.554 4.122 1.524 5.856L0 24l6.335-1.524A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.794 9.794 0 0 1-4.998-1.368l-.358-.213-3.758.985.998-3.655-.233-.375A9.797 9.797 0 0 1 2.182 12c0-5.415 4.403-9.818 9.818-9.818 5.415 0 9.818 4.403 9.818 9.818 0 5.415-4.403 9.818-9.818 9.818z"/>
+                                        </svg>
+                                        Hubungi via WhatsApp
+                                    </a>
+                                {% else %}
+                                <span class="detail-kontak-locked" style="display:block; margin-top:8px; font-size:0.85rem; color:var(--color-muted); font-style:italic;">
+                                    Tautan WhatsApp terkunci. Tekan tombol "Saya Tertarik" di bawah untuk melihat kontak.
+                                </span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    {% endwith %}
+                </div>
+
+                <!-- Tombol Aksi -->
+                <div class="detail-actions">
+
+                    {% if not user.is_authenticated %}
+                        <!-- Belum login -->
+                        <a href="{% url 'authentication:login' %}" class="btn btn-primary">
+                            Masuk untuk Berminat
+                        </a>
+
+                    {% elif user == barang.penjual %}
+                        <!-- PEMILIK: Edit & Hapus Listing -->
+                        <a href="{% url 'katalog:edit_barang' barang.pk %}" class="btn btn-ghost">
+                            Edit Listing
+                        </a>
+                        <form action="{% url 'katalog:hapus_barang' barang.pk %}" method="post"
+                              style="display:inline"
+                              onsubmit="return confirm('Yakin ingin menghapus listing ini?')">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Hapus Listing</button>
+                        </form>
+
+                    {% elif user.is_staff %}
+                        <!-- STAFF/MODERATOR (bukan pemilik) -->
+                        <form action="{% url 'katalog:hapus_barang' barang.pk %}" method="post"
+                              style="display:inline"
+                              onsubmit="return confirm('Hapus barang ini sebagai moderator?')">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Hapus Barang (Moderator)</button>
+                        </form>
+
+                    {% elif barang.status != 'tersedia' %}
+                        <!-- Barang tidak lagi tersedia -->
+                        <button class="btn btn-primary" disabled>Barang Tidak Tersedia</button>
+
+                    {% elif sudah_berminat %}
+                        <a href="{% url 'minat:daftar_peminat' %}" class="btn btn-primary">Lihat Kontak Penjual</a>
+                        <form action="{% url 'minat:batalkan_minat' barang.pk %}" method="post" style="display:inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-ghost">Batalkan Minat</button>
+                        </form>
+
+                    {% else %}
+                        <!-- PEMBELI: belum berminat -->
+                        <form action="{% url 'minat:tandai_minat' barang.pk %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Saya Tertarik</button>
+                        </form>
+                    {% endif %}
+
+                </div><!-- /detail-actions -->
+
+            </div><!-- /detail-info -->
+        </div><!-- /detail-layout -->
+
+    </div>
+</div>
+{% endblock content %}

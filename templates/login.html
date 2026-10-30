@@ -31,6 +31,10 @@
             <button type="submit" class="btn btn-primary btn-block">Masuk</button>
         </form>
 
+        <div class="auth-divider"><span>atau</span></div>
+
+        <a href="{% url 'authentication:login_sso' %}{% if next %}?next={{ next|urlencode }}{% endif %}" class="btn btn-ghost btn-block">Masuk dengan SSO UI</a>
+
         <p class="auth-switch">Belum punya akun? <a href="{% url 'authentication:register' %}">Daftar sekarang</a></p>
     </div>
 </div>

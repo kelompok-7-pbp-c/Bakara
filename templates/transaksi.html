@@ -1,16 +1,225 @@
 {% extends 'base.html' %}
 
-{% block title %}Transaksi — Bakara{% endblock title %}
-
-{% block meta_description %}Lihat riwayat dan status transaksi kamu di Bakara.{% endblock meta_description %}
+{% block title %}Transaksi - Bakara{% endblock title %}
+{% block meta_description %}Lihat dan kelola transaksi barang di Bakara.{% endblock meta_description %}
 
 {% block content %}
-<div class="page-stub">
-    <div class="page-stub-inner">
-        <span class="page-stub-icon">📦</span>
-        <h1>Transaksi</h1>
-        <p>Lihat riwayat dan status transaksi kamu di sini.<br>Fitur ini sedang dalam pengembangan.</p>
-        <a href="{% url 'main:show_beranda' %}" class="btn btn-primary">← Kembali ke Beranda</a>
+<main class="transaksi-section">
+    <div class="container">
+        <header class="transaksi-header">
+            <p class="transaksi-eyebrow">Riwayat dan Status</p>
+            <h1 class="transaksi-title">Transaksi Saya</h1>
+            <p class="transaksi-subtitle">Kelola proses serah terima dan pantau status barangmu.</p>
+        </header>
+
+        <div class="transaksi-filter-bar">
+            <div class="filter-group">
+                <button type="button" class="filter-btn active" data-filter="all">Semua</button>
+                <button type="button" class="filter-btn" data-filter="permintaan">Permintaan Saya</button>
+                <button type="button" class="filter-btn" data-filter="barang_saya">Barang Saya</button>
+            </div>
+        </div>
+
+        <div id="trx-loading" class="state-box">
+            <p>Memuat data transaksi...</p>
+        </div>
+
+        <div id="trx-error" class="state-box hide">
+            <p>Gagal memuat data transaksi. Silakan refresh halaman.</p>
+        </div>
+
+        <div id="trx-empty" class="state-box hide">
+            <p>Belum ada riwayat transaksi yang ditemukan.</p>
+            <a href="{% url 'katalog:show_katalog' %}" class="btn btn-primary">Jelajahi Katalog</a>
+        </div>
+
+        <div id="trx-container" class="transaksi-grid hide"></div>
     </div>
-</div>
+</main>
+
+<script>
+    const TRANSAKSI_API_ENDPOINT = "{% url 'transaksi:get_transaction_json' %}";
+    const CSRF_TOKEN = "{{ csrf_token }}";
+    let allTransactions = [];
+    let currentFilter = 'all';
+
+    const REVIEW_PAGE_URL = "{% url 'review:show_review' %}"; 
+
+    const trxLoading = document.getElementById('trx-loading');
+    const trxError = document.getElementById('trx-error');
+    const trxEmpty = document.getElementById('trx-empty');
+    const trxContainer = document.getElementById('trx-container');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+
+    function setViewState({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
+        trxLoading.classList.toggle('hide', !showLoading);
+        trxError.classList.toggle('hide', !showError);
+        trxEmpty.classList.toggle('hide', !showEmpty);
+        trxContainer.classList.toggle('hide', !showGrid);
+
+        trxLoading.style.display = showLoading ? 'block' : 'none';
+        trxError.style.display = showError ? 'block' : 'none';
+        trxEmpty.style.display = showEmpty ? 'block' : 'none';
+        trxContainer.style.display = showGrid ? 'grid' : 'none';
+    }
+
+    function buildActionButtonsHtml(item) {
+        const id = item.id;
+        const changeStatusBaseUrl = "{% url 'transaksi:update_transaction_status' '00000000-0000-0000-0000-000000000000' %}";
+        const cancelBaseUrl = "{% url 'transaksi:cancel_transaction' '00000000-0000-0000-0000-000000000000' %}";
+        const changeStatusUrl = changeStatusBaseUrl.replace('00000000-0000-0000-0000-000000000000', id);
+        const cancelUrl = cancelBaseUrl.replace('00000000-0000-0000-0000-000000000000', id);
+
+        let actionsHtml = '';
+
+        // Kontak Partner: WhatsApp & LINE
+        if (item.partner_wa) {
+            actionsHtml += `<a href="${item.partner_wa}" target="_blank" rel="noopener" class="btn-action btn-wa">WhatsApp</a>`;
+        }
+        if (item.partner_line) {
+            actionsHtml += `<span class="btn-action" style="background:#06C755; color:#ffffff;" title="LINE ID">LINE: ${escapeHtml(item.partner_line)}</span>`;
+        }
+
+        if (item.is_penjual) {
+            if (item.status === 'menunggu') {
+                actionsHtml += `
+                    <form method="post" action="${changeStatusUrl}">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
+                        <input type="hidden" name="aksi" value="setujui">
+                        <button type="submit" class="btn-action btn-approve">Setujui</button>
+                    </form>
+                    <form method="post" action="${changeStatusUrl}">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
+                        <input type="hidden" name="aksi" value="tolak">
+                        <button type="submit" class="btn-action btn-reject">Tolak</button>
+                    </form>
+                `;
+            } else if (item.status === 'disetujui') {
+                actionsHtml += `
+                    <form method="post" action="${changeStatusUrl}">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
+                        <input type="hidden" name="aksi" value="selesai">
+                        <button type="submit" class="btn-action btn-complete">Tandai Selesai</button>
+                    </form>
+                    <form method="post" action="${cancelUrl}" onsubmit="return confirm('Batalkan proses serah terima ini? Barang akan kembali tersedia.');">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
+                        <button type="submit" class="btn-action btn-reject">Batalkan</button>
+                    </form>
+                `;
+            }
+        } else {
+            if (['menunggu', 'disetujui'].includes(item.status)) {
+                actionsHtml += `
+                    <form method="post" action="${cancelUrl}" onsubmit="return confirm('Yakin ingin membatalkan pengajuan ini?');">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
+                        <button type="submit" class="btn-action btn-reject">Batalkan</button>
+                    </form>
+                `;
+            }
+        } if (item.status === 'selesai') {
+            if (item.sudah_diulas) {
+                actionsHtml += `<a href="${REVIEW_PAGE_URL}?view_transaksi=${item.id}" class="btn-action btn-reviewed">Lihat Ulasan</a>`;
+            } else {
+                if (!item.is_penjual) {
+                    actionsHtml += `<a href="${REVIEW_PAGE_URL}?transaksi=${item.id}" class="btn-action btn-complete">Beri Ulasan</a>`;
+                } else {
+                    actionsHtml += `<span class="btn-action" style="background: #f3f4f6; color: #6b7280; cursor: default;">Menunggu Ulasan</span>`;
+                }
+            }
+        }
+
+
+        return actionsHtml;
+    }
+
+    function createTransactionCard(item) {
+        const card = document.createElement('article');
+        card.className = 'transaksi-card';
+
+        const thumbHtml = item.barang_foto
+            ? `<img src="${escapeHtml(item.barang_foto)}" alt="" class="transaksi-thumb">`
+            : `<div class="transaksi-thumb">No Image</div>`;
+
+        const badgeJenisClass = 'badge-' + (item.barang_jenis || 'jual');
+
+        card.innerHTML = `
+            <div class="transaksi-card-header">
+                ${thumbHtml}
+                <div class="transaksi-meta-item">
+                    <h2 class="transaksi-item-title">${escapeHtml(item.barang_nama)}</h2>
+                    <p class="transaksi-item-price">${escapeHtml(item.barang_harga)}${item.barang_lokasi ? ' · ' + escapeHtml(item.barang_lokasi) : ''}</p>
+                </div>
+                <span class="badge ${badgeJenisClass}">${escapeHtml(item.barang_jenis_label)}</span>
+                <span class="badge-status status-${item.status}">${escapeHtml(item.status_label)}</span>
+            </div>
+
+            <div class="transaksi-party">
+                <span class="party-label">${escapeHtml(item.partner_role)}</span>
+                <span class="party-val">${escapeHtml(item.partner_name)}</span>
+            </div>
+
+            <div class="transaksi-actions">
+                ${buildActionButtonsHtml(item)}
+            </div>
+
+            <div class="transaksi-date">Diajukan pada ${escapeHtml(item.dibuat_pada)} WIB</div>
+        `;
+        return card;
+    }
+
+    function renderTransactions() {
+        const filtered = allTransactions.filter(item => {
+            if (currentFilter === 'permintaan') return !item.is_penjual;
+            if (currentFilter === 'barang_saya') return item.is_penjual;
+            return true;
+        });
+
+        trxContainer.innerHTML = '';
+
+        if (filtered.length === 0) {
+            setViewState({ showEmpty: true, showGrid: false });
+        } else {
+            filtered.forEach(item => {
+                trxContainer.appendChild(createTransactionCard(item));
+            });
+            setViewState({ showGrid: true, showEmpty: false });
+        }
+    }
+
+    async function loadTransactions() {
+        setViewState({ showLoading: true });
+        try {
+            const response = await fetch(TRANSAKSI_API_ENDPOINT, {
+                headers: { 'Accept': 'application/json' }
+            });
+            if (!response.ok) throw new Error('Gagal memuat API');
+            const result = await response.json();
+            allTransactions = result.transaksi || [];
+            renderTransactions();
+        } catch (error) {
+            console.error(error);
+            setViewState({ showError: true });
+        }
+    }
+
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter;
+            renderTransactions();
+        });
+    });
+
+    loadTransactions();
+</script>
 {% endblock content %}

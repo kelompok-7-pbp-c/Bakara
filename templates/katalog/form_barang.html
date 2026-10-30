@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }} — Bakara{% endblock title %}
+
+{% block content %}
+<div class="form-page">
+    <div class="container">
+        <a href="{% url 'katalog:show_katalog' %}" class="form-back">← Kembali ke Katalog</a>
+
+        <div class="form-card">
+            <h1>{{ page_title }}</h1>
+            <p class="form-subtitle">
+                {% if mode == 'tambah' %}Bagikan barangmu kepada sesama mahasiswa UI.
+                {% else %}Perbarui informasi listing barangmu.{% endif %}
+            </p>
+
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+
+                <!-- Nama Barang -->
+                <div class="form-group">
+                    <label for="{{ form.nama.id_for_label }}">{{ form.nama.label }} <span class="required">*</span></label>
+                    {{ form.nama }}
+                    {% if form.nama.errors %}<span class="form-error">{{ form.nama.errors.0 }}</span>{% endif %}
+                </div>
+
+                <!-- Kategori + Jenis -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.kategori.id_for_label }}">{{ form.kategori.label }} <span class="required">*</span></label>
+                        {{ form.kategori }}
+                        {% if form.kategori.errors %}<span class="form-error">{{ form.kategori.errors.0 }}</span>{% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.jenis.id_for_label }}">{{ form.jenis.label }} <span class="required">*</span></label>
+                        {{ form.jenis }}
+                        {% if form.jenis.errors %}<span class="form-error">{{ form.jenis.errors.0 }}</span>{% endif %}
+                    </div>
+                </div>
+
+                <!-- Kondisi + Harga -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.kondisi.id_for_label }}">{{ form.kondisi.label }} <span class="required">*</span></label>
+                        {{ form.kondisi }}
+                        {% if form.kondisi.errors %}<span class="form-error">{{ form.kondisi.errors.0 }}</span>{% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.harga.id_for_label }}">{{ form.harga.label }}</label>
+                        {{ form.harga }}
+                        <span class="form-help">{{ form.harga.help_text }}</span>
+                        {% if form.harga.errors %}<span class="form-error">{{ form.harga.errors.0 }}</span>{% endif %}
+                    </div>
+                </div>
+
+                <!-- Deskripsi -->
+                <div class="form-group">
+                    <label for="{{ form.deskripsi.id_for_label }}">{{ form.deskripsi.label }}</label>
+                    {{ form.deskripsi }}
+                    {% if form.deskripsi.errors %}<span class="form-error">{{ form.deskripsi.errors.0 }}</span>{% endif %}
+                </div>
+
+                <!-- Lokasi -->
+                <div class="form-group">
+                    <label for="{{ form.lokasi.id_for_label }}">{{ form.lokasi.label }}</label>
+                    {{ form.lokasi }}
+                    <span class="form-help">{{ form.lokasi.help_text }}</span>
+                    {% if form.lokasi.errors %}<span class="form-error">{{ form.lokasi.errors.0 }}</span>{% endif %}
+                </div>
+
+                <!-- Foto Upload -->
+                <div class="form-group">
+                    <label for="{{ form.foto.id_for_label }}">{{ form.foto.label }} <span class="required">*</span></label>
+                    {% if mode == 'edit' and barang.foto %}
+                    <div class="foto-preview-wrap">
+                        <img src="{{ barang.foto.url }}" alt="Foto saat ini" class="foto-preview-thumb">
+                        <span class="form-help">Foto saat ini. Upload berkas baru untuk mengganti.</span>
+                    </div>
+                    {% endif %}
+                    {{ form.foto }}
+                    <span class="form-help">{{ form.foto.help_text }}</span>
+                    {% if form.foto.errors %}<span class="form-error">{{ form.foto.errors.0 }}</span>{% endif %}
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        {% if mode == 'tambah' %}Upload Barang{% else %}Simpan Perubahan{% endif %}
+                    </button>
+                    <a href="{% if mode == 'edit' %}{% url 'katalog:detail_barang' barang.pk %}{% else %}{% url 'katalog:show_katalog' %}{% endif %}"
+                       class="btn btn-ghost">Batal</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
