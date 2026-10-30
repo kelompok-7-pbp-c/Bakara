@@ -42,3 +42,9 @@ def show_kebijakan_privasi(request):
         'brand_name': 'Bakara',
     }
     return render(request, 'kebijakan_privasi.html', context)
+
+def show_bantuan(request):
+    context = {
+        'brand_name': 'Bakara',
+    }
+    return render(request, 'bantuan.html', context)
