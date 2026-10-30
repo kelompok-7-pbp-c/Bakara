@@ -2,15 +2,145 @@
 
 {% block title %}Tentang Kami — Bakara{% endblock title %}
 
-{% block meta_description %}Bakara adalah platform berbagi barang khusus mahasiswa Universitas Indonesia yang dikembangkan oleh Kelompok 7 PBP C.{% endblock meta_description %}
+{% block meta_description %}
+Kenali Bakara, platform berbagi barang untuk mahasiswa Universitas Indonesia: cari, jual, pinjam, atau donasikan barang kepada sesama mahasiswa.
+{% endblock meta_description %}
 
 {% block content %}
-<div class="page-stub">
-    <div class="page-stub-inner">
-        <span class="page-stub-icon">ℹ️</span>
-        <h1>Tentang Kami</h1>
-        <p>Bakara adalah platform berbagi barang khusus untuk mahasiswa UI.<br>Dikembangkan oleh Kelompok 7 PBP C. Fitur ini sedang dalam pengembangan.</p>
-        <a href="{% url 'main:show_beranda' %}" class="btn btn-primary">← Kembali ke Beranda</a>
+<main class="info-page">
+    <div class="container">
+        <header class="info-header">
+            <p class="info-eyebrow">Kenalan dengan Bakara</p>
+            <h1>Tentang Kami</h1>
+            <p>
+                Bakara adalah platform berbagi barang untuk mahasiswa
+                Universitas Indonesia. Di sini, kamu bisa mencari barang yang
+                dibutuhkan atau menyalurkan barang yang masih layak pakai
+                melalui jual-beli, pinjam-meminjam, atau donasi.
+            </p>
+            <p>
+                Kami ingin membuat barang yang masih bermanfaat lebih mudah
+                ditemukan oleh orang yang membutuhkannya dan semuanya dalam satu
+                tempat untuk komunitas UI.
+            </p>
+            <a href="{% url 'katalog:show_katalog' %}" class="btn btn-primary">
+                Jelajahi Katalog <span aria-hidden="true">→</span>
+            </a>
+        </header>
+
+        <div class="info-layout">
+            <nav class="info-toc" aria-label="Daftar isi tentang Bakara">
+                <h2>Di halaman ini</h2>
+                <ol>
+                    <li><a href="#mengenal">Mengenal Bakara</a></li>
+                    <li><a href="#alasan">Mengapa Bakara hadir?</a></li>
+                    <li><a href="#bisa-dilakukan">Apa yang bisa dilakukan?</a></li>
+                    <li><a href="#komunitas">Komunitas kami</a></li>
+                    <li><a href="#tujuan">Tujuan kami</a></li>
+                    <li><a href="#tim">Tim di balik Bakara</a></li>
+                </ol>
+            </nav>
+
+            <article class="info-content">
+                <section id="mengenal" aria-labelledby="mengenal-heading">
+                    <h2 id="mengenal-heading">1. Mengenal Bakara</h2>
+                    <p>
+                        Bakara mempertemukan mahasiswa yang sedang mencari
+                        sesuatu dengan sesama mahasiswa yang memiliki barang
+                        untuk dibagikan. Barang dapat ditawarkan untuk dijual,
+                        dipinjamkan, atau didonasikan sesuai kebutuhan dan
+                        kesepakatan penggunanya.
+                    </p>
+                </section>
+
+                <section id="alasan" aria-labelledby="alasan-heading">
+                    <h2 id="alasan-heading">2. Mengapa Bakara hadir?</h2>
+                    <p>
+                        Memulai kuliah atau tinggal di kos sering berarti perlu
+                        menyiapkan banyak barang. Di sisi lain, ada barang milik
+                        mahasiswa lain yang masih bagus tetapi sudah tidak
+                        digunakan. Informasi tentang barang-barang ini sering
+                        tersebar di berbagai tempat, sehingga tidak selalu mudah
+                        ditemukan oleh orang yang membutuhkannya.
+                    </p>
+                    <p>
+                        Bakara hadir untuk mengumpulkan informasi tersebut dalam
+                        satu platform dan memudahkan mahasiswa UI saling
+                        terhubung melalui barang yang masih punya nilai guna.
+                    </p>
+                </section>
+
+                <section
+                    id="yang-bisa-dilakukan"
+                    aria-labelledby="yang-bisa-dilakukan-heading"
+                >
+                    <h2 id="yang-bisa-dilakukan-heading">3. Apa yang bisa dilakukan di Bakara?</h2>
+                    <ul>
+                        <li>
+                            <strong>Mencari barang</strong> melalui katalog dan
+                            menyaringnya berdasarkan kategori atau jenis
+                            penawaran.
+                        </li>
+                        <li>
+                            <strong>Berbagi barang</strong> dengan mengunggah
+                            foto serta informasi kondisi, harga bila ada, dan
+                            lokasi pengambilan.
+                        </li>
+                        <li>
+                            <strong>Terhubung dengan sesama mahasiswa</strong>
+                            melalui fitur Minat &amp; Kontak, lalu mengikuti
+                            perkembangan transaksi di Bakara.
+                        </li>
+                        <li>
+                            <strong>Berbagi pengalaman</strong> dengan memberi
+                            rating dan ulasan setelah transaksi selesai.
+                        </li>
+                    </ul>
+                    <p>
+                        Bakara membantu mempertemukan pengguna dan mencatat
+                        perkembangan transaksi. Komunikasi mengenai detail
+                        kesepakatan dan serah-terima barang dilakukan langsung
+                        oleh mahasiswa yang terlibat.
+                    </p>
+                </section>
+
+                <section id="komunitas" aria-labelledby="komunitas-heading">
+                    <h2 id="komunitas-heading">4. Komunitas kami</h2>
+                    <p>
+                        Bakara ditujukan untuk mahasiswa UI, terutama mahasiswa
+                        baru dan mahasiswa perantau yang sedang menyiapkan
+                        kebutuhan kuliah atau tempat tinggal. Bakara juga
+                        terbuka bagi mahasiswa yang ingin menjual, meminjamkan,
+                        atau mendonasikan barang yang sudah tidak digunakan.
+                    </p>
+                </section>
+
+                <section id="tujuan" aria-labelledby="tujuan-heading">
+                    <h2 id="tujuan-heading">5. Tujuan kami</h2>
+                    <p>
+                        Kami ingin membangun kebiasaan berbagi dan menggunakan
+                        kembali barang di lingkungan UI. Dengan memperpanjang
+                        masa guna barang, mahasiswa bisa menemukan pilihan yang
+                        sesuai kebutuhannya sekaligus mengurangi barang layak
+                        pakai yang terbuang.
+                    </p>
+                </section>
+
+                <section id="tim" aria-labelledby="tim-heading">
+                    <h2 id="tim-heading">6. Tim di balik Bakara</h2>
+                    <p>
+                        Bakara dikembangkan oleh Kelompok 7 PBP C Fasilkom UI, sebagai proyek
+                        pembelajaran dan sebagai upaya menghadirkan ruang
+                        berbagi barang yang bermanfaat bagi komunitas mahasiswa
+                        UI.
+                    </p>
+                    <p>
+                        Punya pertanyaan atau masukan? Hubungi kami melalui
+                        <a href="mailto:james.adi@ui.ac.id">james.adi@ui.ac.id</a>.
+                    </p>
+                </section>
+            </article>
+        </div>
     </div>
-</div>
+</main>
 {% endblock content %}

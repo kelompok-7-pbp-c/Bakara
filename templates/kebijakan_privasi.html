@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Kebijakan Privasi — Bakara{% endblock title %}
+
+{% block meta_description %}
+Pelajari informasi yang digunakan Bakara dan cara kamu mengelola data akunmu.
+{% endblock meta_description %}
+
+{% block content %}
+<main class="privacy-page">
+    <div class="container">
+        <header class="privacy-header">
+            <p class="privacy-eyebrow">Informasi Bakara</p>
+            <h1>Kebijakan Privasi</h1>
+            <p>
+                Di Bakara, kamu bisa menawarkan, mencari, meminjam, atau
+                mendonasikan barang kepada sesama mahasiswa UI. Di halaman ini,
+                kami menjelaskan informasi yang digunakan, tujuan penggunaannya,
+                dan cara kamu mengelolanya.
+            </p>
+            <p class="privacy-updated">
+                <strong>Terakhir diperbarui:</strong> 30 Oktober 2026
+            </p>
+        </header>
+
+        <div class="privacy-layout">
+            <nav class="privacy-toc" aria-label="Daftar isi kebijakan privasi">
+                <h2>Di halaman ini</h2>
+                <ol>
+                    <li><a href="#informasi">Informasi yang kami gunakan</a></li>
+                    <li><a href="#penggunaan">Bagaimana informasi digunakan</a></li>
+                    <li><a href="#visibilitas">Informasi yang dapat dilihat</a></li>
+                    <li><a href="#pembagian">Pembagian informasi</a></li>
+                    <li><a href="#cookie">Cookie dan keamanan</a></li>
+                    <li><a href="#mengelola">Mengelola informasi</a></li>
+                    <li><a href="#perubahan-kontak">Perubahan dan kontak</a></li>
+                </ol>
+            </nav>
+
+            <article class="privacy-content">
+                <section id="informasi" aria-labelledby="informasi-heading">
+                    <h2 id="informasi-heading">1. Informasi yang kami gunakan</h2>
+                    <p>
+                        Saat kamu menggunakan Bakara, kami menggunakan informasi
+                        yang diperlukan untuk menjalankan akun dan fitur yang
+                        kamu gunakan, seperti:
+                    </p>
+                    <ul>
+                        <li>
+                            <strong>Informasi akun</strong>, seperti username
+                            dan email UI. Jika kamu mendaftar menggunakan email
+                            dan kata sandi, informasi tersebut digunakan untuk
+                            mengakses akunmu.
+                        </li>
+                        <li>
+                            <strong>Informasi dari SSO UI.</strong> Jika kamu
+                            masuk melalui SSO UI, identitas akun kampus
+                            digunakan untuk proses login. Nama dan angkatan
+                            dapat terisi otomatis. Pada alur Bakara saat ini,
+                            NPM digunakan untuk mengambil informasi tahun
+                            angkatan; profil Bakara menyimpan tahun angkatan,
+                            bukan NPM penuh.
+                        </li>
+                        <li>
+                            <strong>Informasi profil</strong>, seperti nama
+                            lengkap, fakultas, angkatan, nomor WhatsApp, ID
+                            LINE, dan foto profil.
+                        </li>
+                        <li>
+                            <strong>Informasi barang</strong> yang kamu unggah,
+                            seperti nama, deskripsi, kategori, kondisi, harga,
+                            lokasi, jenis transaksi, dan foto barang.
+                        </li>
+                        <li>
+                            <strong>Informasi aktivitas</strong>, seperti barang
+                            yang kamu minati, status transaksi, catatan pembeli,
+                            rating, dan ulasan.
+                        </li>
+                    </ul>
+                </section>
+
+                <section id="penggunaan" aria-labelledby="penggunaan-heading">
+                    <h2 id="penggunaan-heading">2. Bagaimana informasi digunakan</h2>
+                    <p>Informasimu digunakan untuk membantu Bakara:</p>
+                    <ul>
+                        <li>Membuat dan mengelola akunmu.</li>
+                        <li>Menampilkan profil dan barang yang kamu unggah.</li>
+                        <li>Menghubungkan mahasiswa yang berminat dengan pemilik barang.</li>
+                        <li>Mengelola minat, transaksi, rating, dan ulasan.</li>
+                        <li>Menjaga layanan tetap berjalan dan membantu menangani pertanyaan.</li>
+                    </ul>
+                </section>
+
+                <section id="visibilitas" aria-labelledby="visibilitas-heading">
+                    <h2 id="visibilitas-heading">3. Informasi yang dapat dilihat pengguna lain</h2>
+                    <p>
+                        Informasi barang yang kamu unggah dapat dilihat oleh
+                        pengunjung katalog. Pada halaman detail barang, nama,
+                        foto profil, fakultas, dan angkatan pemilik barang juga
+                        dapat ditampilkan.
+                    </p>
+                    <p>
+                        Informasi kontak seperti WhatsApp dan LINE ditampilkan
+                        melalui fitur <strong>Minat &amp; Kontak</strong> kepada
+                        pengguna yang terkait dengan barang tersebut. Nomor
+                        WhatsApp juga ditampilkan melalui alur minat Bakara.
+                    </p>
+                    <p>
+                        Sebelum mengunggah barang atau melengkapi profil,
+                        pastikan informasi yang kamu masukkan memang ingin kamu
+                        bagikan kepada pengguna Bakara.
+                    </p>
+                </section>
+
+                <section id="pembagian" aria-labelledby="pembagian-heading">
+                    <h2 id="pembagian-heading">4. Pembagian informasi</h2>
+                    <p>
+                        Informasi tertentu diperlukan untuk menjalankan
+                        layanan Bakara, termasuk proses login melalui SSO UI
+                        dan layanan yang digunakan untuk mengoperasikan situs.
+                    </p>
+                    <p>
+                        Halaman Bakara juga memuat font dari Google Fonts.
+                        Jika kamu membuka tautan WhatsApp, kamu akan berpindah
+                        ke layanan WhatsApp dan penggunaan layanan tersebut
+                        mengikuti kebijakan dari penyedianya.
+                    </p>
+                    <p>
+                        Bakara tidak menjual data pribadimu.
+                    </p>
+                </section>
+
+                <section id="cookie" aria-labelledby="cookie-heading">
+                    <h2 id="cookie-heading">5. Cookie dan keamanan</h2>
+                    <p>
+                        Bakara menggunakan cookie teknis yang diperlukan agar
+                        sesi login dan formulir dapat berfungsi dengan baik
+                        dan aman.
+                    </p>
+                    <p>
+                        Kami berupaya menjaga informasi yang kamu berikan dan
+                        membatasi akses ke informasi tersebut sesuai kebutuhan
+                        pengelolaan Bakara.
+                    </p>
+                </section>
+
+                <section id="mengelola" aria-labelledby="mengelola-heading">
+                    <h2 id="mengelola-heading">6. Mengelola informasi</h2>
+                    <p>
+                        Kamu dapat memperbarui informasi profil melalui menu
+                        <strong>Profil</strong>. Kamu juga dapat mengelola
+                        listing, membatalkan minat, atau mengubah dan menghapus
+                        ulasan melalui fitur yang tersedia di Bakara.
+                    </p>
+                    <p>
+                        Untuk meminta salinan, koreksi, atau penghapusan
+                        informasi akun, hubungi kami melalui
+                        <strong>james.adi@ui.ac.id</strong>.
+                    </p>
+                    <p>
+                        Informasi disimpan selama akunmu digunakan dan selama
+                        masih diperlukan untuk menjalankan layanan Bakara.
+                    </p>
+                </section>
+
+                <section
+                    id="perubahan-kontak"
+                    aria-labelledby="perubahan-kontak-heading"
+                >
+                    <h2 id="perubahan-kontak-heading">7. Perubahan dan kontak</h2>
+                    <p>
+                        Jika ada perubahan pada cara Bakara menggunakan
+                        informasi, versi terbaru kebijakan ini akan ditampilkan
+                        di halaman ini.
+                    </p>
+                    <p>
+                        Kalau kamu punya pertanyaan tentang privasi atau ingin
+                        meminta perubahan atas informasi akunmu, hubungi
+                        <strong>james.adi@ui.ac.id</strong>.
+                    </p>
+                </section>
+            </article>
+        </div>
+    </div>
+</main>
+{% endblock content %}
