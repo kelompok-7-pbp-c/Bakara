@@ -19,14 +19,4 @@ def show_profil(request):
     return render(request, 'profil.html')
 
 def show_tentang(request):
-<<<<<<< Updated upstream
     return render(request, 'tentang.html')
-=======
-    return render(request, 'tentang.html')
-
-def show_kebijakan_privasi(request):
-    context = {
-        'brand_name': 'Bakara',
-    }
-    return render(request, 'kebijakan_privasi.html', context)
->>>>>>> Stashed changes
