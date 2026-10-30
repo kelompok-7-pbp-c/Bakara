@@ -214,20 +214,40 @@ function initToolbarControls() {
 }
 
 // Modal Upload Barang (AJAX) 
+window.openTambahBarangModal = function(e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  const modal = document.getElementById('modal-tambah-barang');
+  if (modal) {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    const errBox = document.getElementById('ajax-form-errors');
+    if (errBox) errBox.innerHTML = '';
+    const firstInput = modal.querySelector('#ajax-nama');
+    if (firstInput) firstInput.focus();
+    return false;
+  }
+  return true;
+};
 
 function initTambahBarangModal() {
   const modal = document.getElementById('modal-tambah-barang');
-  const openBtn = document.getElementById('btn-open-modal-tambah');
   const closeBtn = document.getElementById('btn-close-modal-tambah');
   const form = document.getElementById('form-tambah-barang-ajax');
   const errBox = document.getElementById('ajax-form-errors');
 
-  if (!modal || !openBtn || !form) return;
+  if (!modal || !form) return;
 
-  // Buka modal
-  openBtn.addEventListener('click', () => {
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+  // Tangkap klik pada semua tombol pemicu modal (toolbar maupun CTA bar)
+  const openButtons = document.querySelectorAll('#btn-open-modal-tambah, .btn-open-modal-tambah');
+  openButtons.forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    });
   });
 
   // Tutup modal
