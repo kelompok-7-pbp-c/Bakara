@@ -2468,4 +2468,118 @@ textarea.form-input {
     .info-toc {
         position: static;
     }
+
+/* ====================
+   Halaman Bantuan
+   ==================== */
+.help-header {
+    text-align: center;
+}
+
+.help-header > p {
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.help-quick-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+}
+
+.help-faq-item {
+    margin-top: var(--spacing-sm);
+    padding: 14px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+}
+
+.help-faq-item[open] {
+    border-color: var(--color-secondary);
+    background: var(--color-surface);
+}
+
+.help-faq-item summary {
+    position: relative;
+    padding-right: 28px;
+    color: var(--color-primary);
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+}
+
+.help-faq-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.help-faq-item summary::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: var(--color-secondary);
+    font-size: 20px;
+    line-height: 1;
+    content: "+";
+}
+
+.help-faq-item[open] summary::after {
+    content: "−";
+}
+
+.help-faq-item summary:focus-visible {
+    outline: 2px solid var(--color-secondary);
+    outline-offset: 4px;
+    border-radius: 2px;
+}
+
+.help-answer {
+    padding-top: var(--spacing-sm);
+    color: var(--color-secondary);
+}
+
+.help-answer p:last-child {
+    margin-bottom: 0;
+}
+
+.help-answer a,
+.help-contact-link {
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.info-content .help-contact {
+    padding: var(--spacing-lg);
+    border: 1px solid rgba(255, 196, 69, 0.55);
+    border-radius: var(--radius-md);
+    background: var(--color-accent-light);
+}
+
+.help-contact h2 {
+    margin-bottom: var(--spacing-sm);
+}
+
+.help-contact p {
+    margin-bottom: var(--spacing-sm);
+}
+
+@media (max-width: 600px) {
+    .help-quick-links {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .help-quick-links .btn {
+        width: 100%;
+    }
+
+    .help-faq-item {
+        padding: 12px;
+    }
+}
 }

@@ -25,8 +25,8 @@ def show_katalog(request):
         ).select_related('penjual__profile')
     else:
         base_qs = Barang.objects.tersedia()
-    
-    barang_list = Barang.objects.tersedia().filter_katalog(
+
+    barang_list = base_qs.filter_katalog(
         kategori=kategori,
         jenis=jenis,
         search_query=q,
@@ -96,7 +96,7 @@ def tambah_barang(request):
 @login_required
 @require_POST
 def tambah_barang_ajax(request):
-    """Endpoint AJAX: tambah barang via fetch(). return JSON 201/400."""
+    """Endpoint AJAX: tambah barang via fetch(). Return JSON 201 jika berhasil, 400 jika invalid."""
     form = BarangForm(request.POST, request.FILES)
     if form.is_valid():
         barang = form.save(commit=False)
@@ -122,7 +122,7 @@ def tambah_barang_ajax(request):
 
 @login_required
 def edit_barang(request, pk):
-    """Menangani pengeditan barang hanya jika user adalah pemilik atau staff/admin."""
+    """Menangani pengeditan barang jika user adalah pemilik atau staff/moderator."""
     barang = get_object_or_404(Barang, pk=pk)
     if not barang.bisa_diedit_oleh(request.user):
         raise PermissionDenied(
@@ -132,8 +132,13 @@ def edit_barang(request, pk):
         form = BarangForm(request.POST, request.FILES, instance=barang)
         if form.is_valid():
             form.save()
-            messages.success(
-                request, f'Perubahan pada "{barang.nama}" berhasil disimpan.')
+            is_moderator = (request.user.is_staff or request.user.is_superuser) and request.user != barang.penjual
+            if is_moderator:
+                messages.warning(
+                    request, f'Data barang "{barang.nama}" telah diperbarui oleh Moderator.')
+            else:
+                messages.success(
+                    request, f'Perubahan pada "{barang.nama}" berhasil disimpan.')
             return redirect('katalog:detail_barang', pk=barang.pk)
     else:
         form = BarangForm(instance=barang)
@@ -151,14 +156,14 @@ def edit_barang(request, pk):
 @login_required
 @require_POST
 def hapus_barang(request, pk):
-    """Menangani penghapusan barang hanya jika user adalah pemilik atau staff/admin."""
+    """Menangani penghapusan barang jika user adalah pemilik atau staff/moderator."""
     barang = get_object_or_404(Barang, pk=pk)
     if not barang.bisa_dihapus_oleh(request.user):
         raise PermissionDenied(
             "Kamu tidak memiliki izin untuk menghapus barang ini.")
 
     nama_barang = barang.nama
-    is_moderator = request.user.is_staff and request.user != barang.penjual
+    is_moderator = (request.user.is_staff or request.user.is_superuser) and request.user != barang.penjual
     barang.delete()
 
     if is_moderator:
@@ -187,6 +192,8 @@ def katalog_json(request):
     data = []
     for b in qs:
         profile = getattr(b.penjual, 'profile', None)
+        fakultas_fn = getattr(profile, 'get_faculty_display', None) if profile else None
+        fakultas_val = fakultas_fn() if callable(fakultas_fn) else ''
         data.append({
             'id': str(b.id),
             'nama': b.nama,
@@ -198,11 +205,11 @@ def katalog_json(request):
             'harga': b.harga,
             'harga_display': b.harga_display,
             'lokasi': b.lokasi,
-            'foto_url': b.foto.url if b.foto else None,
+            'foto_url': b.foto_url if b.foto else None,
             'penjual': {
                 'username': b.penjual.username,
                 'nama': getattr(profile, 'full_name', '') or b.penjual.username,
-                'fakultas': getattr(profile, 'get_faculty_display', lambda: '')(),
+                'fakultas': fakultas_val,
                 'angkatan': getattr(profile, 'angkatan', None),
             },
             'dibuat_pada': b.dibuat_pada.isoformat(),

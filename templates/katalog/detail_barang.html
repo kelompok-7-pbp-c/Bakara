@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ barang.nama }} — Bakara{% endblock title %}
+{% block title %}{{ barang.nama }} - Bakara{% endblock title %}
 {% block meta_description %}{{ barang.nama }} — {{ barang.get_jenis_display }} oleh {{ barang.penjual.username }} di Bakara.{% endblock meta_description %}
 
 {% block content %}
@@ -100,7 +100,7 @@
 
                             <!-- WhatsApp -->
                             {% if profile.whatsapp %}
-                                {% if user.is_authenticated and sudah_berminat or user == barang.penjual or user.is_staff %}
+                                {% if user.is_authenticated and sudah_berminat or user == barang.penjual or user.is_staff or user.is_superuser %}
                                     <a href="{{ profile.whatsapp_link }}"
                                         target="_blank" rel="noopener noreferrer"
                                         class="btn btn-wa" style="margin-top:8px; display:inline-flex; align-items:center; gap:6px;">
@@ -111,9 +111,13 @@
                                         Hubungi via WhatsApp
                                     </a>
                                 {% else %}
-                                <span class="detail-kontak-locked" style="display:block; margin-top:8px; font-size:0.85rem; color:var(--color-muted); font-style:italic;">
-                                    Tautan WhatsApp terkunci. Tekan tombol "Saya Tertarik" di bawah untuk melihat kontak.
-                                </span>
+                                    <span class="detail-kontak-locked" style="display:block; margin-top:8px; font-size:0.85rem; color:var(--color-muted); font-style:italic;">
+                                        {% if not user.is_authenticated %}
+                                            Tautan WhatsApp terkunci. Silakan masuk untuk melihat kontak penjual.
+                                        {% else %}
+                                            Tautan WhatsApp terkunci. Tekan tombol "Saya Tertarik" di bawah untuk melihat kontak.
+                                        {% endif %}
+                                    </span>
                                 {% endif %}
                             {% endif %}
                         </div>
@@ -141,32 +145,39 @@
                             <button type="submit" class="btn btn-danger">Hapus Listing</button>
                         </form>
 
-                    {% elif user.is_staff %}
-                        <!-- STAFF/MODERATOR (bukan pemilik) -->
-                        <form action="{% url 'katalog:hapus_barang' barang.pk %}" method="post"
-                              style="display:inline"
-                              onsubmit="return confirm('Hapus barang ini sebagai moderator?')">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger">Hapus Barang (Moderator)</button>
-                        </form>
-
-                    {% elif barang.status != 'tersedia' %}
-                        <!-- Barang tidak lagi tersedia -->
-                        <button class="btn btn-primary" disabled>Barang Tidak Tersedia</button>
-
-                    {% elif sudah_berminat %}
-                        <a href="{% url 'minat:daftar_peminat' %}" class="btn btn-primary">Lihat Kontak Penjual</a>
-                        <form action="{% url 'minat:batalkan_minat' barang.pk %}" method="post" style="display:inline">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-ghost">Batalkan Minat</button>
-                        </form>
-
                     {% else %}
-                        <!-- PEMBELI: belum berminat -->
-                        <form action="{% url 'minat:tandai_minat' barang.pk %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-primary">Saya Tertarik</button>
-                        </form>
+                        <!-- BUKAN PEMILIK (Staff/Moderator atau Pembeli Biasa) -->
+                        {% if user.is_staff or user.is_superuser %}
+                        <!-- Aksi Moderasi Khusus Staff / Moderator -->
+                        <div class="moderator-actions" style="display:inline-flex; gap:8px;">
+                            <a href="{% url 'katalog:edit_barang' barang.pk %}" class="btn btn-ghost">
+                                Edit (Moderator)
+                            </a>
+                            <form action="{% url 'katalog:hapus_barang' barang.pk %}" method="post"
+                                  style="display:inline"
+                                  onsubmit="return confirm('Hapus barang ini sebagai moderator?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Hapus (Moderator)</button>
+                            </form>
+                        </div>
+                        {% endif %}
+
+                        <!-- Kontrol Pembeli -->
+                        {% if barang.status != 'tersedia' %}
+                            <button class="btn btn-primary" disabled>Barang Tidak Tersedia</button>
+                        {% elif sudah_berminat %}
+                            <a href="{% url 'minat:daftar_peminat' %}" class="btn btn-primary">Lihat Kontak Penjual</a>
+                            <form action="{% url 'minat:batalkan_minat' barang.pk %}" method="post" style="display:inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-ghost">Batalkan Minat</button>
+                            </form>
+                        {% else %}
+                            <form action="{% url 'minat:tandai_minat' barang.pk %}" method="post" style="display:inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">Saya Tertarik</button>
+                            </form>
+                        {% endif %}
+
                     {% endif %}
 
                 </div><!-- /detail-actions -->
