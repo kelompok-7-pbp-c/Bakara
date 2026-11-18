@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'minat',
     'transaksi',
     'review',
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
