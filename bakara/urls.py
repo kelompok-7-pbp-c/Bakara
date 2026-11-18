@@ -27,6 +27,8 @@ urlpatterns = [
     path('minat/', include('minat.urls')),
     path('transaksi/', include('transaksi.urls')),
     path('review/', include('review.urls')),
+    path('api/v1/', include('katalog.api_urls')),
+    path('api-auth/', include('rest_framework.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
