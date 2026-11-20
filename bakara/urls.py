@@ -28,6 +28,7 @@ urlpatterns = [
     path('transaksi/', include('transaksi.urls')),
     path('review/', include('review.urls')),
     path('api/v1/', include('katalog.api_urls')),
+    path('api/v1/', include('transaksi.api_urls')),
     path('api-auth/', include('rest_framework.urls')),
 ]
 
