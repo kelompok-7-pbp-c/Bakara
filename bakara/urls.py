@@ -31,11 +31,8 @@ urlpatterns = [
     path('api/v1/', include('transaksi.api_urls')),
     path('api/v1/', include('review.api_urls')),
     path('api/v1/', include('minat.api_urls')),
+    path('api/v1/', include('authentication.api_urls')),
     path('api-auth/', include('rest_framework.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-urlpatterns += [
-    path("api-auth/", include("rest_framework.urls")),
-]

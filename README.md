@@ -163,3 +163,47 @@ Dokumentasi penggunaan asisten kecerdasan buatan (AI) oleh anggota tim dalam pro
   * *Celah Otorisasi Sisi Frontend:* Rekomendasi awal AI hanya mengandalkan penyembunyian elemen tombol di antarmuka peramban; diperbaiki manual dengan menyematkan validasi server-side tegas (`transaksi.penjual == request.user`) pada fungsi view agar endpoint aman dari tembakan HTTP langsung.
   * *Inkonsistensi Skema Data JSON (KeyError):* Skrip pengujian otomatis rujukan AI mengasumsikan atribut gambar yang tidak ada di model; diperbaiki manual dengan merestrukturisasi kamus view dan menyelaraskan parameter asersi uji sesuai skema aktual.
   * *Konflik Berkas Pengujian (Merge Conflicts):* Terjadi bentrok kode pada berkas pengujian akibat perbedaan konfigurasi basis data uji dari anggota lain; ditangani dengan peninjauan manual baris demi baris (*manual diff*) hingga seluruh rangkaian tes modul ulasan lolos dengan cakupan di atas 95%.
+
+---
+
+## API Autentikasi & Profil
+
+API memakai sesi Django (`sessionid`), sama seperti modul API lainnya. Semua URL
+berawalan `/api/v1/auth/` dan respons data memakai JSON.
+
+| Method | Endpoint | Kegunaan |
+| --- | --- | --- |
+| GET | `csrf/` | Mendapatkan `csrfToken` dan cookie CSRF sebelum registrasi/login. |
+| POST | `register/` | Membuat akun dengan email `@ui.ac.id`; tidak otomatis login. |
+| POST | `login/` | Login melalui `username` atau `email`, beserta `password`. |
+| POST | `logout/` | Mengakhiri sesi pengguna yang sedang login. |
+| GET | `profile/` | Membaca profil pengguna yang sedang login. |
+| PUT | `profile/` | Memperbarui profil dengan seluruh field wajib. |
+| PATCH | `profile/` | Memperbarui sebagian field profil. |
+
+Registrasi menerima `username`, `email`, `password`, `password_confirm`, dan
+`full_name` opsional. Nama field form web `password1`/`password2` juga diterima.
+Jika konfirmasi tidak dikirim, API memakai nilai password. Validasi password
+mengikuti pengaturan Django, termasuk minimum delapan karakter.
+
+Profil menerima `full_name`, `faculty`, `angkatan`, `whatsapp`, `line_id`, dan
+`photo`. Field wajib pada PUT adalah nama lengkap, fakultas, angkatan, dan
+WhatsApp. PATCH bisa mengisi profil bertahap. Aturan validasi sama dengan form
+web: angkatan 1950 hingga tahun berjalan, normalisasi WhatsApp menjadi `08…`,
+serta ID LINE 4–20 karakter. Foto menggunakan multipart, format JPG/PNG/WEBP,
+maksimal 2 MB. Identitas akun dan field hasil perhitungan hanya dapat dibaca.
+
+Klien perlu menyimpan cookie dari setiap respons, mengirim cookie sesi pada
+request berikutnya, serta mengirim header `X-CSRFToken` pada POST/PUT/PATCH.
+Ambil token awal dari `GET /api/v1/auth/csrf/`. Setelah login berhasil, gunakan
+`csrfToken` baru dari respons login karena token dirotasi. Pada browser lintas
+origin, gunakan `credentials: 'include'`; origin juga harus diizinkan oleh
+konfigurasi deployment. Pengguna tanpa sesi mendapat 403 pada profil/logout,
+kredensial salah mendapat 401, dan data tidak valid mendapat 400.
+
+Jalankan pengujian dengan virtual environment proyek:
+
+```bash
+env/bin/python manage.py test authentication.tests_api authentication.tests
+env/bin/python manage.py makemigrations --check --dry-run
+```

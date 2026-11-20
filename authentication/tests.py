@@ -260,6 +260,7 @@ class RegisterViewTests(TestCase):
         self.assertTrue(User.objects.filter(username='budi').exists())
 
     def test_post_tidak_valid_menampilkan_ulang_form(self):
+        initial_count = User.objects.count()
         response = self.client.post(self.url, {
             'username': 'budi',
             'email': 'budi@gmail.com',
@@ -270,7 +271,7 @@ class RegisterViewTests(TestCase):
         self.assertFormError(
             response.context['form'], 'email', 'Email harus menggunakan domain @ui.ac.id.'
         )
-        self.assertFalse(User.objects.exists())
+        self.assertEqual(User.objects.count(), initial_count)
 
     def test_user_login_diarahkan_ke_beranda(self):
         user = User.objects.create_user('budi', 'budi@ui.ac.id', PASSWORD)
@@ -391,8 +392,9 @@ class SsoHelperTests(TestCase):
 
     def test_memakai_user_dengan_email_yang_sama(self):
         existing = User.objects.create_user('budi_manual', 'Budi@ui.ac.id', PASSWORD)
+        initial_count = User.objects.count()
         self.assertEqual(_get_or_create_sso_user('budi'), existing)
-        self.assertEqual(User.objects.count(), 1)
+        self.assertEqual(User.objects.count(), initial_count)
 
     def test_username_bentrok_diberi_suffix(self):
         User.objects.create_user('budi', 'budi.lain@ui.ac.id', PASSWORD)
@@ -464,11 +466,12 @@ class LoginSsoViewTests(TestCase):
         self.assertRedirects(response, reverse('main:show_profil'))
 
     def test_ticket_tidak_valid(self, cas_client):
+        initial_count = User.objects.count()
         cas_client.return_value.verify_ticket.return_value = (None, None, None)
         response = self.client.get(self.url, {'ticket': 'ST-salah'})
         self.assertRedirects(response, reverse('authentication:login'))
         self.assertNotIn('_auth_user_id', self.client.session)
-        self.assertFalse(User.objects.exists())
+        self.assertEqual(User.objects.count(), initial_count)
 
     def test_server_sso_error(self, cas_client):
         cas_client.return_value.verify_ticket.side_effect = requests.ConnectionError

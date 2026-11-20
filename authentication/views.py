@@ -14,15 +14,9 @@ from authentication.forms import LoginForm, ProfileForm, RegisterForm
 from authentication.models import Profile
 
 
-# ---------------------------------------------------------------------------
-# Helpers (fungsi privat, prefix _)
-# ---------------------------------------------------------------------------
+
 
 def _safe_next_url(request):
-    """
-    Memvalidasi URL redirect parameter 'next' agar aman dari open redirect.
-    Mengembalikan URL jika valid, None jika tidak.
-    """
     next_url = request.POST.get('next') or request.GET.get('next')
     if next_url and url_has_allowed_host_and_scheme(
         next_url,
@@ -52,12 +46,10 @@ def _get_or_create_sso_user(sso_username):
     username = sso_username.lower()
     email = f'{username}@ui.ac.id'
 
-    # Cari user yang sudah terdaftar dengan email yang sama (case-insensitive).
     user = User.objects.filter(email__iexact=email).first()
     if user:
         return user
 
-    # Cegah konflik username dengan menambahkan suffix angka bila perlu.
     candidate, suffix = username, 1
     while User.objects.filter(username__iexact=candidate).exists():
         candidate = f'{username}{suffix}'
@@ -87,15 +79,8 @@ def _prefill_profile_from_sso(user, attributes):
         profile.save()
 
 
-# ---------------------------------------------------------------------------
-# Views (fungsi publik)
-# ---------------------------------------------------------------------------
 
 def register(request):
-    """
-    Registrasi akun baru dengan email @ui.ac.id.
-    Pengguna yang sudah login diarahkan ke beranda.
-    """
     if request.user.is_authenticated:
         return redirect('main:show_beranda')
 
@@ -112,10 +97,6 @@ def register(request):
 
 
 def login_user(request):
-    """
-    Login manual menggunakan username atau email @ui.ac.id.
-    Mendukung parameter 'next' yang aman untuk redirect setelah login.
-    """
     if request.user.is_authenticated:
         return redirect('main:show_beranda')
 
@@ -144,7 +125,6 @@ def login_sso(request):
     ticket = request.GET.get('ticket')
 
     if not ticket:
-        # Simpan URL tujuan sebelum redirect ke SSO agar bisa dikembalikan setelah login.
         request.session['sso_next'] = _safe_next_url(request)
         return redirect(client.get_login_url())
 
@@ -161,8 +141,6 @@ def login_sso(request):
     _prefill_profile_from_sso(user, attributes or {})
     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
-    # Tambahan UX: Jika pengguna SSO belum melengkapi nomor WhatsApp,
-    # berikan info peringatan ramah tanpa menghalangi alur login
     profile = getattr(user, 'profile', None)
     if profile and not profile.whatsapp:
         messages.warning(
@@ -186,10 +164,6 @@ def logout_user(request):
 
 @login_required
 def edit_profile(request):
-    """
-    Menampilkan dan memproses form pengisian/pembaruan profil mahasiswa.
-    Profile dijamin ada karena dibuat otomatis via signal saat User dibuat.
-    """
     profile, _ = Profile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
