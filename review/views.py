@@ -142,6 +142,14 @@ def get_review_json(request):
         for row in diterima.order_by().values('rating').annotate(jumlah=Count('id'))
     }
     sebaran = {str(n): jumlah_per_rating.get(n, 0) for n in range(1, 6)}
+    
+    rating = request.GET.get("rating","").strip()
+    if rating :
+
+        diterima = diterima.filter(rating = rating)
+       
+
+
 
     def format_waktu(waktu):
         return timezone.localtime(waktu).strftime('%d %b %Y, %H:%M')
